@@ -1,0 +1,33 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "24.0.3"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 17
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':demiframe')
+    compile files('libs/alipaySdk-20160825.jar')
+    compile files('libs/huanju-data-raw-v2.1.2-20002a.jar')
+    compile files('libs/libammsdk.jar')
+    compile files('libs/mqqopenpay.jar')
+    compile files('libs/org.apache.http.legacy.jar')
+    compile files('libs/UPPayAssistEx.jar')
+    compile files('libs/UPPayPluginExPro.jar')
+    compile files('libs/vivounionsdk_online_v2.2.1.jar')
+}

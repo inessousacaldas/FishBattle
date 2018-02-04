@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE args [
+        <!ELEMENT args (group+)>
+        <!ELEMENT group (int | string | boolean)+>
+
+        <!ELEMENT string (rule? , desc?)>
+        <!ELEMENT int (rule? , desc?)>
+        <!ELEMENT long (rule? , desc?)>
+        <!ELEMENT boolean (rule? , desc?)>
+        <!ELEMENT string-arr (rule? , desc?)>
+
+        <!ELEMENT desc (#PCDATA)>
+        <!ELEMENT rule (#PCDATA)>
+
+        <!ATTLIST group
+                name CDATA #REQUIRED>
+
+        <!ATTLIST string
+                required (true|false) "false"
+                name CDATA #REQUIRED>
+        <!ATTLIST int
+                noset (true|false) #IMPLIED
+                name CDATA #REQUIRED>
+        <!ATTLIST long
+                noset (true|false) #IMPLIED
+                name CDATA #REQUIRED>
+        <!ATTLIST boolean
+                noset (true|false) #IMPLIED
+                name CDATA #REQUIRED>
+        ]>
+<args>
+    <group name="debug">
+        <boolean name="debug" />
+        <string name="output-dir">
+            <desc>调试路径信息输出路径</desc>
+        </string>
+    </group>
+    <group name="basic">
+        <int name="timeout">
+            <desc>从检测到语音尾点开始计算的超时时间（单位：ms）</desc>
+        </int>
+        <string name="sound_start"/>
+        <string name="sound_end"/>
+        <string name="sound_success"/>
+        <string name="sound_error"/>
+        <string name="sound_cancel"/>
+        <string name="runtime-name"/>
+        <string name="task-name"/>
+        <string name="vad">
+            <desc>语音活动检测方式</desc>
+        </string>
+        <int name="decoder"/>
+        <int name="appid">
+            <desc>
+                在http://yuyin.baidu.com上获取的appid
+            </desc>
+        </int>
+    </group>
+    <group name="ui">
+        <string name="partial-results"/>
+        <string name="porpmpt-text"/>
+        <string name="propmpt-sound-enable"/>
+        <string name="dialog-theme"/>
+        <string name="tips"/>
+        <string name="show-tips-on-start"/>
+        <string name="show-tip"/>
+        <string name="show-help-on-silent"/>
+        <string name="retry-file">
+            <desc>用于重试机制的备份文件路径</desc>
+        </string>
+    </group>
+    <group name="audio">
+        <string name="file"/>
+        <string name="outfile"/>
+        <int name="sample"/>
+        <long name="position">
+            <desc>设置语音起点位置</desc>
+        </long>
+    </group>
+    <group name="vad-mfe">
+        <int name="params-1">
+            <desc>
+                PARAM_MAX_WAIT_DURATION
+            </desc>
+        </int>
+        <int name="params-2">
+            <desc>
+                PARAM_MAX_SP_DURATION
+            </desc>
+        </int>
+        <int name="params-3"/>
+        <int name="params-4"/>
+        <int name="params-5"/>
+        <int name="params-6"/>
+        <int name="params-7"/>
+        <int name="params-8"/>
+        <int name="params-9"/>
+        <int name="params-10"/>
+        <int name="params-11"/>
+        <int name="params-12"/>
+        <int name="params-13"/>
+        <int name="params-14"/>
+        <int name="params-15"/>
+        <int name="params-16"/>
+        <int name="params-17"/>
+        <int name="params-18"/>
+        <int name="params-19"/>
+        <int name="params-20"/>
+        <int name="params-21"/>
+    </group>
+    <group name="decoder-server">
+        <string name="key"/>
+        <string name="secret"/>
+        <string name="url" required="true">
+            <rule>^http://.*$</rule>
+        </string>
+        <boolean name="auth">
+            <desc>是否启用认证</desc>
+        </boolean>
+
+        <string name="uid" required="true">
+            <rule>.+</rule>
+        </string>
+        <string name="app"/>
+        <string name="rtn"/>
+
+        <!--<string name="gbl" />-->
+        <string name="prop_list"/>
+        <string name="pdt">
+            <rule>.+</rule>
+            <desc>
+                开放平台：\n
+                - 普通话-搜索：1536\n
+                - 普通话-输入：1537\n
+                - 粤语-搜索：1636\n
+                - 粤语-输入：1637\n
+                - 英语-搜索：1736\n
+                - 英语-输入：1737\n
+                - 四川-搜索：1836\n
+                - 四川-输入：1837\n
+                非开放平台的产品填写约定的pid</desc>
+        </string>
+        <string name="tok"/>
+
+        <string name="fun"/>
+        <string name="ver"/>
+        <string name="pfm"/>
+        <int name="ptc"/>
+
+        <string name="enc" required="true"/>
+
+        <int name="city_id">
+            <desc>可选字段，城市id</desc>
+        </int>
+        <string name="pam">
+            <desc>可选字段，多伦对话需要的信息</desc>
+        </string>
+
+        <string name="bua">
+            <desc>user-agent</desc>
+        </string>
+        <string name="cok"/>
+        <string name="pu">
+            <desc>生成无线搜索pu参数，csrc追加的csrc值，当前内部搜索来源</desc>
+        </string>
+        <string name="frm">
+            <desc>原始渠道标示</desc>
+        </string>
+        <string name="rsv"/>
+    </group>
+    <group name="decoder-offline">
+        <string name="asr-base-file-path">
+            <rule>.+</rule>
+            <desc>离线解码器所需资源文件路径</desc>
+        </string>
+        <string name="lm-res-file-path">
+            <desc>可选字段，导航和输入法需要额外的语言模型资源文件</desc>
+        </string>
+        <string name="license-file-path">
+            <desc>可选字段，预授权文件路径</desc>
+        </string>
+        <boolean name="enable-punctuation">
+            <desc>可选字段，是否输出标点，默认为输出</desc>
+        </boolean>
+        <int name="prop" />
+        <string name="language"/>
+        <string name="slot-data"/>
+    </group>
+    <group name="decoder-merge">
+        <int name="preferred">
+            <desc>0为在线优先，1为离线优先</desc>
+        </int>
+    </group>
+</args>

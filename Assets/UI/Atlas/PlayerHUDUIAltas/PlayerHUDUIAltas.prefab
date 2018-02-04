@@ -1,0 +1,969 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400000}
+  - 114: {fileID: 11400000}
+  m_Layer: 0
+  m_Name: PlayerHUDUIAltas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d0c51bb0b6e93049af5e88f93826e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 81e52cf37903f6a4a990a802fe3d20b8, type: 2}
+  mSprites:
+  - name: FtFlag_01
+    x: 2
+    y: 386
+    width: 78
+    height: 62
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 94
+    paddingRight: 84
+    paddingTop: 86
+    paddingBottom: 108
+  - name: FtFlag_02
+    x: 756
+    y: 244
+    width: 70
+    height: 62
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 97
+    paddingRight: 89
+    paddingTop: 93
+    paddingBottom: 101
+  - name: FtFlag_03
+    x: 873
+    y: 298
+    width: 66
+    height: 66
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 100
+    paddingRight: 90
+    paddingTop: 94
+    paddingBottom: 96
+  - name: FtFlag_04
+    x: 684
+    y: 244
+    width: 70
+    height: 72
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 99
+    paddingRight: 87
+    paddingTop: 91
+    paddingBottom: 93
+  - name: FtFlag_05
+    x: 178
+    y: 214
+    width: 92
+    height: 78
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 80
+    paddingRight: 84
+    paddingTop: 88
+    paddingBottom: 90
+  - name: FtFlag_06
+    x: 92
+    y: 244
+    width: 84
+    height: 58
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 72
+    paddingRight: 100
+    paddingTop: 94
+    paddingBottom: 104
+  - name: FtFlag_07
+    x: 360
+    y: 214
+    width: 86
+    height: 46
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 74
+    paddingRight: 96
+    paddingTop: 104
+    paddingBottom: 106
+  - name: FtFlag_08
+    x: 892
+    y: 2
+    width: 106
+    height: 40
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 61
+    paddingRight: 89
+    paddingTop: 110
+    paddingBottom: 106
+  - name: FtFlag_09
+    x: 164
+    y: 352
+    width: 72
+    height: 36
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 81
+    paddingRight: 103
+    paddingTop: 114
+    paddingBottom: 106
+  - name: FtFlag_10
+    x: 262
+    y: 342
+    width: 76
+    height: 36
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 78
+    paddingRight: 102
+    paddingTop: 114
+    paddingBottom: 106
+  - name: FtFlag_11
+    x: 530
+    y: 242
+    width: 78
+    height: 38
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 77
+    paddingRight: 101
+    paddingTop: 112
+    paddingBottom: 106
+  - name: FtFlag_12
+    x: 92
+    y: 304
+    width: 82
+    height: 42
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 74
+    paddingRight: 100
+    paddingTop: 108
+    paddingBottom: 106
+  - name: FtFlag_13
+    x: 272
+    y: 292
+    width: 84
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 73
+    paddingRight: 99
+    paddingTop: 102
+    paddingBottom: 106
+  - name: FtFlag_14
+    x: 360
+    y: 262
+    width: 84
+    height: 52
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 74
+    paddingRight: 98
+    paddingTop: 99
+    paddingBottom: 105
+  - name: FtFlag_15
+    x: 178
+    y: 294
+    width: 82
+    height: 56
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 77
+    paddingRight: 97
+    paddingTop: 96
+    paddingBottom: 104
+  - name: FtFlag_16
+    x: 2
+    y: 324
+    width: 80
+    height: 60
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 80
+    paddingRight: 96
+    paddingTop: 93
+    paddingBottom: 103
+  - name: FtFlag_17
+    x: 446
+    y: 276
+    width: 76
+    height: 62
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 84
+    paddingRight: 96
+    paddingTop: 91
+    paddingBottom: 103
+  - name: FtFlag_18
+    x: 873
+    y: 366
+    width: 60
+    height: 64
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 97
+    paddingRight: 99
+    paddingTop: 92
+    paddingBottom: 100
+  - name: FtFlag_19
+    x: 610
+    y: 242
+    width: 72
+    height: 74
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 88
+    paddingRight: 96
+    paddingTop: 86
+    paddingBottom: 96
+  - name: FtFlag_20
+    x: 2
+    y: 244
+    width: 88
+    height: 78
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 85
+    paddingRight: 83
+    paddingTop: 85
+    paddingBottom: 93
+  - name: FtFlag_21
+    x: 892
+    y: 44
+    width: 100
+    height: 76
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 82
+    paddingRight: 74
+    paddingTop: 89
+    paddingBottom: 91
+  - name: FtFlag_22
+    x: 448
+    y: 214
+    width: 80
+    height: 60
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 76
+    paddingRight: 100
+    paddingTop: 92
+    paddingBottom: 104
+  - name: FtFlag_23
+    x: 524
+    y: 282
+    width: 72
+    height: 52
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 82
+    paddingRight: 102
+    paddingTop: 98
+    paddingBottom: 106
+  - name: FtFlag_24
+    x: 941
+    y: 298
+    width: 62
+    height: 54
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 90
+    paddingRight: 104
+    paddingTop: 99
+    paddingBottom: 103
+  - name: FtFlag_25
+    x: 272
+    y: 214
+    width: 86
+    height: 76
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 80
+    paddingRight: 90
+    paddingTop: 91
+    paddingBottom: 89
+  - name: FtFlag_26
+    x: 892
+    y: 122
+    width: 96
+    height: 84
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 75
+    paddingRight: 85
+    paddingTop: 88
+    paddingBottom: 84
+  - name: FtFlag_27
+    x: 882
+    y: 208
+    width: 94
+    height: 88
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 78
+    paddingRight: 84
+    paddingTop: 85
+    paddingBottom: 83
+  - name: FtFlag_28
+    x: 941
+    y: 354
+    width: 62
+    height: 46
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 99
+    paddingRight: 95
+    paddingTop: 101
+    paddingBottom: 109
+  - name: FtFlag_29
+    x: 756
+    y: 308
+    width: 70
+    height: 54
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 96
+    paddingRight: 90
+    paddingTop: 94
+    paddingBottom: 108
+  - name: FtFlag_30
+    x: 358
+    y: 316
+    width: 76
+    height: 60
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 94
+    paddingRight: 86
+    paddingTop: 88
+    paddingBottom: 108
+  - name: FtFlag_31
+    x: 84
+    y: 348
+    width: 78
+    height: 62
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 94
+    paddingRight: 84
+    paddingTop: 86
+    paddingBottom: 108
+  - name: NavFlag_01
+    x: 2
+    y: 214
+    width: 174
+    height: 28
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 110
+    paddingBottom: 112
+  - name: NavFlag_02
+    x: 354
+    y: 174
+    width: 174
+    height: 38
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 100
+    paddingBottom: 112
+  - name: NavFlag_03
+    x: 530
+    y: 154
+    width: 174
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 90
+    paddingBottom: 112
+  - name: NavFlag_04
+    x: 706
+    y: 206
+    width: 174
+    height: 36
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 101
+    paddingBottom: 113
+  - name: NavFlag_05
+    x: 706
+    y: 158
+    width: 174
+    height: 46
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 91
+    paddingBottom: 113
+  - name: NavFlag_06
+    x: 530
+    y: 204
+    width: 174
+    height: 36
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 101
+    paddingBottom: 113
+  - name: NavFlag_07
+    x: 354
+    y: 124
+    width: 174
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 90
+    paddingBottom: 112
+  - name: NavFlag_08
+    x: 178
+    y: 144
+    width: 174
+    height: 38
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 100
+    paddingBottom: 112
+  - name: NavFlag_09
+    x: 178
+    y: 94
+    width: 174
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 90
+    paddingBottom: 112
+  - name: NavFlag_10
+    x: 2
+    y: 144
+    width: 174
+    height: 38
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 100
+    paddingBottom: 112
+  - name: NavFlag_11
+    x: 2
+    y: 94
+    width: 174
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 90
+    paddingBottom: 112
+  - name: NavFlag_12
+    x: 178
+    y: 184
+    width: 174
+    height: 28
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 110
+    paddingBottom: 112
+  - name: NavFlag_13
+    x: 2
+    y: 184
+    width: 174
+    height: 28
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 36
+    paddingRight: 40
+    paddingTop: 110
+    paddingBottom: 112
+  - name: PatrolFlag_01
+    x: 714
+    y: 126
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: PatrolFlag_02
+    x: 714
+    y: 88
+    width: 176
+    height: 36
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 104
+    paddingBottom: 110
+  - name: PatrolFlag_03
+    x: 714
+    y: 2
+    width: 176
+    height: 46
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 94
+    paddingBottom: 110
+  - name: PatrolFlag_04
+    x: 536
+    y: 50
+    width: 176
+    height: 38
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 102
+    paddingBottom: 110
+  - name: PatrolFlag_05
+    x: 180
+    y: 2
+    width: 176
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 92
+    paddingBottom: 110
+  - name: PatrolFlag_06
+    x: 2
+    y: 54
+    width: 176
+    height: 38
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 102
+    paddingBottom: 110
+  - name: PatrolFlag_07
+    x: 536
+    y: 2
+    width: 176
+    height: 46
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 94
+    paddingBottom: 110
+  - name: PatrolFlag_08
+    x: 714
+    y: 50
+    width: 176
+    height: 36
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 104
+    paddingBottom: 110
+  - name: PatrolFlag_09
+    x: 358
+    y: 2
+    width: 176
+    height: 46
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 94
+    paddingBottom: 110
+  - name: PatrolFlag_10
+    x: 180
+    y: 52
+    width: 176
+    height: 40
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 100
+    paddingBottom: 110
+  - name: PatrolFlag_11
+    x: 2
+    y: 2
+    width: 176
+    height: 50
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 90
+    paddingBottom: 110
+  - name: PatrolFlag_12
+    x: 358
+    y: 50
+    width: 176
+    height: 40
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 100
+    paddingBottom: 110
+  - name: PatrolFlag_13
+    x: 536
+    y: 122
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: PatrolFlag_14
+    x: 358
+    y: 92
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: PatrolFlag_15
+    x: 536
+    y: 90
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: PatrolFlag_16
+    x: 714
+    y: 126
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: PatrolFlag_17
+    x: 714
+    y: 126
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: PatrolFlag_18
+    x: 714
+    y: 126
+    width: 176
+    height: 30
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 37
+    paddingRight: 37
+    paddingTop: 110
+    paddingBottom: 110
+  - name: teamFlag_01
+    x: 524
+    y: 336
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_02
+    x: 598
+    y: 318
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_03
+    x: 935
+    y: 402
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_04
+    x: 828
+    y: 334
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_05
+    x: 828
+    y: 289
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_06
+    x: 828
+    y: 244
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_07
+    x: 978
+    y: 253
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  - name: teamFlag_08
+    x: 978
+    y: 208
+    width: 43
+    height: 43
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 16
+    paddingRight: 18
+    paddingTop: 1
+    paddingBottom: 33
+  mPixelSize: 1
+  mReplacement: {fileID: 0}
+  mCoordinates: 0
+  sprites: []
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 100000}
+  m_IsPrefabParent: 1

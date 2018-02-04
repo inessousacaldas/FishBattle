@@ -1,0 +1,16 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cilugame.cilusdk" >
+
+    <application>
+      <activity
+      android:name="com.cilugame.h1.UnityPlayerActivity"
+      android:configChanges="orientation|keyboardHidden|screenSize"
+      android:screenOrientation="sensorLandscape"
+      android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+      <!--dll更新 activity-->
+      <activity android:configChanges="orientation" android:launchMode="standard" android:name="com.cilugame.h1.activity.GameLoaderActivity" android:screenOrientation="sensorLandscape" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <meta-data android:name="gameActivityClass" android:value="com.cilugame.h1.UnityPlayerActivity"/>
+      </activity>
+    </application>
+
+</manifest>

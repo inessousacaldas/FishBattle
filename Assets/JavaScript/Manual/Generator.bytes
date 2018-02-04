@@ -1,0 +1,19 @@
+
+var Generator = Object.getPrototypeOf(function* () {});
+
+Generator.prototype.GetEnumerator = function()
+{
+    return this;
+}
+
+Generator.prototype.get_Current = function ()
+{
+    return this._value.value;
+}
+
+Generator.prototype.MoveNext = function ()
+{
+    this._value = this.next();
+
+    return !this._value.done;
+}

@@ -1,0 +1,33 @@
+// **********************************************************************
+// Copyright (c)  Baoyugame. All rights reserved.
+// File     :  $uiViewName$ControllerAutoGen.cs
+// this file is generate by tool
+// **********************************************************************
+
+using UniRx;
+
+public partial interface I$uiViewName$Controller : ICloseView
+{
+$EventStreamDecl$
+}
+
+public partial class $uiViewName$Controller:FRPBaseController<
+    $uiViewName$Controller
+    , $uiViewName$
+    , I$uiViewName$Controller
+    , I$dataClassName$>
+    , I$uiViewName$Controller
+    {
+	    //机器自动生成的事件订阅
+        protected override void RegistEvent ()
+        {
+$CreateEventStream$
+        }
+        
+        protected override void RemoveEvent()
+        {
+$CloseEventStream$
+        }
+        
+        $ExposeEventStream$
+    }

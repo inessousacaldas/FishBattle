@@ -1,0 +1,27 @@
+{
+    "group": "emtpySDK",
+    "libs": [],
+    "frameworks": [],
+    "headerpaths": [""],
+    "embed_binaries": [],
+    "files":   [],
+    "folders": ["iOS/emptySDK/MySDK"],
+    "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$"],
+    "compiler_flags": [],
+    "linker_flags": [],
+    "plist":
+    {
+        "urltype" :
+        [
+            {
+                "name": "wechat",
+                "schemes": ["wx894a4f65a2835da8"],
+            },
+        ],
+        "ShareSDK" :
+        {
+            "WeiXinAppId": "wx894a4f65a2835da8",
+            "WeiXinAppSecret": "d4624c36b6795d1d99dcf0547af5443d",
+        },
+    },
+}

@@ -1,0 +1,26 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "24.0.3"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 17
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':demiframe')
+    compile files('libs/afsdk_grant_v1.jar')
+    compile files('libs/afsdk_plugin_v1.jar')
+    compile files('libs/afsdk_V_20170315111948.jar')
+}

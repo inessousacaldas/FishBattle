@@ -1,0 +1,1236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Lint Report</title>
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto" />
+<link rel="stylesheet" type="text/css" href="lint-results_files/hololike.css" />
+<script language="javascript" type="text/javascript"> 
+<!--
+function reveal(id) {
+if (document.getElementById) {
+document.getElementById(id).style.display = 'block';
+document.getElementById(id+'Link').style.display = 'none';
+}
+}
+//--> 
+</script>
+</head>
+<body>
+<h1>Lint Report</h1>
+<div class="titleSeparator"></div>
+Check performed at Fri Jan 06 09:47:15 CST 2017.<br/>
+50 errors and 22 warnings found:<br/><br/>
+<table class="overview">
+<tr><td></td><td class="categoryColumn"><a href="#Correctness">Correctness</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#DefaultLocale">DefaultLocale: Implied default locale in case conversion</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#InlinedApi">InlinedApi: Using inlined constants on older versions</a>
+</td></tr>
+<tr>
+<td class="countColumn">43</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-error.png" alt="Error" />
+<a href="#NewApi">NewApi: Calling new methods on older versions</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#OldTargetApi">OldTargetApi: Target SDK attribute is not targeting latest version</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#GradleDependency">GradleDependency: Obsolete Gradle Dependency</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#GradleOverrides">GradleOverrides: Value overridden by Gradle build script</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Security">Security</a>
+</td></tr>
+<tr>
+<td class="countColumn">6</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-error.png" alt="Error" />
+<a href="#WrongConstant">WrongConstant: Incorrect constant</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Performance">Performance</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#ObsoleteLayoutParam">ObsoleteLayoutParam: Obsolete layout params</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#HandlerLeak">HandlerLeak: Handler reference leaks</a>
+</td></tr>
+<tr>
+<td class="countColumn">4</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#UnusedResources">UnusedResources: Unused resources</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#UselessParent">UselessParent: Useless parent layout</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Usability:Icons">Usability:Icons</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#IconMissingDensityFolder">IconMissingDensityFolder: Missing density folder</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Internationalization">Internationalization</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#HardcodedText">HardcodedText: Hardcoded text</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#RelativeOverlap">RelativeOverlap: Overlapping items in RelativeLayout</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#Bi-directional Text">Bi-directional Text</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-error.png" alt="Error" />
+<a href="#RtlCompat">RtlCompat: Right-to-left text compatibility issues</a>
+</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#RtlSymmetry">RtlSymmetry: Padding and margin symmetry</a>
+</td></tr>
+<tr>
+<td class="countColumn">2</td><td class="issueColumn"><img border="0" align="top" src="lint-results_files/lint-warning.png" alt="Warning" />
+<a href="#RtlHardcoded">RtlHardcoded: Using left/right instead of start/end attributes</a>
+</td></tr>
+<tr><td></td><td class="categoryColumn"><a href="#MissingIssues">Disabled Checks (11)</a>
+</td></tr></table>
+<br/>
+<a name="Correctness"></a>
+<div class="category"><a href="#" title="Return to top">Correctness</a><div class="categorySeparator"></div>
+</div>
+<a name="DefaultLocale"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">DefaultLocale: Implied default locale in case conversion</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:282</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use <code>String.format(Locale, ...)</code> instead</span><br /><pre class="errorlines">
+<span class="lineno"> 279</span>         if (hours > 99) {
+<span class="lineno"> 280</span>             return "99:59:59";
+<span class="lineno"> 281</span>         }
+<span class="lineno"> 282</span>         return String.<span class="errorspan">format("%02d:%02d:%02d", hours, minutes, seconds);</span>
+<span class="lineno"> 283</span>     }
+<span class="lineno"> 284</span> 
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Implied default locale in case conversion.</div>
+<div class="explanation">
+Calling <code>String#toLowerCase()</code> or <code>#toUpperCase()</code> <b>without specifying an explicit locale</b> is a common source of bugs. The reason for that is that those methods will use the current locale on the user's device, and even though the code appears to work correctly when you are developing the app, it will fail in some locales. For example, in the Turkish locale, the uppercase replacement for <code>i</code> is <b>not</b> <code>I</code>.<br/>
+<br/>
+If you want the methods to just perform ASCII replacement, for example to convert an enum name, call <code>String#toUpperCase(Locale.US)</code> instead. If you really want to use the current locale, call <code>String#toUpperCase(Locale.getDefault())</code> instead.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/reference/java/util/Locale.html#default_locale">http://developer.android.com/reference/java/util/Locale.html#default_locale</a>
+</div><br/>To suppress this error, use the issue id "DefaultLocale" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="InlinedApi"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">InlinedApi: Using inlined constants on older versions</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/cilugame/android/commons/DeviceUtils.java">../../src/main/java/com/cilugame/android/commons/DeviceUtils.java</a>:639</span>: <span class="message">Field requires API level 17 (current min is 8): <code>android.provider.Settings.Global#INSTALL_NON_MARKET_APPS</code></span><br /><pre class="errorlines">
+<span class="lineno"> 636</span> 	public static int getOptionInstallNonMarketApps() {
+<span class="lineno"> 637</span> 		String key = null; 
+<span class="lineno"> 638</span> 		if ( Build.VERSION.SDK_INT >= 17 ) {
+<span class="lineno"> 639</span> 			key = <span class="errorspan">Settings.Global.INSTALL_NON_MARKET_APPS;</span>
+<span class="lineno"> 640</span> 		} else {
+<span class="lineno"> 641</span> 			key = Settings.Secure.INSTALL_NON_MARKET_APPS;
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT & Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Using inlined constants on older versions.</div>
+<div class="explanation">
+This check scans through all the Android API field references in the application and flags certain constants, such as static final integers and Strings, which were introduced in later versions. These will actually be copied into the class files rather than being referenced, which means that the value is available even when running on older devices. In some cases that's fine, and in other cases it can result in a runtime crash or incorrect behavior. It depends on the context, so consider the code carefully and device whether it's safe and can be suppressed or whether the code needs tbe guarded.<br/>
+<br/>
+If you really want to use this API and don't need to support older devices just set the <code>minSdkVersion</code> in your <code>build.gradle</code> or <code>AndroidManifest.xml</code> files.<br/>
+If your code is <b>deliberately</b> accessing newer APIs, and you have ensured (e.g. with conditional execution) that this code will only ever be called on a supported platform, then you can annotate your class or method with the <code>@TargetApi</code> annotation specifying the local minimum SDK to apply, such as <code>@TargetApi(11)</code>, such that this check considers 11 rather than your manifest file's minimum SDK as the required API level.<br/>
+
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "InlinedApi" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="NewApi"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">NewApi: Calling new methods on older versions</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:48</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.lang.String#isEmpty</code></span><br /><pre class="errorlines">
+<span class="lineno">  45</span> 
+<span class="lineno">  46</span>   public static boolean CheckPermission(String permission)
+<span class="lineno">  47</span>   {
+<span class="lineno">  48</span> 	  if (permission.<span class="errorspan">isEmpty())</span>
+<span class="lineno">  49</span> 	  {
+<span class="lineno">  50</span> 		  return false;
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:112</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.content.ClipboardManager#getPrimaryClip</code></span><br /><pre class="errorlines">
+<span class="lineno"> 109</span>     {
+<span class="lineno"> 110</span>       public void run()
+<span class="lineno"> 111</span>       {
+<span class="lineno"> 112</span>         Object localObject = ((ClipboardManager)UnityPlayerActivity.instance.getSystemService("clipboard")).<span class="errorspan">getPrimaryClip();</span>
+<span class="lineno"> 113</span>         if ((localObject != null) &amp;&amp; (((ClipData)localObject).getItemCount() > 0))
+<span class="lineno"> 114</span>         {
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:113</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.content.ClipData#getItemCount</code></span><br /><pre class="errorlines">
+<span class="lineno"> 110</span>       public void run()
+<span class="lineno"> 111</span>       {
+<span class="lineno"> 112</span>         Object localObject = ((ClipboardManager)UnityPlayerActivity.instance.getSystemService("clipboard")).getPrimaryClip();
+<span class="lineno"> 113</span>         if ((localObject != null) &amp;&amp; (((ClipData)localObject).<span class="errorspan">getItemCount() > 0))</span>
+<span class="lineno"> 114</span>         {
+<span class="lineno"> 115</span>           localObject = ((ClipData)localObject).getItemAt(0);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:115</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.content.ClipData#getItemAt</code></span><br /><pre class="errorlines">
+<span class="lineno"> 112</span>         Object localObject = ((ClipboardManager)UnityPlayerActivity.instance.getSystemService("clipboard")).getPrimaryClip();
+<span class="lineno"> 113</span>         if ((localObject != null) &amp;&amp; (((ClipData)localObject).getItemCount() > 0))
+<span class="lineno"> 114</span>         {
+<span class="lineno"> 115</span>           localObject = ((ClipData)localObject).<span class="errorspan">getItemAt(0);</span>
+<span class="lineno"> 116</span>           if (localObject != null)
+<span class="lineno"> 117</span>           {
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:200</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.content.ClipData#newPlainText</code></span><br /><pre class="errorlines">
+<span class="lineno"> 197</span>     {
+<span class="lineno"> 198</span>       public void run()
+<span class="lineno"> 199</span>       {
+<span class="lineno"> 200</span>         ((ClipboardManager)UnityPlayerActivity.instance.getSystemService("clipboard")).setPrimaryClip(ClipData.<span class="errorspan">newPlainText("CopyText", paramString));</span>
+<span class="lineno"> 201</span>       }
+<span class="lineno"> 202</span>     });
+</pre>
+<button id="NewApiDivLink" onclick="reveal('NewApiDiv');" />+ 38 More Occurrences...</button>
+<div id="NewApiDiv" style="display: none">
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:200</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.content.ClipboardManager#setPrimaryClip</code></span><br /><pre class="errorlines">
+<span class="lineno"> 197</span>     {
+<span class="lineno"> 198</span>       public void run()
+<span class="lineno"> 199</span>       {
+<span class="lineno"> 200</span>         ((ClipboardManager)UnityPlayerActivity.instance.getSystemService("clipboard")).<span class="errorspan">setPrimaryClip(ClipData.newPlainText("CopyText", paramString));</span>
+<span class="lineno"> 201</span>       }
+<span class="lineno"> 202</span>     });
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/ApkDownloader.java">../../src/main/java/com/cilugame/h1/patch/ApkDownloader.java</a>:189</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.Activity#getFragmentManager</code></span><br /><pre class="errorlines">
+<span class="lineno"> 186</span>     public void showDownload() {
+<span class="lineno"> 187</span>         dialog = new CLGamePacketFragment();
+<span class="lineno"> 188</span>         dialog.setDownloader(this);
+<span class="lineno"> 189</span>         dialog.show(currentActivity.<span class="errorspan">getFragmentManager(), "cl_packet_dialog");</span>
+<span class="lineno"> 190</span>     }
+<span class="lineno"> 191</span> 
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/ApkDownloader.java">../../src/main/java/com/cilugame/h1/patch/ApkDownloader.java</a>:189</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#show</code></span><br /><pre class="errorlines">
+<span class="lineno"> 186</span>     public void showDownload() {
+<span class="lineno"> 187</span>         dialog = new CLGamePacketFragment();
+<span class="lineno"> 188</span>         dialog.setDownloader(this);
+<span class="lineno"> 189</span>         dialog.<span class="errorspan">show(currentActivity.getFragmentManager(), "cl_packet_dialog");</span>
+<span class="lineno"> 190</span>     }
+<span class="lineno"> 191</span> 
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/ApkDownloader.java">../../src/main/java/com/cilugame/h1/patch/ApkDownloader.java</a>:220</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#dismiss</code></span><br /><pre class="errorlines">
+<span class="lineno"> 217</span>             downloadTask.cancel();
+<span class="lineno"> 218</span>         }
+<span class="lineno"> 219</span>         if (dialog != null) {
+<span class="lineno"> 220</span>             dialog.<span class="errorspan">dismiss();</span>
+<span class="lineno"> 221</span>         }
+<span class="lineno"> 222</span>     }
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:32</span>: <span class="message">Call requires API level 11 (current min is 8): <code>new android.app.DialogFragment</code></span><br /><pre class="errorlines">
+<span class="lineno">  29</span> import java.io.IOException;
+<span class="lineno">  30</span> import java.util.concurrent.TimeUnit;
+<span class="lineno">  31</span> 
+<span class="lineno">  32</span> public class CLGamePacketFragment extends <span class="errorspan">DialogFragment {</span>
+<span class="lineno">  33</span> 
+<span class="lineno">  34</span>     public static final int STATE_PROCESS_STOP = 0;
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:32</span>: <span class="message">Class requires API level 11 (current min is 8): <code>android.app.DialogFragment</code></span><br /><pre class="errorlines">
+<span class="lineno">  29</span> import java.io.IOException;
+<span class="lineno">  30</span> import java.util.concurrent.TimeUnit;
+<span class="lineno">  31</span> 
+<span class="lineno">  32</span> public class CLGamePacketFragment extends <span class="errorspan">DialogFragment {</span>
+<span class="lineno">  33</span> 
+<span class="lineno">  34</span>     public static final int STATE_PROCESS_STOP = 0;
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:58</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno">  55</span> 
+<span class="lineno">  56</span>     @Override
+<span class="lineno">  57</span>     public Dialog onCreateDialog(Bundle savedInstanceState) {
+<span class="lineno">  58</span>         final String appPackageName = <span class="errorspan">getActivity().getApplicationContext().getPackageName();</span>
+<span class="lineno">  59</span>         final int rPacketLayoutId = getResources().getIdentifier("fragment_clgame_packet", "layout", appPackageName);
+<span class="lineno">  60</span> 
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:59</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  56</span>     @Override
+<span class="lineno">  57</span>     public Dialog onCreateDialog(Bundle savedInstanceState) {
+<span class="lineno">  58</span>         final String appPackageName = getActivity().getApplicationContext().getPackageName();
+<span class="lineno">  59</span>         final int rPacketLayoutId = <span class="errorspan">getResources().getIdentifier("fragment_clgame_packet", "layout", appPackageName);</span>
+<span class="lineno">  60</span> 
+<span class="lineno">  61</span>         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:61</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno">  58</span>         final String appPackageName = getActivity().getApplicationContext().getPackageName();
+<span class="lineno">  59</span>         final int rPacketLayoutId = getResources().getIdentifier("fragment_clgame_packet", "layout", appPackageName);
+<span class="lineno">  60</span> 
+<span class="lineno">  61</span>         AlertDialog.Builder builder = new AlertDialog.Builder(<span class="errorspan">getActivity());</span>
+<span class="lineno">  62</span>         LayoutInflater inflater = getActivity().getLayoutInflater();
+<span class="lineno">  63</span>         View view = inflater.inflate(rPacketLayoutId, null);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:62</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno">  59</span>         final int rPacketLayoutId = getResources().getIdentifier("fragment_clgame_packet", "layout", appPackageName);
+<span class="lineno">  60</span> 
+<span class="lineno">  61</span>         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+<span class="lineno">  62</span>         LayoutInflater inflater = <span class="errorspan">getActivity().getLayoutInflater();</span>
+<span class="lineno">  63</span>         View view = inflater.inflate(rPacketLayoutId, null);
+<span class="lineno">  64</span>         builder.setView(view);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:67</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  64</span>         builder.setView(view);
+<span class="lineno">  65</span>         createDialogTitle(builder);
+<span class="lineno">  66</span> 
+<span class="lineno">  67</span>         final int rTxtUpdateContentId = <span class="errorspan">getResources().getIdentifier("cilu_txt_packet_update_content", "id", appPackageName);</span>
+<span class="lineno">  68</span>         final int rTxtUpdateTitleId = getResources().getIdentifier("cilu_txt_packet_update_title", "id", appPackageName);
+<span class="lineno">  69</span>         final int rProgressBarId = getResources().getIdentifier("cilu_game_packet_pbLoader", "id", appPackageName);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:68</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  65</span>         createDialogTitle(builder);
+<span class="lineno">  66</span> 
+<span class="lineno">  67</span>         final int rTxtUpdateContentId = getResources().getIdentifier("cilu_txt_packet_update_content", "id", appPackageName);
+<span class="lineno">  68</span>         final int rTxtUpdateTitleId = <span class="errorspan">getResources().getIdentifier("cilu_txt_packet_update_title", "id", appPackageName);</span>
+<span class="lineno">  69</span>         final int rProgressBarId = getResources().getIdentifier("cilu_game_packet_pbLoader", "id", appPackageName);
+<span class="lineno">  70</span>         final int rTxtSizeTitleId = getResources().getIdentifier("cilu_txt_packet_size", "id", appPackageName);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:69</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  66</span> 
+<span class="lineno">  67</span>         final int rTxtUpdateContentId = getResources().getIdentifier("cilu_txt_packet_update_content", "id", appPackageName);
+<span class="lineno">  68</span>         final int rTxtUpdateTitleId = getResources().getIdentifier("cilu_txt_packet_update_title", "id", appPackageName);
+<span class="lineno">  69</span>         final int rProgressBarId = <span class="errorspan">getResources().getIdentifier("cilu_game_packet_pbLoader", "id", appPackageName);</span>
+<span class="lineno">  70</span>         final int rTxtSizeTitleId = getResources().getIdentifier("cilu_txt_packet_size", "id", appPackageName);
+<span class="lineno">  71</span>         final int rBtnProcessId = getResources().getIdentifier("cilu_btn_packet_process", "id", appPackageName);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:70</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  67</span>         final int rTxtUpdateContentId = getResources().getIdentifier("cilu_txt_packet_update_content", "id", appPackageName);
+<span class="lineno">  68</span>         final int rTxtUpdateTitleId = getResources().getIdentifier("cilu_txt_packet_update_title", "id", appPackageName);
+<span class="lineno">  69</span>         final int rProgressBarId = getResources().getIdentifier("cilu_game_packet_pbLoader", "id", appPackageName);
+<span class="lineno">  70</span>         final int rTxtSizeTitleId = <span class="errorspan">getResources().getIdentifier("cilu_txt_packet_size", "id", appPackageName);</span>
+<span class="lineno">  71</span>         final int rBtnProcessId = getResources().getIdentifier("cilu_btn_packet_process", "id", appPackageName);
+<span class="lineno">  72</span>         final int rTxtSpeedId = getResources().getIdentifier("cilu_txt_packet_speed", "id", appPackageName);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:71</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  68</span>         final int rTxtUpdateTitleId = getResources().getIdentifier("cilu_txt_packet_update_title", "id", appPackageName);
+<span class="lineno">  69</span>         final int rProgressBarId = getResources().getIdentifier("cilu_game_packet_pbLoader", "id", appPackageName);
+<span class="lineno">  70</span>         final int rTxtSizeTitleId = getResources().getIdentifier("cilu_txt_packet_size", "id", appPackageName);
+<span class="lineno">  71</span>         final int rBtnProcessId = <span class="errorspan">getResources().getIdentifier("cilu_btn_packet_process", "id", appPackageName);</span>
+<span class="lineno">  72</span>         final int rTxtSpeedId = getResources().getIdentifier("cilu_txt_packet_speed", "id", appPackageName);
+<span class="lineno">  73</span>         final int rTxtRestTimeId = getResources().getIdentifier("cilu_txt_packet_rest_time", "id", appPackageName);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:72</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  69</span>         final int rProgressBarId = getResources().getIdentifier("cilu_game_packet_pbLoader", "id", appPackageName);
+<span class="lineno">  70</span>         final int rTxtSizeTitleId = getResources().getIdentifier("cilu_txt_packet_size", "id", appPackageName);
+<span class="lineno">  71</span>         final int rBtnProcessId = getResources().getIdentifier("cilu_btn_packet_process", "id", appPackageName);
+<span class="lineno">  72</span>         final int rTxtSpeedId = <span class="errorspan">getResources().getIdentifier("cilu_txt_packet_speed", "id", appPackageName);</span>
+<span class="lineno">  73</span>         final int rTxtRestTimeId = getResources().getIdentifier("cilu_txt_packet_rest_time", "id", appPackageName);
+<span class="lineno">  74</span> 
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:73</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno">  70</span>         final int rTxtSizeTitleId = getResources().getIdentifier("cilu_txt_packet_size", "id", appPackageName);
+<span class="lineno">  71</span>         final int rBtnProcessId = getResources().getIdentifier("cilu_btn_packet_process", "id", appPackageName);
+<span class="lineno">  72</span>         final int rTxtSpeedId = getResources().getIdentifier("cilu_txt_packet_speed", "id", appPackageName);
+<span class="lineno">  73</span>         final int rTxtRestTimeId = <span class="errorspan">getResources().getIdentifier("cilu_txt_packet_rest_time", "id", appPackageName);</span>
+<span class="lineno">  74</span> 
+<span class="lineno">  75</span>         TextView txtUpdateContent = (TextView) view.findViewById(rTxtUpdateContentId);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:116</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#setCancelable</code></span><br /><pre class="errorlines">
+<span class="lineno"> 113</span>             downloader.publishEvent(IPackageDownloadListener.EVENT_TYPE_DOWNLOAD_FINISH);
+<span class="lineno"> 114</span>             canInstall();
+<span class="lineno"> 115</span>         }
+<span class="lineno"> 116</span>         this.<span class="errorspan">setCancelable(false);</span>
+<span class="lineno"> 117</span>         builder.setCancelable(false);
+<span class="lineno"> 118</span>         Dialog dialog = builder.create();
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:125</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 122</span> 
+<span class="lineno"> 123</span>     public void createDialogTitle(AlertDialog.Builder builder) {
+<span class="lineno"> 124</span> 
+<span class="lineno"> 125</span>         RelativeLayout rootLayout = new RelativeLayout(this.<span class="errorspan">getActivity());</span>
+<span class="lineno"> 126</span>         RelativeLayout.LayoutParams paramsrl = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+<span class="lineno"> 127</span>         rootLayout.setLayoutParams(paramsrl);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:130</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 127</span>         rootLayout.setLayoutParams(paramsrl);
+<span class="lineno"> 128</span>         rootLayout.setBackgroundColor(Color.DKGRAY);
+<span class="lineno"> 129</span> 
+<span class="lineno"> 130</span>         TextView title = new TextView(<span class="errorspan">getActivity());</span>
+<span class="lineno"> 131</span>         title.setText("&#28216;&#25103;&#26356;&#26032;");
+<span class="lineno"> 132</span>         title.setBackgroundColor(Color.DKGRAY);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:144</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 141</span> 
+<span class="lineno"> 142</span>         Drawable closeDrawable = null;
+<span class="lineno"> 143</span>         try {
+<span class="lineno"> 144</span>             closeDrawable = Drawable.createFromStream(<span class="errorspan">getActivity().getAssets().open("cilu_dialog_close.png"), null);</span>
+<span class="lineno"> 145</span>         } catch (IOException e) {
+<span class="lineno"> 146</span>             Log.w("CLGamePacketFragment", "get close button png error:", e);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:149</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 146</span>             Log.w("CLGamePacketFragment", "get close button png error:", e);
+<span class="lineno"> 147</span>         }
+<span class="lineno"> 148</span>         if (closeDrawable != null) {
+<span class="lineno"> 149</span>             ImageView closeImage = new ImageView(this.<span class="errorspan">getActivity());</span>
+<span class="lineno"> 150</span>             closeImage.setImageDrawable(closeDrawable);
+<span class="lineno"> 151</span>             closeImage.setOnClickListener(new View.OnClickListener() {
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:159</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getResources</code></span><br /><pre class="errorlines">
+<span class="lineno"> 156</span>             });
+<span class="lineno"> 157</span>             closeImage.setPadding(0, 10, 20, 10);
+<span class="lineno"> 158</span> 
+<span class="lineno"> 159</span>             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, <span class="errorspan">getResources().getDisplayMetrics());</span>
+<span class="lineno"> 160</span>             closeImage.setAdjustViewBounds(true);
+<span class="lineno"> 161</span>             closeImage.setMaxWidth(px);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:174</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 171</span>     }
+<span class="lineno"> 172</span> 
+<span class="lineno"> 173</span>     public void preCloseConfirm() {
+<span class="lineno"> 174</span>         AlertDialog.Builder builder = new AlertDialog.Builder(<span class="errorspan">getActivity());</span>
+<span class="lineno"> 175</span>         final String exitButtonTitle = downloader.isExitGame() ? "&#36864;&#20986;&#28216;&#25103;" : "&#36864;&#20986;&#26356;&#26032;";
+<span class="lineno"> 176</span>         builder.setTitle("&#25552;&#31034;");
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:185</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getDialog</code></span><br /><pre class="errorlines">
+<span class="lineno"> 182</span>             public void onClick(DialogInterface dialog, int which) {
+<span class="lineno"> 183</span>                 downloader.pause();
+<span class="lineno"> 184</span>                 downloader.publishEvent(IPackageDownloadListener.EVENT_TYPE_QUIT_DOWNLOAD);
+<span class="lineno"> 185</span>                 Dialog d = self.<span class="errorspan">getDialog();</span>
+<span class="lineno"> 186</span>                 if (d != null &amp;&amp; d.isShowing()) {
+<span class="lineno"> 187</span>                     if(downloader.isExitGame()) {
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:188</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 185</span>                 Dialog d = self.getDialog();
+<span class="lineno"> 186</span>                 if (d != null &amp;&amp; d.isShowing()) {
+<span class="lineno"> 187</span>                     if(downloader.isExitGame()) {
+<span class="lineno"> 188</span>                         <span class="errorspan">getActivity().finish();</span>
+<span class="lineno"> 189</span>                     } else {
+<span class="lineno"> 190</span>                         d.dismiss();
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:263</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getDialog</code></span><br /><pre class="errorlines">
+<span class="lineno"> 260</span> 
+<span class="lineno"> 261</span>     private void onDownloadError() {
+<span class="lineno"> 262</span>         stop();
+<span class="lineno"> 263</span>         if (<span class="errorspan">getDialog() != null &amp;&amp; getDialog().isShowing()) {</span>
+<span class="lineno"> 264</span>             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+<span class="lineno"> 265</span>             builder.setTitle("&#32593;&#32476;&#24322;&#24120;");
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:264</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getActivity</code></span><br /><pre class="errorlines">
+<span class="lineno"> 261</span>     private void onDownloadError() {
+<span class="lineno"> 262</span>         stop();
+<span class="lineno"> 263</span>         if (getDialog() != null &amp;&amp; getDialog().isShowing()) {
+<span class="lineno"> 264</span>             AlertDialog.Builder builder = new AlertDialog.Builder(<span class="errorspan">getActivity());</span>
+<span class="lineno"> 265</span>             builder.setTitle("&#32593;&#32476;&#24322;&#24120;");
+<span class="lineno"> 266</span>             builder.setMessage("&#24403;&#21069;&#32593;&#32476;&#19981;&#21487;&#29992;,&#26080;&#27861;&#26356;&#26032;&#25991;&#20214;&#20869;&#23481;,&#35831;&#26816;&#26597;&#32593;&#32476;&#35774;&#32622;");
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:286</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#getDialog</code></span><br /><pre class="errorlines">
+<span class="lineno"> 283</span>     }
+<span class="lineno"> 284</span> 
+<span class="lineno"> 285</span>     public void install() {
+<span class="lineno"> 286</span>         if (<span class="errorspan">getDialog() != null &amp;&amp; getDialog().isShowing()) {</span>
+<span class="lineno"> 287</span>             downloader.publishEvent(IPackageDownloadListener.EVENT_TYPE_INSTALL);
+<span class="lineno"> 288</span>             Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java">../../src/main/java/com/cilugame/h1/activity/CLGamePacketFragment.java</a>:291</span>: <span class="message">Call requires API level 11 (current min is 8): <code>android.app.DialogFragment#startActivityForResult</code></span><br /><pre class="errorlines">
+<span class="lineno"> 288</span>             Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+<span class="lineno"> 289</span>                     .setDataAndType(Uri.fromFile(downloader.getOutputFile()),
+<span class="lineno"> 290</span>                             "application/vnd.android.package-archive");
+<span class="lineno"> 291</span>             <span class="errorspan">startActivityForResult(promptInstall, 3000);</span>
+<span class="lineno"> 292</span>         } else {
+<span class="lineno"> 293</span>             Log.d("packet_dialog", "dialog not showing, skill install!");
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/DLLUnZipTask.java">../../src/main/java/com/cilugame/h1/patch/DLLUnZipTask.java</a>:100</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.util.Arrays#copyOf</code></span><br /><pre class="errorlines">
+<span class="lineno">  97</span>     // deZipDll
+<span class="lineno">  98</span>     public byte[] dz(byte[] orig, int step) {
+<span class="lineno">  99</span>         int tagLength = CILU_ZIP_DLL_MAGIC_TAG.length;
+<span class="lineno"> 100</span>         byte[] magicTag = Arrays.<span class="errorspan">copyOf(orig, tagLength);</span>
+<span class="lineno"> 101</span>         if (Arrays.equals(magicTag, CILU_ZIP_DLL_MAGIC_TAG)) {
+<span class="lineno"> 102</span>             int keyLength = 32;
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/DLLUnZipTask.java">../../src/main/java/com/cilugame/h1/patch/DLLUnZipTask.java</a>:103</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.util.Arrays#copyOfRange</code></span><br /><pre class="errorlines">
+<span class="lineno"> 100</span>         byte[] magicTag = Arrays.copyOf(orig, tagLength);
+<span class="lineno"> 101</span>         if (Arrays.equals(magicTag, CILU_ZIP_DLL_MAGIC_TAG)) {
+<span class="lineno"> 102</span>             int keyLength = 32;
+<span class="lineno"> 103</span>             byte[] zipKey = Arrays.<span class="errorspan">copyOfRange(orig, orig.length-keyLength-1, orig.length-1);</span>
+<span class="lineno"> 104</span>             byte[] zipDllBytes = new byte[orig.length - tagLength - keyLength - 1];
+<span class="lineno"> 105</span>             System.arraycopy(orig, tagLength, zipDllBytes, 0, zipDllBytes.length);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/DLLUnZipTask.java">../../src/main/java/com/cilugame/h1/patch/DLLUnZipTask.java</a>:112</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.util.Arrays#copyOfRange</code></span><br /><pre class="errorlines">
+<span class="lineno"> 109</span>             byte[] unzipBytes = eb(zipDllBytes);
+<span class="lineno"> 110</span>             // 2.
+<span class="lineno"> 111</span>             publishProgress(step);
+<span class="lineno"> 112</span>             byte[] encryptBytes = e.eh(unzipBytes, dk(Arrays.<span class="errorspan">copyOfRange(zipKey, 16, keyLength), orig[orig.length-1]));</span>
+<span class="lineno"> 113</span>             ByteBuffer buf = ByteBuffer.allocate(encryptBytes.length + CILU_DLL_MAGIC_TAG.length);
+<span class="lineno"> 114</span>             buf.put(CILU_DLL_MAGIC_TAG);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/android/commons/DeviceUtils.java">../../src/main/java/com/cilugame/android/commons/DeviceUtils.java</a>:710</span>: <span class="message">Field requires API level 17 (current min is 8): <code>android.content.pm.PermissionInfo#flags</code></span><br /><pre class="errorlines">
+<span class="lineno"> 707</span> 	                PermissionGroupInfo pgi = pm.getPermissionGroupInfo(tmpPermInfo.group, 0);//&#26435;&#38480;&#20998;&#20026;&#19981;&#21516;&#30340;&#32676;&#32452;&#65292;&#36890;&#36807;&#26435;&#38480;&#21517;&#65292;&#25105;&#20204;&#24471;&#21040;&#35813;&#26435;&#38480;&#23646;&#20110;&#20160;&#20040;&#31867;&#22411;&#30340;&#26435;&#38480;&#12290;  
+<span class="lineno"> 708</span> 	                
+<span class="lineno"> 709</span> 	                Log.e("##ddd", i + "-" + permName + "\n");  
+<span class="lineno"> 710</span> 	                Log.e("##ddd", i + "-" + pgi.loadLabel(pm).toString() +" PermissionInfo.<span class="errorspan">flags"+tmpPermInfo.flags + "\n");  </span>
+<span class="lineno"> 711</span> 	                Log.e("##ddd", i + "-" + tmpPermInfo.loadLabel(pm).toString()  +" PermissionGroupInfo.flags"+pgi.flags + "\n");  
+<span class="lineno"> 712</span> 	                Log.e("##ddd", i + "-" + tmpPermInfo.loadDescription(pm).toString()+ "\n");  
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/android/commons/DeviceUtils.java">../../src/main/java/com/cilugame/android/commons/DeviceUtils.java</a>:711</span>: <span class="message">Field requires API level 17 (current min is 8): <code>android.content.pm.PermissionGroupInfo#flags</code></span><br /><pre class="errorlines">
+<span class="lineno"> 708</span> 	                
+<span class="lineno"> 709</span> 	                Log.e("##ddd", i + "-" + permName + "\n");  
+<span class="lineno"> 710</span> 	                Log.e("##ddd", i + "-" + pgi.loadLabel(pm).toString() +" PermissionInfo.flags"+tmpPermInfo.flags + "\n");  
+<span class="lineno"> 711</span> 	                Log.e("##ddd", i + "-" + tmpPermInfo.loadLabel(pm).toString()  +" PermissionGroupInfo.<span class="errorspan">flags"+pgi.flags + "\n");  </span>
+<span class="lineno"> 712</span> 	                Log.e("##ddd", i + "-" + tmpPermInfo.loadDescription(pm).toString()+ "\n");  
+<span class="lineno"> 713</span> 	                //tv.append(mDivider + "\n");  
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/GameLoaderActivity.java">../../src/main/java/com/cilugame/h1/activity/GameLoaderActivity.java</a>:75</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.lang.String#isEmpty</code></span><br /><pre class="errorlines">
+<span class="lineno">  72</span>             Log.i(TAG, msg.what + "" + msg.obj);
+<span class="lineno">  73</span>             if (DLLDownloadTip.MSG_VERSION_DOWNLOAD == msg.what) {
+<span class="lineno">  74</span>                 String strJson = (String) msg.obj;
+<span class="lineno">  75</span>                 if (strJson == null || strJson.<span class="errorspan">isEmpty()) {</span>
+<span class="lineno">  76</span>                     Log.e(TAG, "remote version not available! ");
+<span class="lineno">  77</span>                     txtLoadTip.setText("&#29256;&#26412;&#25991;&#20214;&#19979;&#36733;&#22833;&#36133;!");
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/PatchUtils.java">../../src/main/java/com/cilugame/h1/patch/PatchUtils.java</a>:108</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.lang.String#isEmpty</code></span><br /><pre class="errorlines">
+<span class="lineno"> 105</span>      * @return
+<span class="lineno"> 106</span>      */
+<span class="lineno"> 107</span>     public static int setLocalUpdateURL(String versionURL, String downURLPrefix) {
+<span class="lineno"> 108</span>         if (versionURL == null || versionURL.<span class="errorspan">isEmpty() || downURLPrefix == null || downURLPrefix.isEmpty()) {</span>
+<span class="lineno"> 109</span>             return ERR_PARAMS_EMPTY;
+<span class="lineno"> 110</span>         }
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/patch/PatchUtils.java">../../src/main/java/com/cilugame/h1/patch/PatchUtils.java</a>:148</span>: <span class="message">Call requires API level 9 (current min is 8): <code>java.lang.String#isEmpty</code></span><br /><pre class="errorlines">
+<span class="lineno"> 145</span>      * @return
+<span class="lineno"> 146</span>      */
+<span class="lineno"> 147</span>     public static int setLocalVersion(String jsonContent) {
+<span class="lineno"> 148</span>         if (jsonContent == null || jsonContent.<span class="errorspan">isEmpty()) {</span>
+<span class="lineno"> 149</span>             return ERR_PARAMS_EMPTY;
+<span class="lineno"> 150</span>         }
+</pre>
+</div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT & Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="error">Error</span><div class="summary">
+Explanation: Calling new methods on older versions.</div>
+<div class="explanation">
+This check scans through all the Android API calls in the application and warns about any calls that are not available on <b>all</b> versions targeted by this application (according to its minimum SDK attribute in the manifest).<br/>
+<br/>
+If you really want to use this API and don't need to support older devices just set the <code>minSdkVersion</code> in your <code>build.gradle</code> or <code>AndroidManifest.xml</code> files.<br/>
+<br/>
+If your code is <b>deliberately</b> accessing newer APIs, and you have ensured (e.g. with conditional execution) that this code will only ever be called on a supported platform, then you can annotate your class or method with the <code>@TargetApi</code> annotation specifying the local minimum SDK to apply, such as <code>@TargetApi(11)</code>, such that this check considers 11 rather than your manifest file's minimum SDK as the required API level.<br/>
+<br/>
+If you are deliberately setting <code>android:</code> attributes in style definitions, make sure you place this in a <code>values-vNN</code> folder in order to avoid running into runtime conflicts on certain devices where manufacturers have added custom attributes whose ids conflict with the new ones on later platforms.<br/>
+<br/>
+Similarly, you can use tools:targetApi="11" in an XML file to indicate that the element will only be inflated in an adequate context.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "NewApi" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="OldTargetApi"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">OldTargetApi: Target SDK attribute is not targeting latest version</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:8</span>: <span class="message">Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the <code>android.os.Build.VERSION_CODES</code> javadoc for details.</span><br /><pre class="errorlines">
+<span class="lineno">   5</span> 
+<span class="lineno">   6</span>     &lt;uses-sdk
+<span class="lineno">   7</span>         android:minSdkVersion="8"
+<span class="lineno">   8</span>         <span class="errorspan">android:targetSdkVersion="17" /></span>
+<span class="lineno">   9</span> 
+<span class="lineno">  10</span> 
+</pre>
+<span class="location"><a href="../../build.gradle">../../build.gradle</a>:9</span>: <span class="message">Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details.</span><br /><pre class="errorlines">
+<span class="lineno">   6</span> 
+<span class="lineno">   7</span>     defaultConfig {
+<span class="lineno">   8</span>         minSdkVersion 8
+<span class="lineno">   9</span>         <span class="errorspan">targetSdkVersion 17</span>
+<span class="lineno">  10</span>     }
+<span class="lineno">  11</span> 
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 6 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Target SDK attribute is not targeting latest version.</div>
+<div class="explanation">
+When your application runs on a version of Android that is more recent than your <code>targetSdkVersion</code> specifies that it has been tested with, various compatibility modes kick in. This ensures that your application continues to work, but it may look out of place. For example, if the <code>targetSdkVersion</code> is less than 14, your app may get an option button in the UI.<br/>
+<br/>
+To fix this issue, set the <code>targetSdkVersion</code> to the highest available value. Then test your app to make sure everything works correctly. You may want to consult the compatibility notes to see what changes apply to each version you are adding support for: <a href="http://developer.android.com/reference/android/os/Build.VERSION_CODES.html">http://developer.android.com/reference/android/os/Build.VERSION_CODES.html</a>
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/reference/android/os/Build.VERSION_CODES.html">http://developer.android.com/reference/android/os/Build.VERSION_CODES.html</a>
+</div><br/>To suppress this error, use the issue id "OldTargetApi" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="GradleDependency"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">GradleDependency: Obsolete Gradle Dependency</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../build.gradle">../../build.gradle</a>:25</span>: <span class="message">A newer version of com.android.support:support-v4 than 18.0.0 is available: 23.1.1</span><br /><pre class="errorlines">
+<span class="lineno">  22</span> }
+<span class="lineno">  23</span> 
+<span class="lineno">  24</span> dependencies {
+<span class="lineno">  25</span>     <span class="errorspan">compile 'com.android.support:support-v4:18.0.0'</span>
+<span class="lineno">  26</span>     compile files('libs/MobCommons.jar')
+<span class="lineno">  27</span>     compile files('libs/MobTools.jar')
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 4 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Obsolete Gradle Dependency.</div>
+<div class="explanation">
+This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "GradleDependency" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="GradleOverrides"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">GradleOverrides: Value overridden by Gradle build script</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:7</span>: <span class="message">This <code>minSdkVersion</code> value (<code>8</code>) is not used; it is always overridden by the value specified in the Gradle build script (<code>8</code>)</span><br /><pre class="errorlines">
+<span class="lineno">   4</span>     android:versionName="1.0" >
+<span class="lineno">   5</span> 
+<span class="lineno">   6</span>     &lt;uses-sdk
+<span class="lineno">   7</span>         <span class="errorspan">android:minSdkVersion="8"</span>
+<span class="lineno">   8</span>         android:targetSdkVersion="17" />
+<span class="lineno">   9</span> 
+</pre>
+<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:8</span>: <span class="message">This <code>targetSdkVersion</code> value (<code>17</code>) is not used; it is always overridden by the value specified in the Gradle build script (<code>17</code>)</span><br /><pre class="errorlines">
+<span class="lineno">   5</span> 
+<span class="lineno">   6</span>     &lt;uses-sdk
+<span class="lineno">   7</span>         android:minSdkVersion="8"
+<span class="lineno">   8</span>         <span class="errorspan">android:targetSdkVersion="17" /></span>
+<span class="lineno">   9</span> 
+<span class="lineno">  10</span> 
+</pre>
+</div>
+<div class="metadata">Priority: 4 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Value overridden by Gradle build script.</div>
+<div class="explanation">
+The value of (for example) <code>minSdkVersion</code> is only used if it is not specified in the <code>build.gradle</code> build scripts. When specified in the Gradle build scripts, the manifest value is ignored and can be misleading, so should be removed to avoid ambiguity.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "GradleOverrides" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="Security"></a>
+<div class="category"><a href="#" title="Return to top">Security</a><div class="categorySeparator"></div>
+</div>
+<a name="WrongConstant"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">WrongConstant: Incorrect constant</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:112</span>: <span class="message">Must be one of: Context.POWER_SERVICE, Context.WINDOW_SERVICE, Context.LAYOUT_INFLATER_SERVICE, Context.ACCOUNT_SERVICE, Context.ACTIVITY_SERVICE, Context.ALARM_SERVICE, Context.NOTIFICATION_SERVICE, Context.ACCESSIBILITY_SERVICE, Context.CAPTIONING_SERVICE, Context.KEYGUARD_SERVICE, Context.LOCATION_SERVICE, Context.SEARCH_SERVICE, Context.SENSOR_SERVICE, Context.STORAGE_SERVICE, Context.WALLPAPER_SERVICE, Context.VIBRATOR_SERVICE, Context.CONNECTIVITY_SERVICE, Context.NETWORK_STATS_SERVICE, Context.WIFI_SERVICE, Context.WIFI_P2P_SERVICE, Context.NSD_SERVICE, Context.AUDIO_SERVICE, Context.FINGERPRINT_SERVICE, Context.MEDIA_ROUTER_SERVICE, Context.TELEPHONY_SERVICE, Context.TELEPHONY_SUBSCRIPTION_SERVICE, Context.CARRIER_CONFIG_SERVICE, Context.TELECOM_SERVICE, Context.CLIPBOARD_SERVICE, Context.INPUT_METHOD_SERVICE, Context.TEXT_SERVICES_MANAGER_SERVICE, Context.APPWIDGET_SERVICE, Context.DROPBOX_SERVICE, Context.DEVICE_POLICY_SERVICE, Context.UI_MODE_SERVICE, Context.DOWNLOAD_SERVICE, Context.NFC_SERVICE, Context.BLUETOOTH_SERVICE, Context.USB_SERVICE, Context.LAUNCHER_APPS_SERVICE, Context.INPUT_SERVICE, Context.DISPLAY_SERVICE, Context.USER_SERVICE, Context.RESTRICTIONS_SERVICE, Context.APP_OPS_SERVICE, Context.CAMERA_SERVICE, Context.PRINT_SERVICE, Context.CONSUMER_IR_SERVICE, Context.TV_INPUT_SERVICE, Context.USAGE_STATS_SERVICE, Context.MEDIA_SESSION_SERVICE, Context.BATTERY_SERVICE, Context.JOB_SCHEDULER_SERVICE, Context.MEDIA_PROJECTION_SERVICE, Context.MIDI_SERVICE</span><br /><pre class="errorlines">
+<span class="lineno"> 109</span>     {
+<span class="lineno"> 110</span>       public void run()
+<span class="lineno"> 111</span>       {
+<span class="lineno"> 112</span>         Object localObject = ((ClipboardManager)UnityPlayerActivity.instance.getSystemService(<span class="errorspan">"clipboard")).getPrimaryClip();</span>
+<span class="lineno"> 113</span>         if ((localObject != null) &amp;&amp; (((ClipData)localObject).getItemCount() > 0))
+<span class="lineno"> 114</span>         {
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:139</span>: <span class="message">Must be one of: Context.POWER_SERVICE, Context.WINDOW_SERVICE, Context.LAYOUT_INFLATER_SERVICE, Context.ACCOUNT_SERVICE, Context.ACTIVITY_SERVICE, Context.ALARM_SERVICE, Context.NOTIFICATION_SERVICE, Context.ACCESSIBILITY_SERVICE, Context.CAPTIONING_SERVICE, Context.KEYGUARD_SERVICE, Context.LOCATION_SERVICE, Context.SEARCH_SERVICE, Context.SENSOR_SERVICE, Context.STORAGE_SERVICE, Context.WALLPAPER_SERVICE, Context.VIBRATOR_SERVICE, Context.CONNECTIVITY_SERVICE, Context.NETWORK_STATS_SERVICE, Context.WIFI_SERVICE, Context.WIFI_P2P_SERVICE, Context.NSD_SERVICE, Context.AUDIO_SERVICE, Context.FINGERPRINT_SERVICE, Context.MEDIA_ROUTER_SERVICE, Context.TELEPHONY_SERVICE, Context.TELEPHONY_SUBSCRIPTION_SERVICE, Context.CARRIER_CONFIG_SERVICE, Context.TELECOM_SERVICE, Context.CLIPBOARD_SERVICE, Context.INPUT_METHOD_SERVICE, Context.TEXT_SERVICES_MANAGER_SERVICE, Context.APPWIDGET_SERVICE, Context.DROPBOX_SERVICE, Context.DEVICE_POLICY_SERVICE, Context.UI_MODE_SERVICE, Context.DOWNLOAD_SERVICE, Context.NFC_SERVICE, Context.BLUETOOTH_SERVICE, Context.USB_SERVICE, Context.LAUNCHER_APPS_SERVICE, Context.INPUT_SERVICE, Context.DISPLAY_SERVICE, Context.USER_SERVICE, Context.RESTRICTIONS_SERVICE, Context.APP_OPS_SERVICE, Context.CAMERA_SERVICE, Context.PRINT_SERVICE, Context.CONSUMER_IR_SERVICE, Context.TV_INPUT_SERVICE, Context.USAGE_STATS_SERVICE, Context.MEDIA_SESSION_SERVICE, Context.BATTERY_SERVICE, Context.JOB_SCHEDULER_SERVICE, Context.MEDIA_PROJECTION_SERVICE, Context.MIDI_SERVICE</span><br /><pre class="errorlines">
+<span class="lineno"> 136</span> 
+<span class="lineno"> 137</span>   public static long[] GetMemoryInfo()
+<span class="lineno"> 138</span>   {
+<span class="lineno"> 139</span>     ((ActivityManager)UnityPlayerActivity.instance.getSystemService(<span class="errorspan">"activity")).getMemoryInfo(activityMemInfo);</span>
+<span class="lineno"> 140</span>     Debug.getMemoryInfo(debugMemInfo);
+<span class="lineno"> 141</span>     infos[0] = debugMemInfo.getTotalPss();
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/AndroidPlugin.java">../../src/main/java/com/cilugame/h1/AndroidPlugin.java</a>:200</span>: <span class="message">Must be one of: Context.POWER_SERVICE, Context.WINDOW_SERVICE, Context.LAYOUT_INFLATER_SERVICE, Context.ACCOUNT_SERVICE, Context.ACTIVITY_SERVICE, Context.ALARM_SERVICE, Context.NOTIFICATION_SERVICE, Context.ACCESSIBILITY_SERVICE, Context.CAPTIONING_SERVICE, Context.KEYGUARD_SERVICE, Context.LOCATION_SERVICE, Context.SEARCH_SERVICE, Context.SENSOR_SERVICE, Context.STORAGE_SERVICE, Context.WALLPAPER_SERVICE, Context.VIBRATOR_SERVICE, Context.CONNECTIVITY_SERVICE, Context.NETWORK_STATS_SERVICE, Context.WIFI_SERVICE, Context.WIFI_P2P_SERVICE, Context.NSD_SERVICE, Context.AUDIO_SERVICE, Context.FINGERPRINT_SERVICE, Context.MEDIA_ROUTER_SERVICE, Context.TELEPHONY_SERVICE, Context.TELEPHONY_SUBSCRIPTION_SERVICE, Context.CARRIER_CONFIG_SERVICE, Context.TELECOM_SERVICE, Context.CLIPBOARD_SERVICE, Context.INPUT_METHOD_SERVICE, Context.TEXT_SERVICES_MANAGER_SERVICE, Context.APPWIDGET_SERVICE, Context.DROPBOX_SERVICE, Context.DEVICE_POLICY_SERVICE, Context.UI_MODE_SERVICE, Context.DOWNLOAD_SERVICE, Context.NFC_SERVICE, Context.BLUETOOTH_SERVICE, Context.USB_SERVICE, Context.LAUNCHER_APPS_SERVICE, Context.INPUT_SERVICE, Context.DISPLAY_SERVICE, Context.USER_SERVICE, Context.RESTRICTIONS_SERVICE, Context.APP_OPS_SERVICE, Context.CAMERA_SERVICE, Context.PRINT_SERVICE, Context.CONSUMER_IR_SERVICE, Context.TV_INPUT_SERVICE, Context.USAGE_STATS_SERVICE, Context.MEDIA_SESSION_SERVICE, Context.BATTERY_SERVICE, Context.JOB_SCHEDULER_SERVICE, Context.MEDIA_PROJECTION_SERVICE, Context.MIDI_SERVICE</span><br /><pre class="errorlines">
+<span class="lineno"> 197</span>     {
+<span class="lineno"> 198</span>       public void run()
+<span class="lineno"> 199</span>       {
+<span class="lineno"> 200</span>         ((ClipboardManager)UnityPlayerActivity.instance.getSystemService(<span class="errorspan">"clipboard")).setPrimaryClip(ClipData.newPlainText("CopyText", paramString));</span>
+<span class="lineno"> 201</span>       }
+<span class="lineno"> 202</span>     });
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/android/commons/DeviceUtils.java">../../src/main/java/com/cilugame/android/commons/DeviceUtils.java</a>:676</span>: <span class="message">Must be one or more of: PendingIntent.FLAG_ONE_SHOT, PendingIntent.FLAG_NO_CREATE, PendingIntent.FLAG_CANCEL_CURRENT, PendingIntent.FLAG_UPDATE_CURRENT, Intent.FILL_IN_ACTION, Intent.FILL_IN_DATA, Intent.FILL_IN_CATEGORIES, Intent.FILL_IN_COMPONENT, Intent.FILL_IN_PACKAGE, Intent.FILL_IN_SOURCE_BOUNDS, Intent.FILL_IN_SELECTOR, Intent.FILL_IN_CLIP_DATA</span><br /><pre class="errorlines">
+<span class="lineno"> 673</span> //		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+<span class="lineno"> 674</span> //		Logger.Log( "intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)");
+<span class="lineno"> 675</span> 		
+<span class="lineno"> 676</span> 		PendingIntent pendIntent = PendingIntent.getActivity(currentActivity, 0, intent, <span class="errorspan">Intent.FLAG_ACTIVITY_CLEAR_TOP);</span>
+<span class="lineno"> 677</span> 		AlarmManager manager = (AlarmManager) currentActivity.getSystemService(Context.ALARM_SERVICE);
+<span class="lineno"> 678</span> 		manager.set(AlarmManager.RTC, System.currentTimeMillis() + delay, pendIntent);
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/view/UnityEditTextDialog.java">../../src/main/java/com/cilugame/h1/view/UnityEditTextDialog.java</a>:74</span>: <span class="message">Must be one of: Context.POWER_SERVICE, Context.WINDOW_SERVICE, Context.LAYOUT_INFLATER_SERVICE, Context.ACCOUNT_SERVICE, Context.ACTIVITY_SERVICE, Context.ALARM_SERVICE, Context.NOTIFICATION_SERVICE, Context.ACCESSIBILITY_SERVICE, Context.CAPTIONING_SERVICE, Context.KEYGUARD_SERVICE, Context.LOCATION_SERVICE, Context.SEARCH_SERVICE, Context.SENSOR_SERVICE, Context.STORAGE_SERVICE, Context.WALLPAPER_SERVICE, Context.VIBRATOR_SERVICE, Context.CONNECTIVITY_SERVICE, Context.NETWORK_STATS_SERVICE, Context.WIFI_SERVICE, Context.WIFI_P2P_SERVICE, Context.NSD_SERVICE, Context.AUDIO_SERVICE, Context.FINGERPRINT_SERVICE, Context.MEDIA_ROUTER_SERVICE, Context.TELEPHONY_SERVICE, Context.TELEPHONY_SUBSCRIPTION_SERVICE, Context.CARRIER_CONFIG_SERVICE, Context.TELECOM_SERVICE, Context.CLIPBOARD_SERVICE, Context.INPUT_METHOD_SERVICE, Context.TEXT_SERVICES_MANAGER_SERVICE, Context.APPWIDGET_SERVICE, Context.DROPBOX_SERVICE, Context.DEVICE_POLICY_SERVICE, Context.UI_MODE_SERVICE, Context.DOWNLOAD_SERVICE, Context.NFC_SERVICE, Context.BLUETOOTH_SERVICE, Context.USB_SERVICE, Context.LAUNCHER_APPS_SERVICE, Context.INPUT_SERVICE, Context.DISPLAY_SERVICE, Context.USER_SERVICE, Context.RESTRICTIONS_SERVICE, Context.APP_OPS_SERVICE, Context.CAMERA_SERVICE, Context.PRINT_SERVICE, Context.CONSUMER_IR_SERVICE, Context.TV_INPUT_SERVICE, Context.USAGE_STATS_SERVICE, Context.MEDIA_SESSION_SERVICE, Context.BATTERY_SERVICE, Context.JOB_SCHEDULER_SERVICE, Context.MEDIA_PROJECTION_SERVICE, Context.MIDI_SERVICE</span><br /><pre class="errorlines">
+<span class="lineno">  71</span> 
+<span class="lineno">  72</span>   private void CloseKeyboard()
+<span class="lineno">  73</span>   {
+<span class="lineno">  74</span>     ((InputMethodManager)getContext().getSystemService(<span class="errorspan">"input_method")).hideSoftInputFromWindow(this.editText.getWindowToken(), 0);</span>
+<span class="lineno">  75</span>   }
+<span class="lineno">  76</span> 
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/view/UnityEditTextDialog.java">../../src/main/java/com/cilugame/h1/view/UnityEditTextDialog.java</a>:79</span>: <span class="message">Must be one of: Context.POWER_SERVICE, Context.WINDOW_SERVICE, Context.LAYOUT_INFLATER_SERVICE, Context.ACCOUNT_SERVICE, Context.ACTIVITY_SERVICE, Context.ALARM_SERVICE, Context.NOTIFICATION_SERVICE, Context.ACCESSIBILITY_SERVICE, Context.CAPTIONING_SERVICE, Context.KEYGUARD_SERVICE, Context.LOCATION_SERVICE, Context.SEARCH_SERVICE, Context.SENSOR_SERVICE, Context.STORAGE_SERVICE, Context.WALLPAPER_SERVICE, Context.VIBRATOR_SERVICE, Context.CONNECTIVITY_SERVICE, Context.NETWORK_STATS_SERVICE, Context.WIFI_SERVICE, Context.WIFI_P2P_SERVICE, Context.NSD_SERVICE, Context.AUDIO_SERVICE, Context.FINGERPRINT_SERVICE, Context.MEDIA_ROUTER_SERVICE, Context.TELEPHONY_SERVICE, Context.TELEPHONY_SUBSCRIPTION_SERVICE, Context.CARRIER_CONFIG_SERVICE, Context.TELECOM_SERVICE, Context.CLIPBOARD_SERVICE, Context.INPUT_METHOD_SERVICE, Context.TEXT_SERVICES_MANAGER_SERVICE, Context.APPWIDGET_SERVICE, Context.DROPBOX_SERVICE, Context.DEVICE_POLICY_SERVICE, Context.UI_MODE_SERVICE, Context.DOWNLOAD_SERVICE, Context.NFC_SERVICE, Context.BLUETOOTH_SERVICE, Context.USB_SERVICE, Context.LAUNCHER_APPS_SERVICE, Context.INPUT_SERVICE, Context.DISPLAY_SERVICE, Context.USER_SERVICE, Context.RESTRICTIONS_SERVICE, Context.APP_OPS_SERVICE, Context.CAMERA_SERVICE, Context.PRINT_SERVICE, Context.CONSUMER_IR_SERVICE, Context.TV_INPUT_SERVICE, Context.USAGE_STATS_SERVICE, Context.MEDIA_SESSION_SERVICE, Context.BATTERY_SERVICE, Context.JOB_SCHEDULER_SERVICE, Context.MEDIA_PROJECTION_SERVICE, Context.MIDI_SERVICE</span><br /><pre class="errorlines">
+<span class="lineno">  76</span> 
+<span class="lineno">  77</span>   private void OpenKeyboard()
+<span class="lineno">  78</span>   {
+<span class="lineno">  79</span>     ((InputMethodManager)getContext().getSystemService(<span class="errorspan">"input_method")).showSoftInput(this.editText, 0);</span>
+<span class="lineno">  80</span>   }
+<span class="lineno">  81</span> 
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Security</div>
+Severity: <span class="error">Error</span><div class="summary">
+Explanation: Incorrect constant.</div>
+<div class="explanation">
+Ensures that when parameter in a method only allows a specific set of constants, calls obey those rules.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "WrongConstant" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="Performance"></a>
+<div class="category"><a href="#" title="Return to top">Performance</a><div class="categorySeparator"></div>
+</div>
+<a name="ObsoleteLayoutParam"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">ObsoleteLayoutParam: Obsolete layout params</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/cilu_activity_game_loader.xml">../../src/main/res/layout/cilu_activity_game_loader.xml</a>:20</span>: <span class="message">Invalid layout param in a <code>LinearLayout</code>: <code>layout_alignParentBottom</code></span><br /><pre class="errorlines">
+<span class="lineno">  17</span>             android:layout_width="fill_parent"
+<span class="lineno">  18</span>             android:layout_height="wrap_content"
+<span class="lineno">  19</span>             android:id="@+id/cilu_game_loader_pbLoader"
+<span class="lineno">  20</span>             <span class="errorspan">android:layout_alignParentBottom="true"</span>
+<span class="lineno">  21</span>             android:layout_marginBottom="60dp"
+<span class="lineno">  22</span>             android:minWidth="560dp"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT & Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 6 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Obsolete layout params.</div>
+<div class="explanation">
+The given layout_param is not defined for the given layout, meaning it has no effect. This usually happens when you change the parent layout or move view code around without updating the layout params. This will cause useless attribute processing at runtime, and is misleading for others reading the layout so the parameter should be removed.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "ObsoleteLayoutParam" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="HandlerLeak"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">HandlerLeak: Handler reference leaks</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/pay/alipay/AlipayAdapter.java">../../src/main/java/com/cilugame/h1/pay/alipay/AlipayAdapter.java</a>:37</span>: <span class="message">This Handler class should be static or leaks might occur (new android.os.Handler(){})</span><br /><pre class="errorlines">
+<span class="lineno">  34</span> 
+<span class="lineno">  35</span> 
+<span class="lineno">  36</span>     @SuppressLint("HandlerLeak")
+<span class="lineno">  37</span>     private Handler mHandler = new Handler() <span class="errorspan">{</span>
+<span class="lineno">  38</span>         @SuppressWarnings("unused")
+<span class="lineno">  39</span>         public void handleMessage(Message msg) {
+</pre>
+<span class="location"><a href="../../src/main/java/com/cilugame/h1/activity/GameLoaderActivity.java">../../src/main/java/com/cilugame/h1/activity/GameLoaderActivity.java</a>:69</span>: <span class="message">This Handler class should be static or leaks might occur (new android.os.Handler(){})</span><br /><pre class="errorlines">
+<span class="lineno">  66</span> 
+<span class="lineno">  67</span>     private boolean forceUpdate = true;
+<span class="lineno">  68</span> 
+<span class="lineno">  69</span>     private final Handler handler = new Handler() <span class="errorspan">{</span>
+<span class="lineno">  70</span>         @Override
+<span class="lineno">  71</span>         public void handleMessage(Message msg) {
+</pre>
+</div>
+<div class="metadata">Priority: 4 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Handler reference leaks.</div>
+<div class="explanation">
+Since this Handler is declared as an inner class, it may prevent the outer class from being garbage collected. If the Handler is using a Looper or MessageQueue for a thread other than the main thread, then there is no issue. If the Handler is using the Looper or MessageQueue of the main thread, you need to fix your Handler declaration, as follows: Declare the Handler as a static class; In the outer class, instantiate a WeakReference to the outer class and pass this object to your Handler when you instantiate the Handler; Make all references to members of the outer class using the WeakReference object.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "HandlerLeak" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="UnusedResources"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">UnusedResources: Unused resources</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/cilu_activity_game_loader.xml">../../src/main/res/layout/cilu_activity_game_loader.xml</a></span>: <span class="message">The resource <code>R.layout.cilu_activity_game_loader</code> appears to be unused</span><br />
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a></span>: <span class="message">The resource <code>R.layout.fragment_clgame_packet</code> appears to be unused</span><br />
+<span class="location"><a href="../../src/main/res/drawable-hdpi/ic_launcher.png">../../src/main/res/drawable-hdpi/ic_launcher.png</a></span>: <span class="message">The resource <code>R.drawable.ic_launcher</code> appears to be unused</span><br />
+<ul></ul><button id="Location3DivLink" onclick="reveal('Location3Div');" />+ 2 Additional Locations...</button>
+<div id="Location3Div" style="display: none">
+Additional locations: <ul>
+<li> <span class="location"><a href="../../src/main/res/drawable-mdpi/ic_launcher.png">../../src/main/res/drawable-mdpi/ic_launcher.png</a></span>
+<li> <span class="location"><a href="../../src/main/res/drawable-xhdpi/ic_launcher.png">../../src/main/res/drawable-xhdpi/ic_launcher.png</a></span>
+</ul>
+</div><br/><br/>
+<table><tr><td><a href="../../src/main/res/drawable-xhdpi/ic_launcher.png"><img border="0" align="top" src="../../src/main/res/drawable-xhdpi/ic_launcher.png" /></a>
+</td><td><a href="../../src/main/res/drawable-hdpi/ic_launcher.png"><img border="0" align="top" src="../../src/main/res/drawable-hdpi/ic_launcher.png" /></a>
+</td><td><a href="../../src/main/res/drawable-mdpi/ic_launcher.png"><img border="0" align="top" src="../../src/main/res/drawable-mdpi/ic_launcher.png" /></a>
+</td></tr><tr><th>xhdpi</th><th>hdpi</th><th>mdpi</th></tr>
+</table>
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:3</span>: <span class="message">The resource <code>R.string.app_name</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno">   1</span> &lt;resources>
+<span class="lineno">   2</span> 
+<span class="lineno">   3</span>     &lt;string <span class="errorspan">name="app_name">commons&lt;/string></span>
+<span class="lineno">   4</span> 
+<span class="lineno">   5</span> &lt;/resources>
+</pre>
+</div>
+<div class="metadata">Priority: 3 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Unused resources.</div>
+<div class="explanation">
+Unused resources make applications larger and slow down builds.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "UnusedResources" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="UselessParent"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">UselessParent: Useless parent layout</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:7</span>: <span class="message">This <code>LinearLayout</code> layout or its <code>FrameLayout</code> parent is useless</span><br /><pre class="errorlines">
+<span class="lineno">   4</span>     android:layout_height="match_parent"
+<span class="lineno">   5</span>     tools:context="com.cilugame.h1.activity.CLGamePacketFragment">
+<span class="lineno">   6</span> 
+<span class="lineno">   7</span>     <span class="errorspan">&lt;LinearLayout</span>
+<span class="lineno">   8</span>         android:layout_width="match_parent"
+<span class="lineno">   9</span>         android:layout_height="match_parent"
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 2 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Useless parent layout.</div>
+<div class="explanation">
+A layout with children that has no siblings, is not a scrollview or a root layout, and does not have a background, can be removed and have its children moved directly into the parent for a flatter and more efficient layout hierarchy.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "UselessParent" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="Usability:Icons"></a>
+<div class="category"><a href="#" title="Return to top">Usability:Icons</a><div class="categorySeparator"></div>
+</div>
+<a name="IconMissingDensityFolder"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">IconMissingDensityFolder: Missing density folder</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res">../../src/main/res</a></span>: <span class="message">Missing density variation folders in <code>src/main/res</code>: drawable-xxhdpi, drawable-xxxhdpi</span><br />
+</div>
+<div class="metadata">Priority: 3 / 10<br/>
+Category: Usability:Icons</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Missing density folder.</div>
+<div class="explanation">
+Icons will look best if a custom version is provided for each of the major screen density classes (low, medium, high, extra-high, extra-extra-high). This lint check identifies folders which are missing, such as <code>drawable-hdpi</code>.<br/>
+<br/>
+Low density is not really used much anymore, so this check ignores the ldpi density. To force lint to include it, set the environment variable <code>ANDROID_LINT_INCLUDE_LDPI=true</code>. For more information on current density usage, see <a href="http://developer.android.com/resources/dashboard/screens.html">http://developer.android.com/resources/dashboard/screens.html</a>
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/guide/practices/screens_support.html">http://developer.android.com/guide/practices/screens_support.html</a>
+</div><br/>To suppress this error, use the issue id "IconMissingDensityFolder" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="Internationalization"></a>
+<div class="category"><a href="#" title="Return to top">Internationalization</a><div class="categorySeparator"></div>
+</div>
+<a name="HardcodedText"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">HardcodedText: Hardcoded text</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:17</span>: <span class="message">[I18N] Hardcoded string "&#26356;&#26032;&#20869;&#23481;", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  14</span> 
+<span class="lineno">  15</span>         &lt;TextView
+<span class="lineno">  16</span>             android:id="@+id/cilu_txt_packet_update_title"
+<span class="lineno">  17</span>             <span class="errorspan">android:text="&#26356;&#26032;&#20869;&#23481;"</span>
+<span class="lineno">  18</span>             android:layout_width="wrap_content"
+<span class="lineno">  19</span>             android:layout_height="wrap_content"
+</pre>
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:73</span>: <span class="message">[I18N] Hardcoded string "&#24320;&#22987;&#26356;&#26032;", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  70</span>         &lt;Button
+<span class="lineno">  71</span>             android:layout_width="wrap_content"
+<span class="lineno">  72</span>             android:layout_height="wrap_content"
+<span class="lineno">  73</span>             <span class="errorspan">android:text="&#24320;&#22987;&#26356;&#26032;"</span>
+<span class="lineno">  74</span>             android:id="@+id/cilu_btn_packet_process"
+<span class="lineno">  75</span>             android:layout_gravity="center_horizontal" />
+</pre>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Priority: 5 / 10<br/>
+Category: Internationalization</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Hardcoded text.</div>
+<div class="explanation">
+Hardcoding text attributes directly in layout files is bad for several reasons:<br/>
+<br/>
+* When creating configuration variations (for example for landscape or portrait)you have to repeat the actual text (and keep it up to date when making changes)<br/>
+<br/>
+* The application cannot be translated to other languages by just adding new translations for existing string resources.<br/>
+<br/>
+In Android Studio and Eclipse there are quickfixes to automatically extract this hardcoded string into a resource lookup.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "HardcodedText" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="RelativeOverlap"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">RelativeOverlap: Overlapping items in RelativeLayout</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:55</span>: <span class="message"><code>@id/cilu_txt_packet_rest_time</code> can overlap <code>@id/cilu_txt_packet_speed</code> if @id/cilu_txt_packet_speed, @id/cilu_txt_packet_rest_time grow due to localized text expansion</span><br /><pre class="errorlines">
+<span class="lineno">  52</span>                 android:paddingTop="5dp"
+<span class="lineno">  53</span>                 android:paddingLeft="10dp" />
+<span class="lineno">  54</span> 
+<span class="lineno">  55</span>             <span class="errorspan">&lt;TextView</span>
+<span class="lineno">  56</span>                 android:layout_width="wrap_content"
+<span class="lineno">  57</span>                 android:layout_height="wrap_content"
+</pre>
+</div>
+<div class="metadata">Priority: 3 / 10<br/>
+Category: Internationalization</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Overlapping items in RelativeLayout.</div>
+<div class="explanation">
+If relative layout has text or button items aligned to left and right sides they can overlap each other due to localized text expansion unless they have mutual constraints like <code>toEndOf</code>/<code>toStartOf</code>.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "RelativeOverlap" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="Bi-directional Text"></a>
+<div class="category"><a href="#" title="Return to top">Bi-directional Text</a><div class="categorySeparator"></div>
+</div>
+<a name="RtlCompat"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">RtlCompat: Right-to-left text compatibility issues</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:51</span>: <span class="message">To support older versions than API 17 (project specifies 8) you should <b>also</b> add <code>android:layout_toRightOf="@id/cilu_txt_packet_size"</code></span><br /><pre class="errorlines">
+<span class="lineno">  48</span>                 android:layout_width="wrap_content"
+<span class="lineno">  49</span>                 android:layout_height="wrap_content"
+<span class="lineno">  50</span>                 android:id="@+id/cilu_txt_packet_speed"
+<span class="lineno">  51</span>                 <span class="errorspan">android:layout_toEndOf="@id/cilu_txt_packet_size"</span>
+<span class="lineno">  52</span>                 android:paddingTop="5dp"
+<span class="lineno">  53</span>                 android:paddingLeft="10dp" />
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Bi-directional Text</div>
+Severity: <span class="error">Error</span><div class="summary">
+Explanation: Right-to-left text compatibility issues.</div>
+<div class="explanation">
+API 17 adds a <code>textAlignment</code> attribute to specify text alignment. However, if you are supporting older versions than API 17, you must <b>also</b> specify a gravity or layout_gravity attribute, since older platforms will ignore the <code>textAlignment</code> attribute.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "RtlCompat" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="RtlSymmetry"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">RtlSymmetry: Padding and margin symmetry</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:53</span>: <span class="message">When you define <code>paddingLeft</code> you should probably also define <code>paddingRight</code> for right-to-left symmetry</span><br /><pre class="errorlines">
+<span class="lineno">  50</span>                 android:id="@+id/cilu_txt_packet_speed"
+<span class="lineno">  51</span>                 android:layout_toEndOf="@id/cilu_txt_packet_size"
+<span class="lineno">  52</span>                 android:paddingTop="5dp"
+<span class="lineno">  53</span>                 <span class="errorspan">android:paddingLeft="10dp" /></span>
+<span class="lineno">  54</span> 
+<span class="lineno">  55</span>             &lt;TextView
+</pre>
+</div>
+<div class="metadata">Priority: 6 / 10<br/>
+Category: Bi-directional Text</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Padding and margin symmetry.</div>
+<div class="explanation">
+If you specify padding or margin on the left side of a layout, you should probably also specify padding on the right side (and vice versa) for right-to-left layout symmetry.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "RtlSymmetry" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="RtlHardcoded"></a>
+<div class="issue">
+<div class="id"><a href="#" title="Return to top">RtlHardcoded: Using left/right instead of start/end attributes</a><div class="issueSeparator"></div>
+</div>
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:53</span>: <span class="message">Consider adding <code>android:paddingStart="10dp"</code> to better support right-to-left layouts</span><br /><pre class="errorlines">
+<span class="lineno">  50</span>                 android:id="@+id/cilu_txt_packet_speed"
+<span class="lineno">  51</span>                 android:layout_toEndOf="@id/cilu_txt_packet_size"
+<span class="lineno">  52</span>                 android:paddingTop="5dp"
+<span class="lineno">  53</span>                 <span class="errorspan">android:paddingLeft="10dp" /></span>
+<span class="lineno">  54</span> 
+<span class="lineno">  55</span>             &lt;TextView
+</pre>
+<span class="location"><a href="../../src/main/res/layout/fragment_clgame_packet.xml">../../src/main/res/layout/fragment_clgame_packet.xml</a>:59</span>: <span class="message">Consider adding <code>android:layout_alignParentEnd="true"</code> to better support right-to-left layouts</span><br /><pre class="errorlines">
+<span class="lineno">  56</span>                 android:layout_width="wrap_content"
+<span class="lineno">  57</span>                 android:layout_height="wrap_content"
+<span class="lineno">  58</span>                 android:id="@+id/cilu_txt_packet_rest_time"
+<span class="lineno">  59</span>                 <span class="errorspan">android:layout_alignParentRight="true"</span>
+<span class="lineno">  60</span>                 android:paddingTop="5dp" />
+<span class="lineno">  61</span>         &lt;/RelativeLayout>
+</pre>
+</div>
+<div class="metadata">Priority: 5 / 10<br/>
+Category: Bi-directional Text</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Using left/right instead of start/end attributes.</div>
+<div class="explanation">
+Using <code>Gravity#LEFT</code> and <code>Gravity#RIGHT</code> can lead to problems when a layout is rendered in locales where text flows from right to left. Use <code>Gravity#START</code> and <code>Gravity#END</code> instead. Similarly, in XML <code>gravity</code> and <code>layout_gravity</code> attributes, use <code>start</code> rather than <code>left</code>.<br/>
+<br/>
+For XML attributes such as paddingLeft and <code>layout_marginLeft</code>, use <code>paddingStart</code> and <code>layout_marginStart</code>. <b>NOTE</b>: If your <code>minSdkVersion</code> is less than 17, you should add <b>both</b> the older left/right attributes <b>as well as</b> the new start/right attributes. On older platforms, where RTL is not supported and the start/right attributes are unknown and therefore ignored, you need the older left/right attributes. There is a separate lint check which catches that type of error.<br/>
+<br/>
+(Note: For <code>Gravity#LEFT</code> and <code>Gravity#START</code>, you can use these constants even when targeting older platforms, because the <code>start</code> bitmask is a superset of the <code>left</code> bitmask. Therefore, you can use <code>gravity="start"</code> rather than <code>gravity="left|start"</code>.)
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "RtlHardcoded" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="MissingIssues"></a>
+<div class="category">Disabled Checks<div class="categorySeparator"></div>
+</div>
+The following issues were not run by lint, either because the check is not enabled by default, or because it was disabled with a command line flag or via one or more lint.xml configuration files in the project directories.
+<br/><br/>
+<a name="BackButton"></a>
+<div class="issue">
+<div class="id">BackButton<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 6 / 10<br/>
+Category: Usability</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Back button.</div>
+<div class="explanation">
+According to the Android Design Guide,<br/>
+<br/>
+"Other platforms use an explicit back button with label to allow the user to navigate up the application's hierarchy. Instead, Android uses the main action bar's app icon for hierarchical navigation and the navigation bar's back button for temporal navigation."<br/>
+This check is not very sophisticated (it just looks for buttons with the label "Back"), so it is disabled by default to not trigger on common scenarios like pairs of Back/Next buttons to paginate through screens.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/design/patterns/pure-android.html">http://developer.android.com/design/patterns/pure-android.html</a>
+</div><br/>To suppress this error, use the issue id "BackButton" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="EasterEgg"></a>
+<div class="issue">
+<div class="id">EasterEgg<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 6 / 10<br/>
+Category: Security</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Code contains easter egg.</div>
+<div class="explanation">
+An "easter egg" is code deliberately hidden in the code, both from potential users and even from other developers. This lint check looks for code which looks like it may be hidden from sight.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "EasterEgg" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="FieldGetter"></a>
+<div class="issue">
+<div class="id">FieldGetter<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 4 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Using getter instead of field.</div>
+<div class="explanation">
+Accessing a field within the class that defines a getter for that field is at least 3 times faster than calling the getter. For simple getters that do nothing other than return the field, you might want to just reference the local field directly instead.<br/>
+<br/>
+<b>NOTE</b>: As of Android 2.3 (Gingerbread), this optimization is performed automatically by Dalvik, so there is no need to change your code; this is only relevant if you are targeting older versions of Android.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/guide/practices/design/performance.html#internal_get_set">http://developer.android.com/guide/practices/design/performance.html#internal_get_set</a>
+</div><br/>To suppress this error, use the issue id "FieldGetter" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="IconExpectedSize"></a>
+<div class="issue">
+<div class="id">IconExpectedSize<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 5 / 10<br/>
+Category: Usability:Icons</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Icon has incorrect size.</div>
+<div class="explanation">
+There are predefined sizes (for each density) for launcher icons. You should follow these conventions to make sure your icons fit in with the overall look of the platform.
+</div>
+<br/><div class="moreinfo">More info: <a href="http://developer.android.com/design/style/iconography.html">http://developer.android.com/design/style/iconography.html</a>
+</div><br/>To suppress this error, use the issue id "IconExpectedSize" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="LogConditional"></a>
+<div class="issue">
+<div class="id">LogConditional<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 5 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Unconditional Logging Calls.</div>
+<div class="explanation">
+The BuildConfig class (available in Tools 17) provides a constant, "DEBUG", which indicates whether the code is being built in release mode or in debug mode. In release mode, you typically want to strip out all the logging calls. Since the compiler will automatically remove all code which is inside a "if (false)" check, surrounding your logging calls with a check for BuildConfig.DEBUG is a good idea.<br/>
+<br/>
+If you <b>really</b> intend for the logging to be present in release mode, you can suppress this warning with a @SuppressLint annotation for the intentional logging calls.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "LogConditional" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="NegativeMargin"></a>
+<div class="issue">
+<div class="id">NegativeMargin<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 4 / 10<br/>
+Category: Usability</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Negative Margins.</div>
+<div class="explanation">
+Margin values should be positive. Negative values are generally a sign that you are making assumptions about views surrounding the current one, or may be tempted to turn off child clipping to allow a view to escape its parent. Turning off child clipping to do this not only leads to poor graphical performance, it also results in wrong touch event handling since touch events are based strictly on a chain of parent-rect hit tests. Finally, making assumptions about the size of strings can lead to localization problems.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "NegativeMargin" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="NewerVersionAvailable"></a>
+<div class="issue">
+<div class="id">NewerVersionAvailable<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Disabled By: Default<br/>
+Priority: 4 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Newer Library Versions Available.</div>
+<div class="explanation">
+This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the <code>GradleDependency</code> check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also <b>much</b> slower.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "NewerVersionAvailable" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="SelectableText"></a>
+<div class="issue">
+<div class="id">SelectableText<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Disabled By: Default<br/>
+Priority: 7 / 10<br/>
+Category: Usability</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Dynamic text should probably be selectable.</div>
+<div class="explanation">
+If a <code>&lt;TextView></code> is used to display data, the user might want to copy that data and paste it elsewhere. To allow this, the <code>&lt;TextView></code> should specify <code>android:textIsSelectable="true"</code>.<br/>
+<br/>
+This lint check looks for TextViews which are likely to be displaying data: views whose text is set dynamically. This value will be ignored on platforms older than API 11, so it is okay to set it regardless of your <code>minSdkVersion</code>.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "SelectableText" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="StopShip"></a>
+<div class="issue">
+<div class="id">StopShip<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Disabled By: Default<br/>
+Priority: 10 / 10<br/>
+Category: Correctness</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Code contains <code>STOPSHIP</code> marker.</div>
+<div class="explanation">
+Using the comment <code>// STOPSHIP</code> can be used to flag code that is incomplete but checked in. This comment marker can be used to indicate that the code should not be shipped until the issue is addressed, and lint will look for these.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "StopShip" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="TypographyQuotes"></a>
+<div class="issue">
+<div class="id">TypographyQuotes<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Note: This issue has an associated quickfix operation in Eclipse/ADT & Android Studio/IntelliJ&nbsp;<img alt="Fix" border="0" align="top" src="lint-results_files/lint-run.png" />
+<br>
+Disabled By: Default<br/>
+Priority: 5 / 10<br/>
+Category: Usability:Typography</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Straight quotes can be replaced with curvy quotes.</div>
+<div class="explanation">
+Straight single quotes and double quotes, when used as a pair, can be replaced by "curvy quotes" (or directional quotes). This can make the text more readable.<br/>
+<br/>
+Note that you should never use grave accents and apostrophes to quote, `like this'.<br/>
+<br/>
+(Also note that you should not use curvy quotes for code fragments.)
+</div>
+<br/><div class="moreinfo">More info: <a href="http://en.wikipedia.org/wiki/Quotation_mark">http://en.wikipedia.org/wiki/Quotation_mark</a>
+</div><br/>To suppress this error, use the issue id "TypographyQuotes" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+<a name="UnusedIds"></a>
+<div class="issue">
+<div class="id">UnusedIds<div class="issueSeparator"></div>
+</div>
+<div class="metadata">Disabled By: Default<br/>
+Priority: 1 / 10<br/>
+Category: Performance</div>
+Severity: <span class="warning">Warning</span><div class="summary">
+Explanation: Unused id.</div>
+<div class="explanation">
+This resource id definition appears not to be needed since it is not referenced from anywhere. Having id definitions, even if unused, is not necessarily a bad idea since they make working on layouts and menus easier, so there is not a strong reason to delete these.
+</div>
+<br/><div class="moreinfo">More info: </div><br/>To suppress this error, use the issue id "UnusedIds" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+</div>
+
+<a name="SuppressInfo"></a>
+<div class="category">Suppressing Warnings and Errors<div class="categorySeparator"></div>
+</div>
+Lint errors can be suppressed in a variety of ways:<br/>
+<br/>
+1. With a <code>@SuppressLint</code> annotation in the Java code<br/>
+2. With a <code>tools:ignore</code> attribute in the XML file<br/>
+3. With ignore flags specified in the <code>build.gradle</code> file, as explained below<br/>
+4. With a <code>lint.xml</code> configuration file in the project<br/>
+5. With a <code>lint.xml</code> configuration file passed to lint via the --config flag<br/>
+6. With the --ignore flag passed to lint.<br/>
+<br/>
+To suppress a lint warning with an annotation, add a <code>@SuppressLint("id")</code> annotation on the class, method or variable declaration closest to the warning instance you want to disable. The id can be one or more issue id's, such as <code>"UnusedResources"</code> or <code>{"UnusedResources","UnusedIds"}</code>, or it can be <code>"all"</code> to suppress all lint warnings in the given scope.<br/>
+<br/>
+To suppress a lint warning in an XML file, add a <code>tools:ignore="id"</code> attribute on the element containing the error, or one of its surrounding elements. You also need to define the namespace for the tools prefix on the root element in your document, next to the <code>xmlns:android</code> declaration:<br/>
+<code>xmlns:tools="http://schemas.android.com/tools"</code><br/>
+<br/>
+To suppress a lint warning in a <code>build.gradle</code> file, add a section like this:<br/>
+<br/>
+android {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;lintOptions {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;disable 'TypographyFractions','TypographyQuotes'<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+}<br/>
+<br/>
+Here we specify a comma separated list of issue id's after the disable command. You can also use <code>warning</code> or <code>error</code> instead of <code>disable</code> to change the severity of issues.<br/>
+<br/>
+To suppress lint warnings with a configuration XML file, create a file named <code>lint.xml</code> and place it at the root directory of the project in which it applies.<br/>
+<br/>
+The format of the <code>lint.xml</code> file is something like the following:<br/>
+<br/>
+&lt;?xml version="1.0" encoding="UTF-8"?><br/>
+&lt;lint><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Disable this given check in this project --><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;issue id="IconMissingDensityFolder" severity="ignore" /><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Ignore the ObsoleteLayoutParam issue in the given files --><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;issue id="ObsoleteLayoutParam"><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;ignore path="res/layout/activation.xml" /><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;ignore path="res/layout-xlarge/activation.xml" /><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/issue><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Ignore the UselessLeaf issue in the given file --><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;issue id="UselessLeaf"><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;ignore path="res/layout/main.xml" /><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/issue><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Change the severity of hardcoded strings to "error" --><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;issue id="HardcodedText" severity="error" /><br/>
+&lt;/lint><br/>
+<br/>
+To suppress lint checks from the command line, pass the --ignore flag with a comma separated list of ids to be suppressed, such as:<br/>
+<code>$ lint --ignore UnusedResources,UselessLeaf /my/project/path</code><br/>
+<br/>
+For more information, see <a href="http://g.co/androidstudio/suppressing-lint-warnings">http://g.co/androidstudio/suppressing-lint-warnings</a><br/>
+
+
+</body>
+</html>

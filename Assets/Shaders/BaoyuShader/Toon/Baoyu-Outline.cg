@@ -1,0 +1,26 @@
+
+float4 _OutlineColor;
+float  _EdgeThickness = 1.0;
+
+struct v2f
+{
+	float4 pos : SV_POSITION;
+	// float4 color: COLOR0;
+};
+
+
+// Vertex shader
+v2f vert(appdata_full v)
+{
+	v2f o;
+	o.pos =  mul(UNITY_MATRIX_MVP, v.vertex); 
+	half3 normal = mul((half3x3)UNITY_MATRIX_IT_MV, v.normal); 
+	half2 offset = TransformViewToProjection(normal.xy);
+	o.pos.xy += offset * _EdgeThickness;
+	return o;
+}
+
+half4 frag(v2f i) : COLOR
+{
+	return _OutlineColor;
+}

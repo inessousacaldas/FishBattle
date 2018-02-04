@@ -1,0 +1,18 @@
+{
+    "group": "TestinAgent",
+    "libs": [],
+    "frameworks": ["CoreTelephony.framework",
+    				"CoreLocation.framework",
+                    "Security.framework"
+                    "AudioToolbox.framework"
+                    "CoreMotion.framework"
+                    "ImageIO.framework"
+    				"SystemConfiguration.framework"],
+    "headerpaths": [],
+    "embed_binaries": ["iOS/TestinAgent/CrashMaster.framework"],
+    "files":   ["iOS/TestinAgent/CrashMaster.framework"],
+    "folders": [],    
+    "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$", "^.*.DS_Store$"],
+    "compiler_flags": [],
+	"linker_flags": []
+}

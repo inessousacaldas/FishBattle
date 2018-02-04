@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/cilu_gameLoaderLayout"
+    tools:context="com.cilugame.h1.activity.GameLoaderActivity">
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/cilu_game_loader_linearLayout">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cilu_game_loader_pbLoader"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="60dp"
+            android:minWidth="560dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:secondaryProgress="0"
+            android:progress="0" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cilu_game_loader_txtLoadTip"
+        android:layout_above="@+id/cilu_game_loader_linearLayout"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
+<!-- From: file:/Users/senkay/Workspace/H5/unity/H5_trunk/Project.android/cilugame-android-commons/app/src/main/res/layout/cilu_activity_game_loader.xml --><!-- From: file:/Users/senkay/Workspace/H5/unity/H5_trunk/Project.android/cilugame-android-commons/app/build/intermediates/bundles/debug/res/layout/cilu_activity_game_loader.xml -->

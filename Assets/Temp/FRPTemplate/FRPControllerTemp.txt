@@ -1,0 +1,50 @@
+// **********************************************************************
+// Copyright (c)  Baoyugame. All rights reserved.
+// File     :  $uiViewName$Controller.cs
+// Author   : $Author$
+// Created  : $timeDecls$
+// Porpuse  : 
+// **********************************************************************
+
+using System;
+using UniRx;
+
+public partial interface I$uiViewName$Controller
+{
+
+}
+public partial class $uiViewName$Controller    {
+
+	    // 界面初始化完成之后的一些后续初始化工作
+        protected override void AfterInitView ()
+        {
+            
+        }
+
+	    // 客户端自定义代码
+	    protected override void RegistCustomEvent ()
+        {
+        
+        }
+
+        protected override void RemoveCustomEvent ()
+        {
+        }
+        
+        protected override void OnDispose()
+        {
+            base.OnDispose();
+        }
+
+	    //在打开界面之前，初始化数据
+	    protected override void InitData()
+    	{
+            
+    	}
+
+        // 业务逻辑数据刷新
+        protected override void UpdateDataAndView(I$dataClassName$ data){
+
+        }
+
+    }

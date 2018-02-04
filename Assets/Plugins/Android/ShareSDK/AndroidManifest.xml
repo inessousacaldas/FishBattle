@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.sharesdk.unity3d" >
+    
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    
+
+    <application>
+        <activity
+            android:name="com.mob.tools.MobUIShell"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <!-- 
+            微信分享回调
+            注意..wxapi.WXEntryActivity前面加上自己的包名
+            并且得在自己包名下创建wxapi.WXEntryActivity
+            目测微信是根据这个来回调的，所以必须在自己的包名下创建
+        -->
+        <activity
+            android:name="com.cilugame.h1.android.tc.wxapi.WXEntryActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true" />
+
+        <meta-data android:name="LHWXAppId" android:value="wx894a4f65a2835da8"/>
+        <meta-data android:name="LHWXAppKey" android:value="d4624c36b6795d1d99dcf0547af5443d"/>
+    </application>
+</manifest>

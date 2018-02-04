@@ -1,0 +1,60 @@
+// **********************************************************************
+// Copyright (c)  Baoyugame. All rights reserved.
+// File     :  $uiViewName$Controller.cs
+// Author   : $Author$
+// Created  : $timeDecls$
+// Porpuse  : 
+// **********************************************************************
+
+using System;
+using UniRx;
+
+public partial interface I$uiViewName$Controller
+{
+
+}
+public partial class $uiViewName$Controller    {
+
+        public static I$uiViewName$Controller Show<T>(
+              string moduleName
+              , UILayerType layerType
+              , bool addBgMask
+              , bool bgMaskClose = true)
+              where T : MonoController, I$uiViewName$Controller
+        {
+            var controller = UIModuleManager.Instance.OpenFunModule<T>(
+                    moduleName
+                    , layerType
+                    , addBgMask
+                    , bgMaskClose) as I$uiViewName$Controller;
+            
+            return controller;        
+        }         
+        
+	    // 界面初始化完成之后的一些后续初始化工作
+        protected override void AfterInitView ()
+        {
+            
+        }
+
+	    // 客户端自定义代码
+	    protected override void RegistCustomEvent ()
+        {
+        
+        }
+
+        protected override void RemoveCustomEvent ()
+        {
+        }
+        
+        protected override void OnDispose()
+        {
+            base.OnDispose();
+        }
+
+	    //在打开界面之前，初始化数据
+	    protected override void InitData()
+    	{
+            
+    	}
+    }

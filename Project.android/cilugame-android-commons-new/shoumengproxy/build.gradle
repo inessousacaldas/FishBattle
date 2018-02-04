@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "24.0.3"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 17
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':demiframe')
+    compile files('libs/alipaySdk-20151112.jar')
+    compile files('libs/game_sdk_thirdparty_shoumeng_simple_v1.3.7.jar')
+    compile files('libs/sdklm_v1.0.jar')
+    compile files('libs/shoumeng_game_sdk_2.5.3.jar')
+    compile files('libs/shoumeng_sdk.jar')
+    compile files('libs/umeng_sdk.jar')
+}

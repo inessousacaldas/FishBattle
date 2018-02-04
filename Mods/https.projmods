@@ -1,0 +1,26 @@
+{
+    "group":"https",
+    "libs": ["libstdc++.6.dylib:optional"],
+    "frameworks":[],
+    "headerpaths": [],
+    "files": [],
+    "folders": [],
+    "excludes": [],
+    "compiler_flags": [],
+    "linker_flags": [],
+    "embed_binaries": [],
+    "plist": {
+        "NSAppTransportSecurity" : {
+            "NSAllowsArbitraryLoads":true
+        },
+
+        "UIRequiresFullScreen": true,
+        "UIViewControllerBasedStatusBarAppearance": false,
+
+        "NSCameraUsageDescription": "是否允许此App使用你的相机",
+        "NSMicrophoneUsageDescription": "是否允许此App使用你的麦克风",
+        "NSPhotoLibraryUsageDescription": "是否允许此App使用你的相册",
+        "NSLocationAlwaysUsageDescription": "我们需要通过您的地理位置信息获取您周边的相关数据",
+        "NSLocationWhenInUseUsageDescription": "我们需要通过您的地理位置信息获取您周边的相关数据",
+    }
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:theme="@style/Paysdk.AppTheme"
+    tools:context="com.haimawan.paysdk.ui.activity.RealNameAuthActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Paysdk.AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_haima_real_name_auth"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/Paysdk.AppTheme.PopupOverlay"
+            />
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ImageView
+            android:id="@+id/iv_haima_cerified_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="60dp"
+            android:src="@drawable/icon_haima_certified"/>
+
+        <TextView
+            android:id="@+id/tv_haima_certified_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_haima_cerified_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:gravity="center"
+            android:text="根据相关法律您需要通过实名认证绑定账户"
+            android:textColor="@color/card_type_text_color"
+            android:textSize="18sp"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_haima_certified_desc"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_haima_aleady_certified"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:paddingTop="80dp"
+                android:text="您已通过实名认证"
+                android:textColor="@color/waiting_pay_btn_color"
+                android:textSize="@dimen/font_size_large"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/ll_haima_not_certified"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="80dp"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_haima_alipay_certified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/user_register_affirm_button_selector"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="支付宝一键认证"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_middle"/>
+
+                <TextView
+                    android:id="@+id/tv_haima_certified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:paddingBottom="55dp"
+                    android:text="没有支付宝请点这里"
+                    android:textColor="@color/card_type_text_color"
+                    android:textSize="@dimen/font_size_middle"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

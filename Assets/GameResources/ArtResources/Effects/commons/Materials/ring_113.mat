@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: ring_113
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _DISS_SWITCH_ON
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _Dissoled
+      second:
+        m_Texture: {fileID: 2800000, guid: 6475569e57de23843b4c52854998a6af, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 824370c0cf900284c8bdf7fe97c3603d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _TEX
+      second:
+        m_Texture: {fileID: 2800000, guid: 824370c0cf900284c8bdf7fe97c3603d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: _ALPHA
+      second: 1.2
+    - first:
+        name: _Cutoff
+      second: 0.5
+    - first:
+        name: _DISS
+      second: 0.6
+    - first:
+        name: _Diss_Switch
+      second: 0.8080663
+    - first:
+        name: _InvFade
+      second: 1
+    - first:
+        name: _Light
+      second: 2
+    - first:
+        name: _Power
+      second: 3
+    - first:
+        name: _VertexColor_power
+      second: 4
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 0.49264705, g: 0.49264705, b: 0.49264705, a: 1}
+    - first:
+        name: _TintColor
+      second: {r: 0.9264706, g: 0.9264706, b: 0.9264706, a: 0.5}

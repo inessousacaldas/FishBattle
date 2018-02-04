@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:theme="@style/Paysdk.AppTheme">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Paysdk.AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/submit_info_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/Paysdk.AppTheme.PopupOverlay"
+
+            />
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/user_register_button_disable_text_color"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            style="@style/MatchWrap"
+            android:background="@color/real_name_authentication_info_hint"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/real_name_authentication_info_hint"
+            android:textSize="@dimen/font_size_small"/>
+
+        <LinearLayout
+            style="@style/MatchWrap"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/bg_edit"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp">
+
+            <TextView
+                style="@style/WrapWrap"
+                android:text="@string/real_name_authentication_name"
+                android:textSize="@dimen/font_size_middle"
+                />
+
+            <EditText
+                android:id="@+id/et_haima_certification_name"
+                style="@style/MatchMatch"
+                android:background="@null"
+                android:singleLine="true"
+                android:textSize="@dimen/font_size_middle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/MatchWrap"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/bg_edit"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp">
+
+            <TextView
+                style="@style/WrapWrap"
+                android:text="@string/real_name_authentication_certify"
+                android:textSize="@dimen/font_size_middle"/>
+
+            <EditText
+                android:id="@+id/et_haima_certification_id_card_no"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:maxLength="18"
+                android:textSize="@dimen/font_size_middle"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/bt_certify_submit"
+            style="@style/MatchWrap"
+            android:layout_margin="40dp"
+            android:background="@drawable/user_register_affirm_button_selector"
+            android:enabled="true"
+            android:text="@string/real_name_authentication_submit"
+            android:textColor="@color/user_register_button_text_selector"
+            android:textSize="@dimen/font_size_middle"/>
+
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE args [
+        <!ELEMENT args (cmd+)>
+        <!ELEMENT cmd (#PCDATA)>
+
+        <!ATTLIST cmd
+                name CDATA #REQUIRED
+                depends CDATA #REQUIRED
+                >
+        ]>
+<args>
+    <cmd name="default" depends="">
+        <![CDATA[
+        --debug.output-dir        /sdcard/sdk2
+        --basic.vad           search
+        --basic.timeout           15000
+        --basic.decoder           2
+
+        --ui.porpmpt-text          请说话
+        --ui.prompt-sound-enable false
+        --audio.sample                 &com.baidu.speech.Policy.sample()
+        --vad-mfe.params-2             900
+        --vad-mfe.params-8             0 # PARAM_OFFSET
+        --vad-mfe.params-10            0
+        --vad-mfe.params-11            1  # PARAM_NEED_VAD
+        --vad-mfe.params-12            0  # PARAM_NEED_COMPRESS
+        --vad-mfe.params-14            0
+
+        --decoder-server.key                this is key
+        --decoder-server.secret             this is secret
+        --decoder-server.app          &com.baidu.speech.Policy.app()
+        --decoder-server.auth             true
+        --decoder-server.url          http://vop.baidu.com/echo.fcgi
+        --decoder-server.uid          &com.baidu.speech.Policy.uid()
+        --decoder-server.rtn          json
+        --decoder-server.fun          262401
+        --decoder-server.ver          &com.baidu.speech.Policy.ver()
+        --decoder-server.pfm          &com.baidu.speech.Policy.pfm()
+        --decoder-server.pdt          1536
+        --decoder-server.ptc          101
+        --decoder-server.enc          utf-8
+
+        --decoder-offline.language            cmn-Hans-CN
+        --decoder-offline.enable-punctuation        true
+]]>
+    </cmd>
+    <cmd name="vad-multiple" depends="default">
+        <![CDATA[
+        --vad-mfe.params-16     5                  # PARAM_SPEECHOUT_THRESHOLD_BIAS
+        --vad-mfe.params-10     1                  # PARAM_SPEECH_MODE
+        --vad-mfe.params-1      250                 # PARAM_MAX_WAIT_DURATION
+        --vad-mfe.params-2      1875                 # PARAM_MAX_SP_DURATION
+
+        --vad-mfe.params-3      10                 # PARAM_MAX_SP_PAUSE
+        --vad-mfe.params-4      5                 # PARAM_MIN_SP_DURATION
+        --vad-mfe.params-8      0                 # PARAM_OFFSET
+        --vad-mfe.params-21     1                 # PARAM_MODE_CMB
+        --decoder-server.pdt          1537
+        ]]>
+    </cmd>
+    <cmd name="vad-single" depends="default">
+        <![CDATA[
+        --vad-mfe.params-10    0       # PARAM_SPEECH_MODE
+        --vad-mfe.params-2     900     # PARAM_MAX_SP_DURATION
+        --decoder-server.pdt          1536
+        ]]>
+    </cmd>
+
+    <cmd name="params-vad-multiple-8k.list" depends="vad-multiple">
+        <![CDATA[
+        --vad-mfe.params-13  8000  # PARAM_SAMPLE_RATE
+        --vad-mfe.params-14  0  # PARAM_CODE_FORMAT
+        ]]>
+    </cmd>
+    <cmd name="params-vad-multiple-16k.list" depends="vad-multiple">
+        <![CDATA[
+        --vad-mfe.params-13  16000  # PARAM_SAMPLE_RATE
+        --vad-mfe.params-14  4  # PARAM_CODE_FORMAT
+        ]]>
+    </cmd>
+    <cmd name="params-vad-single-8k.list" depends="vad-single">
+        <![CDATA[
+        --vad-mfe.params-13  8000  # PARAM_SAMPLE_RATE
+        --vad-mfe.params-14  0  # PARAM_CODE_FORMAT
+        ]]>
+    </cmd>
+    <cmd name="params-vad-single-16k.list" depends="vad-single">
+        <![CDATA[
+        --vad-mfe.params-13   16000  # PARAM_SAMPLE_RATE
+        --vad-mfe.params-14    4  # PARAM_CODE_FORMAT
+        ]]>
+    </cmd>
+
+    <!-- touch 模式始终使用输入法的vad检测，并关闭服务端vad和提前返回 -->
+    <cmd name="params-vad-touch-8k.list" depends="params-vad-multiple-8k.list">
+        <![CDATA[
+        --vad-mfe.params-1    1875
+        --vad-mfe.params-9  1875  # PARAM_SPEECH_END, 设置尾点超时时间，每单位=32ms，1875=50秒
+        --decoder-server.fun  256  # 256=[00000001 00000000] 关闭服务端 vad，关闭服务端提前返回
+        ]]>
+    </cmd>
+    <!-- touch 模式始终使用输入法的vad检测，并关闭服务端vad和提前返回 -->
+    <cmd name="params-vad-touch-16k.list" depends="params-vad-multiple-16k.list">
+        <![CDATA[
+        --vad-mfe.params-1    1875
+        --vad-mfe.params-9    1875    # PARAM_SPEECH_END, 设置尾点超时时间，每单位=32ms，1875=50秒
+        --decoder-server.fun  256  # 256=[00000001 00000000] 关闭服务端 vad，关闭服务端提前返回
+        ]]>
+    </cmd>
+</args>

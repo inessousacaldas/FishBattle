@@ -1,0 +1,391 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: fire_203_ctg_add
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _COLOR_SWITH_ON _DISS_SWITCH_ON _DISS_SWITH_ON _EMISSION
+  m_LightmapFlags: 1
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _BumpMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Control
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DISS_TEX
+      second:
+        m_Texture: {fileID: 2800000, guid: f32d8cbdfa3df5e48a885c48e037a62b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailAlbedoMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailMask
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailNormalMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _DetailTex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Diss_Tex
+      second:
+        m_Texture: {fileID: 2800000, guid: 91d436b0b02556e409adff0387c82528, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Dissoled
+      second:
+        m_Texture: {fileID: 2800000, guid: 73dea759706fcdf4ab79cced1196c230, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Dssoled
+      second:
+        m_Texture: {fileID: 2800000, guid: 7acc33f24a06fcd46baa112415b42195, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _EmissionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MASK
+      second:
+        m_Texture: {fileID: 2800000, guid: abfba5629fa2ec34f8f15f2a7ce26d34, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 071cc3d04d2cad84fb46a47d711f9ffc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Mask
+      second:
+        m_Texture: {fileID: 2800000, guid: fefbf7dfd2152db4f8baa6251c2c29da, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _MetallicGlossMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Noise01
+      second:
+        m_Texture: {fileID: 2800000, guid: 9a3c093aa80a8c34ca15053ab7abda2c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Noise02
+      second:
+        m_Texture: {fileID: 2800000, guid: 7acc33f24a06fcd46baa112415b42195, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Noise_01
+      second:
+        m_Texture: {fileID: 2800000, guid: 5acee2e05cb523d4f826d8704520e3b4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Noise_02
+      second:
+        m_Texture: {fileID: 2800000, guid: 91d436b0b02556e409adff0387c82528, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _OcclusionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ParallaxMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Splat0
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Splat1
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Splat2
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Splat3
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _SpreadTEX
+      second:
+        m_Texture: {fileID: 2800000, guid: b9a7f5fb90567434992ff4737f365378, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _TEX
+      second:
+        m_Texture: {fileID: 2800000, guid: dd131008465545242992893aef7920bf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Tex_Dis
+      second:
+        m_Texture: {fileID: 2800000, guid: 7acc33f24a06fcd46baa112415b42195, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: _ALPHA
+      second: -7.2
+    - first:
+        name: _Alpha
+      second: 1
+    - first:
+        name: _BumpScale
+      second: 1
+    - first:
+        name: _Color_Sweitch
+      second: 0
+    - first:
+        name: _Color_Swith
+      second: 1
+    - first:
+        name: _Cutoff
+      second: 0.5
+    - first:
+        name: _DISS
+      second: 6
+    - first:
+        name: _DetailNormalMapScale
+      second: 1
+    - first:
+        name: _Dis_U_Speed
+      second: 4
+    - first:
+        name: _Dis_V_Speed
+      second: 0
+    - first:
+        name: _Diss
+      second: 0
+    - first:
+        name: _Diss_Switch
+      second: 0.8080663
+    - first:
+        name: _Diss_Swith
+      second: 1
+    - first:
+        name: _Disturbance
+      second: 0
+    - first:
+        name: _DstBlend
+      second: 0
+    - first:
+        name: _Fenli
+      second: 2
+    - first:
+        name: _Fresnel
+      second: 0
+    - first:
+        name: _FresnelBright
+      second: 3
+    - first:
+        name: _FresnelEXP
+      second: 3
+    - first:
+        name: _Fresnel_Posterize
+      second: 2
+    - first:
+        name: _Fresnel_Power
+      second: 0.43
+    - first:
+        name: _Fresnel_Switch
+      second: 0
+    - first:
+        name: _Fresnel_ZT
+      second: 3
+    - first:
+        name: _GlossMapScale
+      second: 1
+    - first:
+        name: _Glossiness
+      second: 0.5
+    - first:
+        name: _GlossyReflections
+      second: 1
+    - first:
+        name: _InvFade
+      second: 1
+    - first:
+        name: _Light
+      second: 1
+    - first:
+        name: _LightingLevels
+      second: 10
+    - first:
+        name: _Metallic
+      second: 0
+    - first:
+        name: _Mode
+      second: 0
+    - first:
+        name: _MultipleFactor
+      second: 0.5
+    - first:
+        name: _OcclusionStrength
+      second: 1
+    - first:
+        name: _Outline
+      second: 0
+    - first:
+        name: _Parallax
+      second: 0.02
+    - first:
+        name: _Power
+      second: -8.9
+    - first:
+        name: _RotateSpeed
+      second: 2.23
+    - first:
+        name: _Scroll2X
+      second: 1
+    - first:
+        name: _Scroll2Y
+      second: 0
+    - first:
+        name: _ScrollX
+      second: 1
+    - first:
+        name: _ScrollY
+      second: 0
+    - first:
+        name: _SmoothnessTextureChannel
+      second: 0
+    - first:
+        name: _SpecularHighlights
+      second: 1
+    - first:
+        name: _SrcBlend
+      second: 1
+    - first:
+        name: _UVSec
+      second: 0
+    - first:
+        name: _U_Sapeed
+      second: 0
+    - first:
+        name: _U_Speed
+      second: -1.47
+    - first:
+        name: _U_Speed01
+      second: 1
+    - first:
+        name: _U_Speed02
+      second: 0
+    - first:
+        name: _U_Speed_copy
+      second: -0.3
+    - first:
+        name: _V_Speed
+      second: -4.37
+    - first:
+        name: _V_Speed01
+      second: -1.08
+    - first:
+        name: _V_Speed_copy
+      second: 0.2
+    - first:
+        name: _V_Speef02
+      second: 0.7
+    - first:
+        name: _VertexColor_power
+      second: 2.9
+    - first:
+        name: _ZT
+      second: 1
+    - first:
+        name: _ZWrite
+      second: 1
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _ColorAlpha
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _EmissionColor
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _FresnelColor
+      second: {r: 0.5, g: 0.3, b: 1, a: 1}
+    - first:
+        name: _Fresnel_Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _OutlineColor
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _Splat0Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _Splat1Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _Splat2Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _Splat3Color
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _TintColor
+      second: {r: 0.8455882, g: 0.8455882, b: 0.8455882, a: 0.5019608}

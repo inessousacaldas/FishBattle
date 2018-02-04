@@ -1,0 +1,27 @@
+{
+    "group": "ShareSDK",
+    "libs": ["libicucore.dylib",
+                "libz.dylib",
+                "libstdc++.dylib",
+                "libsqlite3.dylib",],
+    "frameworks": ["JavaScriptCore.framework"],
+    "headerpaths": [""],
+    "embed_binaries": [],
+    "files": ["iOS/ShareSDK/framework/MOBFoundation.framework",
+                "iOS/ShareSDK/framework/ShareSDK.framework",
+                "iOS/ShareSDK/framework/ShareSDKConnector.framework",
+                "iOS/ShareSDK/framework/ShareSDKExtension.framework",
+                "iOS/ShareSDK/framework/ShareSDKUI.framework"],
+    "folders": ["iOS/ShareSDK/ShareSDK"],
+    "excludes": ["^.*.meta$", "^.*.mdown$", "^.*.pdf$"],
+    "compiler_flags": [],
+    "linker_flags": [],
+    "plist":
+    {
+        "LSApplicationQueriesSchemes" :
+        [
+            "weixin",
+            "wechat",
+        ],
+    }
+}

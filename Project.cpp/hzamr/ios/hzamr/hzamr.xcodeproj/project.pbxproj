@@ -1,0 +1,456 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		938D59231AE4F59B0097D5C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 938D59221AE4F59B0097D5C3 /* Foundation.framework */; };
+		938D59311AE4F59B0097D5C3 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 938D59301AE4F59B0097D5C3 /* XCTest.framework */; };
+		938D59321AE4F59B0097D5C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 938D59221AE4F59B0097D5C3 /* Foundation.framework */; };
+		938D59341AE4F59B0097D5C3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 938D59331AE4F59B0097D5C3 /* UIKit.framework */; };
+		938D59371AE4F59B0097D5C3 /* libhzamr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 938D591F1AE4F59B0097D5C3 /* libhzamr.a */; };
+		938D593D1AE4F59B0097D5C3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 938D593B1AE4F59B0097D5C3 /* InfoPlist.strings */; };
+		938D593F1AE4F59B0097D5C3 /* hzamrTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 938D593E1AE4F59B0097D5C3 /* hzamrTests.m */; };
+		938D59581AE4F6460097D5C3 /* interf_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 938D59481AE4F6460097D5C3 /* interf_dec.c */; };
+		938D59591AE4F6460097D5C3 /* interf_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 938D594A1AE4F6460097D5C3 /* interf_enc.c */; };
+		938D595A1AE4F6460097D5C3 /* Plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 938D594D1AE4F6460097D5C3 /* Plugin.cpp */; };
+		938D595B1AE4F6460097D5C3 /* sp_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 938D59511AE4F6460097D5C3 /* sp_dec.c */; };
+		938D595C1AE4F6460097D5C3 /* sp_enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 938D59531AE4F6460097D5C3 /* sp_enc.c */; };
+		938D595D1AE4F6460097D5C3 /* wavwriter.c in Sources */ = {isa = PBXBuildFile; fileRef = 938D59561AE4F6460097D5C3 /* wavwriter.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		938D59351AE4F59B0097D5C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 938D59171AE4F59B0097D5C3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 938D591E1AE4F59B0097D5C3;
+			remoteInfo = hzamr;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		938D591D1AE4F59B0097D5C3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		938D591F1AE4F59B0097D5C3 /* libhzamr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libhzamr.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		938D59221AE4F59B0097D5C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		938D59261AE4F59B0097D5C3 /* hzamr-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hzamr-Prefix.pch"; sourceTree = "<group>"; };
+		938D592F1AE4F59B0097D5C3 /* hzamrTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = hzamrTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		938D59301AE4F59B0097D5C3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		938D59331AE4F59B0097D5C3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		938D593A1AE4F59B0097D5C3 /* hzamrTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "hzamrTests-Info.plist"; sourceTree = "<group>"; };
+		938D593C1AE4F59B0097D5C3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		938D593E1AE4F59B0097D5C3 /* hzamrTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = hzamrTests.m; sourceTree = "<group>"; };
+		938D59481AE4F6460097D5C3 /* interf_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = interf_dec.c; sourceTree = "<group>"; };
+		938D59491AE4F6460097D5C3 /* interf_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
+		938D594A1AE4F6460097D5C3 /* interf_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = interf_enc.c; sourceTree = "<group>"; };
+		938D594B1AE4F6460097D5C3 /* interf_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
+		938D594C1AE4F6460097D5C3 /* interf_rom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interf_rom.h; sourceTree = "<group>"; };
+		938D594D1AE4F6460097D5C3 /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
+		938D594E1AE4F6460097D5C3 /* Pluging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pluging.h; sourceTree = "<group>"; };
+		938D594F1AE4F6460097D5C3 /* rom_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rom_dec.h; sourceTree = "<group>"; };
+		938D59501AE4F6460097D5C3 /* rom_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rom_enc.h; sourceTree = "<group>"; };
+		938D59511AE4F6460097D5C3 /* sp_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sp_dec.c; sourceTree = "<group>"; };
+		938D59521AE4F6460097D5C3 /* sp_dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sp_dec.h; sourceTree = "<group>"; };
+		938D59531AE4F6460097D5C3 /* sp_enc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sp_enc.c; sourceTree = "<group>"; };
+		938D59541AE4F6460097D5C3 /* sp_enc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sp_enc.h; sourceTree = "<group>"; };
+		938D59551AE4F6460097D5C3 /* typedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typedef.h; sourceTree = "<group>"; };
+		938D59561AE4F6460097D5C3 /* wavwriter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wavwriter.c; sourceTree = "<group>"; };
+		938D59571AE4F6460097D5C3 /* wavwriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wavwriter.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		938D591C1AE4F59B0097D5C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				938D59231AE4F59B0097D5C3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		938D592C1AE4F59B0097D5C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				938D59311AE4F59B0097D5C3 /* XCTest.framework in Frameworks */,
+				938D59341AE4F59B0097D5C3 /* UIKit.framework in Frameworks */,
+				938D59371AE4F59B0097D5C3 /* libhzamr.a in Frameworks */,
+				938D59321AE4F59B0097D5C3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		938D59161AE4F59B0097D5C3 = {
+			isa = PBXGroup;
+			children = (
+				938D59241AE4F59B0097D5C3 /* hzamr */,
+				938D59381AE4F59B0097D5C3 /* hzamrTests */,
+				938D59211AE4F59B0097D5C3 /* Frameworks */,
+				938D59201AE4F59B0097D5C3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		938D59201AE4F59B0097D5C3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				938D591F1AE4F59B0097D5C3 /* libhzamr.a */,
+				938D592F1AE4F59B0097D5C3 /* hzamrTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		938D59211AE4F59B0097D5C3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				938D59221AE4F59B0097D5C3 /* Foundation.framework */,
+				938D59301AE4F59B0097D5C3 /* XCTest.framework */,
+				938D59331AE4F59B0097D5C3 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		938D59241AE4F59B0097D5C3 /* hzamr */ = {
+			isa = PBXGroup;
+			children = (
+				938D59481AE4F6460097D5C3 /* interf_dec.c */,
+				938D59491AE4F6460097D5C3 /* interf_dec.h */,
+				938D594A1AE4F6460097D5C3 /* interf_enc.c */,
+				938D594B1AE4F6460097D5C3 /* interf_enc.h */,
+				938D594C1AE4F6460097D5C3 /* interf_rom.h */,
+				938D594D1AE4F6460097D5C3 /* Plugin.cpp */,
+				938D594E1AE4F6460097D5C3 /* Pluging.h */,
+				938D594F1AE4F6460097D5C3 /* rom_dec.h */,
+				938D59501AE4F6460097D5C3 /* rom_enc.h */,
+				938D59511AE4F6460097D5C3 /* sp_dec.c */,
+				938D59521AE4F6460097D5C3 /* sp_dec.h */,
+				938D59531AE4F6460097D5C3 /* sp_enc.c */,
+				938D59541AE4F6460097D5C3 /* sp_enc.h */,
+				938D59551AE4F6460097D5C3 /* typedef.h */,
+				938D59561AE4F6460097D5C3 /* wavwriter.c */,
+				938D59571AE4F6460097D5C3 /* wavwriter.h */,
+				938D59251AE4F59B0097D5C3 /* Supporting Files */,
+			);
+			path = hzamr;
+			sourceTree = "<group>";
+		};
+		938D59251AE4F59B0097D5C3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				938D59261AE4F59B0097D5C3 /* hzamr-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		938D59381AE4F59B0097D5C3 /* hzamrTests */ = {
+			isa = PBXGroup;
+			children = (
+				938D593E1AE4F59B0097D5C3 /* hzamrTests.m */,
+				938D59391AE4F59B0097D5C3 /* Supporting Files */,
+			);
+			path = hzamrTests;
+			sourceTree = "<group>";
+		};
+		938D59391AE4F59B0097D5C3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				938D593A1AE4F59B0097D5C3 /* hzamrTests-Info.plist */,
+				938D593B1AE4F59B0097D5C3 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		938D591E1AE4F59B0097D5C3 /* hzamr */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 938D59421AE4F59B0097D5C3 /* Build configuration list for PBXNativeTarget "hzamr" */;
+			buildPhases = (
+				938D591B1AE4F59B0097D5C3 /* Sources */,
+				938D591C1AE4F59B0097D5C3 /* Frameworks */,
+				938D591D1AE4F59B0097D5C3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = hzamr;
+			productName = hzamr;
+			productReference = 938D591F1AE4F59B0097D5C3 /* libhzamr.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		938D592E1AE4F59B0097D5C3 /* hzamrTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 938D59451AE4F59B0097D5C3 /* Build configuration list for PBXNativeTarget "hzamrTests" */;
+			buildPhases = (
+				938D592B1AE4F59B0097D5C3 /* Sources */,
+				938D592C1AE4F59B0097D5C3 /* Frameworks */,
+				938D592D1AE4F59B0097D5C3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				938D59361AE4F59B0097D5C3 /* PBXTargetDependency */,
+			);
+			name = hzamrTests;
+			productName = hzamrTests;
+			productReference = 938D592F1AE4F59B0097D5C3 /* hzamrTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		938D59171AE4F59B0097D5C3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = cilu;
+			};
+			buildConfigurationList = 938D591A1AE4F59B0097D5C3 /* Build configuration list for PBXProject "hzamr" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 938D59161AE4F59B0097D5C3;
+			productRefGroup = 938D59201AE4F59B0097D5C3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				938D591E1AE4F59B0097D5C3 /* hzamr */,
+				938D592E1AE4F59B0097D5C3 /* hzamrTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		938D592D1AE4F59B0097D5C3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				938D593D1AE4F59B0097D5C3 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		938D591B1AE4F59B0097D5C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				938D59581AE4F6460097D5C3 /* interf_dec.c in Sources */,
+				938D595C1AE4F6460097D5C3 /* sp_enc.c in Sources */,
+				938D595D1AE4F6460097D5C3 /* wavwriter.c in Sources */,
+				938D595A1AE4F6460097D5C3 /* Plugin.cpp in Sources */,
+				938D595B1AE4F6460097D5C3 /* sp_dec.c in Sources */,
+				938D59591AE4F6460097D5C3 /* interf_enc.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		938D592B1AE4F59B0097D5C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				938D593F1AE4F59B0097D5C3 /* hzamrTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		938D59361AE4F59B0097D5C3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 938D591E1AE4F59B0097D5C3 /* hzamr */;
+			targetProxy = 938D59351AE4F59B0097D5C3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		938D593B1AE4F59B0097D5C3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				938D593C1AE4F59B0097D5C3 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		938D59401AE4F59B0097D5C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		938D59411AE4F59B0097D5C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		938D59431AE4F59B0097D5C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/hzamr.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "hzamr/hzamr-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		938D59441AE4F59B0097D5C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/hzamr.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "hzamr/hzamr-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		938D59461AE4F59B0097D5C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "hzamr/hzamr-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "hzamrTests/hzamrTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		938D59471AE4F59B0097D5C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "hzamr/hzamr-Prefix.pch";
+				INFOPLIST_FILE = "hzamrTests/hzamrTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		938D591A1AE4F59B0097D5C3 /* Build configuration list for PBXProject "hzamr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				938D59401AE4F59B0097D5C3 /* Debug */,
+				938D59411AE4F59B0097D5C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		938D59421AE4F59B0097D5C3 /* Build configuration list for PBXNativeTarget "hzamr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				938D59431AE4F59B0097D5C3 /* Debug */,
+				938D59441AE4F59B0097D5C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		938D59451AE4F59B0097D5C3 /* Build configuration list for PBXNativeTarget "hzamrTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				938D59461AE4F59B0097D5C3 /* Debug */,
+				938D59471AE4F59B0097D5C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 938D59171AE4F59B0097D5C3 /* Project object */;
+}

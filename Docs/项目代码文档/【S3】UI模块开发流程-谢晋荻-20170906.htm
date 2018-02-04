@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>default</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>UI模块开发流程</h1>
+<h2>简介</h2>
+<h3>基于老项目的MVC思想进一步改造，引入UniRx响应式编程的机制，通过数据流的形式驱动业务；同时也就MVC思想进一步优化</h3>
+<p>框架组成内容：</p>
+<ul>
+<li>面向接口编程</li>
+<li>充分利用partial关键字</li>
+<li>UnityRx编程思想</li>
+</ul>
+<h2>目录组成部分</h2>
+<p>XXModule</p>
+<ul>
+<li>ProxyXX（文件）</li>
+<li>Model（文件夹）</li>
+<li>View（文件夹）</li>
+<li>Controller（文件夹）</li>
+</ul>
+<p>Model文件夹</p>
+<ul>
+<li>ModuleNameData</li>
+<li>ModuleNameDataMgr</li>
+<li>ModuleNameNetMsg</li>
+<li>ModuleNameConst</li>
+<li>ModuleNameUtil</li>
+</ul>
+<p>View文件夹</p>
+<ul>
+<li>ModuleNameViewAutoGen</li>
+<li>ModuleNameXXXViewAutoGen</li>
+<li>…</li>
+</ul>
+<p>Controller文件夹</p>
+<ul>
+<li>ModuleNameViewControllerAutoGen</li>
+<li>ModuleNameViewController</li>
+<li>ModuleNameViewLogic</li>
+</ul>
+<h2>各个文件介绍</h2>
+<h3>ProxyXX：模块入口，通常用来OpenView的</h3>
+<pre><code>public static void OpenModuleNameXXView(){
+    ModuleNameXXViewLogic.Open();
+}
+</code></pre>
+
+<h3>Model相关</h3>
+<h3>ModuleNameData：</h3>
+<p>1.存放、初始化整个模块的数据，划分接口，通常是按照当前View的数量来划分，也可以就实际情况来增加对应的接口</p>
+<pre><code>public interface IModuleNameData{
+    IModuleNameViewData ModuleNameViewData {get;}
+    IXXViewData XXViewData {get;}
+}
+
+public interface IModuleNameViewData{
+    public int data {get;}
+}
+
+public interface IXXViewData{
+    public int data {get;}
+}
+
+public sealed partial class ModuleNameDataMgr{
+    public sealed partial class ModuleNameData
+    :IModuleNameData
+    ,IModuleNameViewData
+    ,IXXViewData
+    ...
+    {
+        public ModuleNameData(){};
+        public void InitData();
+        public void Dispose();
+        ...(update..)
+    }
+}
+</code></pre>
+
+<p>2.数据的各种增删查改</p>
+<pre><code>//提供给内部模块的查询接口
+public XXXDto GetDtoByID(int id){
+    return …
+}
+
+//提供给外部模块的查询接口
+public interface IModuleNameData{
+    XXXDto GetDtoByID(int id);
+}
+</code></pre>
+
+<p>3.存放模块内需要的微小数据结构</p>
+<pre><code>public class XXXItemVO{
+    public int a;
+    public bool b;
+    ...
+}
+</code></pre>
+
+<p>4.存放模块内需要的枚举</p>
+<pre><code>public enum XXViewXX{
+    AA,
+    BB
+    ...
+}
+</code></pre>
+
+<h3>ModuleNameDataMgrAutoGen</h3>
+<p>1.初始化数据Data和数据流</p>
+<pre><code>private static void InitDataAndStream()
+{
+    if (stream == null)
+    {
+       stream = new Subject&lt;IXXNameData&gt;();
+    }
+
+    if (_ins == null){
+        _ins = new XXNameDataMgr();
+        _ins.Init();
+        stream.Hold(_ins._data);
+    }
+}
+
+public void Init(){
+    _disposable = new CompositeDisposable();
+    _data = new XXNameData();
+    _data.InitData();
+    stream.Hold(_ins._data);
+    LateInit();
+}
+</code></pre>
+
+<p>2.驱动本数据流的执行</p>
+<pre><code>//这里会调用订阅了stream的各个回调
+public static void FireData(){
+    stream.OnNext(DataMgr._data);
+}
+</code></pre>
+
+<p>3.释放本数据流以及其他数据流的订阅</p>
+<pre><code>public void Dispose(){
+    OnDispose();
+    _data.Dispose();
+    _data = null;
+    stream = stream.CloseOnceNull();
+    _disposable.Dispose();
+    _disposable = null;
+}
+</code></pre>
+
+<h3>ModuleNameDataMgr</h3>
+<p>​
+1.初始化其他数据流的订阅、服务器下发协议数据流订阅</p>
+<pre><code>private void LateInit()
+{
+    _disposable.Add(NotifyListenerRegister.RegistListener&lt;ModuleNameDto&gt;(HandleModuleNameDtoNotify));
+    or：
+    _disposable.Add(GenericNotifyListener.Get&lt;ModuleNameDto&gt;().Stream.SubscribeAndFire(HandleModuleNameDtoNotify));
+}
+</code></pre>
+
+<p>2.服务器下发协议数据流的回调函数，作用（对ModuleNameData的数据进行增删改）</p>
+<pre><code>private void HandleModuleNameDtoNotify(ModuleNameDto dto){
+    _data.UpdateModuleNameDto(dto);
+    stream.OnNext(_data);//数据流变化时调用各个订阅的回调函数
+}
+</code></pre>
+
+<p>3.其他释放</p>
+<pre><code>public void OnDispose(){
+    ..其他释放
+}
+</code></pre>
+
+<h3>ModuleNameDataNetMsg</h3>
+<ul>
+<li>客服端与服务端交互</li>
+<li>客户端上发数据（Req）</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre><code>//客户端请求数据，返回后更新数据层，并推动数据流（如果需要更新界面）
+public static void ReqXXData(XXDto dto) //数据请求发送的数据dto
+{
+    GameUtil.GeneralReq(Services.XXName(dto),resp=&gt;{
+        AllXXDto data = response as AllXXDto;
+        DataMgr._data.updatXXData(); //更新数据层
+        FireData(); //推动数据流
+}
+</code></pre>
+
+<h3>ModuleNameConst</h3>
+<p>定义一些常量数据</p>
+<h3>ModuleNameUtil</h3>
+<p>定义一些工具接口</p>
+<pre><code>public static int GetIndexById(int id){
+    return id % 10;
+}
+</code></pre>
+
+<h3>View相关</h3>
+<h3>ModuleNameViewAutoGen</h3>
+<ul>
+<li>脚本自动生成，包含的内容有：</li>
+<li>继承BaseView</li>
+<li>声明预设的各个变量名</li>
+<li>变量动态赋值</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre><code>public sealed partial class ModuleNameView:BaseView {
+    public const string Name = &quot;ModuleNameView&quot;;
+    public XXComponent XXBtn_XXComponent;
+    //变量动态赋值
+    protected override void IniElementBinding(){
+        //后续可用fieldInfo的SetValue统一替代
+        //InitAllChildComponents();
+        XXBtn_XXComponent = go.FindScript&lt;XXComponent&gt;(&quot;XXBtn_XXComponent&quot;);
+    }
+}
+</code></pre>
+
+<h3>controller相关</h3>
+<h3>ModuleNameViewControllerAutoGen</h3>
+<ul>
+<li>脚本自动生成，包含的内容有：</li>
+<li>继承FRPBaseController</li>
+<li>实现一个IModuleNameController的接口给 ModuleNameViewController调用</li>
+<li>注册UI交互事件（点击，输入，改变等等）</li>
+<li>清除UI交互事件</li>
+<li>提供UI交互事件的IObservable接口（给ctrl、logic响应做）</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre><code>public partial interface IModuleNameViewController {
+    UniRx.IObservable&lt;Unit&gt; OnXXBtn_UIButtonClick{get;}
+}
+
+public partial class ModuleNameViewController:
+FRPBaseController&lt;ModuleNameViewController,ModuleNameView,IModuleNameViewController,IModuleNameData&gt;,IModuleNameViewController
+{
+    protected override void InitViewWithStream(){
+    stream.OnNext(DataMgr._data);
+}
+
+//注册UI交互事件（点击，输入，改变等等）
+protected override void RegistEvent(){
+    //注册按钮的点击事件，相当于UIEventListener.Get(XXBtn_XXComponentEvt.gameObject).onClick = delegateXX;
+    XXBtn_XXComponentEvt = XXBtn_XXComponent.AsObservable();
+}
+
+private Subject&lt;Unit&gt; XXBtn_XXComponentEvt;
+    public IObservable&lt;Unit&gt; OnXXBtn_XXComponentClick{
+        get{return XXBtn_XXComponentEvt;}
+    }
+}
+
+//清除UI交互事件
+protected override void RemoveEvents(){
+    XXBtn_XXComponentEvt = XXBtn_XXComponent.CloseOnceNull();
+}
+</code></pre>
+
+<h3>ModuleNameViewController</h3>
+<p>包含对View的操作有：声明组件，初始化组件，Update界面</p>
+<ul>
+<li>声明各种组件、子Controller</li>
+<li>初始化相关界面（AfterInitView）</li>
+<li>初始化数据接口</li>
+<li>初始化跨模块的数据流回调</li>
+<li>Ctrl释放接口</li>
+<li>界面更新接口</li>
+<li>UI交互接口（刷新当前界面、打开子界面）</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre><code>public partial interface IModuleNameViewController{
+    //非自动生成的事件
+    UniRx.IObservable&lt;Unit&gt; OnOtherUIEvent{get;}
+}
+
+public partial class ModuleNameViewController{
+
+    private XXViewController xxViewController;
+
+    private CompositeDisposable _disposable; //Mono(less)ViewController需添加
+
+    protected override void AfterInitView(){
+        //初始化一些子对象的组件，或者其他View
+        InitChildItem();
+        InitChildView();
+    }
+
+    protected override void RegistCustomEvent(){
+        //订阅View的大更新 这个已经在基类实例化订阅了
+        //_disposable.Add(stream.Subscribe(data=&gt;View.UpdateView(data)));
+        //如果只是订阅不需要立马调用的就用Stream.Subscribe
+        _disposable.Add(OtherModuleNameData.Stream.SubscribeAndFire(XXUpdateView));
+
+        //Mono(less)ViewController 子界面订阅UI交互事件回调
+        _disposable.Add(XXBtn_UIButtonEvt.Subscribe(_ =&gt; OnXXBtnClick()));
+        or
+        EventDelegate.Set(View.InsetBtn_UIButton.onClick, OnInsetBtnClick);
+
+    }
+
+    protected override void OnDispose(){
+        //释放 组件、子Controller、事件管理
+        childCtrl.Dispose();
+        base.OnDispose();
+        _disposable = _disposable.CloseOnceNull();
+
+        //MonolessViewController
+        if (_disposable != null)
+            _disposable.Dispose();
+            _disposable = null;
+    }
+
+    private void InitChildItem(){
+    }
+
+    private void InitChildView(){
+    }
+
+    private void UpdateView(IModuleNameData _data){
+    }
+
+    private void UpdateXXInfo(){
+    }
+}
+</code></pre>
+
+<h3>ModuleNameViewLogic</h3>
+<p>存放View层的数据逻辑处理，事件交互处理，View层需对ModuleNameData的操作统一写在这里</p>
+<ul>
+<li>打开界面方法（Open）</li>
+<li>初始化事件订阅器</li>
+<li>订阅UI交互事件的回调（点击、输入、改变等等）</li>
+<li>操作数据层</li>
+<li>释放事件订阅器</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre><code>public sealed partial class ModuleNameDataMgr{
+    public static partial class ModuleNameLogic{
+        private static CompositeDisposable _disposable;
+
+        public static void Open()
+        {
+            // open的参数根据需求自己调整
+            var ctrl = XXModuleNameViewController.Show&lt;XXModuleNameViewController&gt;(
+                XXModuleNameView.NAME
+                , UILayerType.BaseModule
+                , false
+                , false
+                , Stream);
+            InitReactiveEvents(ctrl);
+        }
+
+        private static void InitReactiveEvents(IModuleNameController ctrl){
+            //初始化事件管理器
+            _disposable = new CompositeDisposable();
+            //OnXXBtn_UIButtonClick方法存放在ModuleNameViewController
+            _disposable.Add(ctrl.OnXXBtn_UIButtonClick.Subscribe(_ =&gt; OnXXBtn_UIButtonClick);
+            //SubView
+            _disposable.Add(ctrl.IXXViewCtrl.OnXXBtn_UIButtonClick.Subscribe(_ =&gt; /*ctrl.*/OnXXBtn_UIButtonClick);
+            //其他数据流
+            _disposable.Add(ctrl.XXNameStream.Subscribe(data =&gt;
+            {
+                updateXXSubView();
+                FireData();
+            }));
+        }
+
+        private static void Dispose(){
+             _disposable = _disposable.CloseOnceNull();
+        }
+    }
+}kes
+</code></pre>
+
+<h2>潜规则</h2>
+<p>1.模块开发只公开get权限，需要修改数据或者拿View的子gameObject统一在接口文件里面添加方法</p>
+<p>2.禁止直接将ModuleNameData暴露出去，禁止将私有修饰符改成public</p>
+<p>3.ModuleNameData、ModuleNameNetMsg、ModuleNameLogic、这三个类为ModuleNameDataMgr的局部类型（用了partial关键字）</p>
+<h2>注意事项</h2>
+<p>1.想要获取ModuleNameData其中的某一个数据的途径：</p>
+<ul>
+<li>通过ModuleNameDataMgr的DataMgr方法调用（仅允许模块内的logic，netmsg这两个类）</li>
+<li>通过ModuleNameDataMgr的对外公开接口（IModuleNameData）</li>
+<li>通过增加对ModuleNameDataMgr的steam数据流监听</li>
+</ul>
+<p>2.服务端的数据有上发回调和下发两种形式，第一种在ModuleNameNetMsg，第二种在 
+  ModuleNameDataMgr里面注册数据流的监听</p>
+<p>3.需要自定义前端的数据结构或枚举类型，代码放到ModuleNameData里面即可</p>
+<p>4.OnClick事件不需要自己重新写监听，脚本自动生成，监听回调方法在ModuleNameViewLogic里面；其他事件可以手动添加到Ctrl的接口上，Logic来注册监听</p>
+<p>5.ModuleNameViewController只能获取数据来更新，View层想对Data的客户端数据进行修改只能通过ModuleNameLogic提供的接口来修改</p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
