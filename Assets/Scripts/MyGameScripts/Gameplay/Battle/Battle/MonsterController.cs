@@ -1323,7 +1323,7 @@ public class MonsterController : MonoBehaviour
 
     public Transform GetMountBattleEffect()
     {
-        var hudTransform = _mTrans.FindChild("floatTextGO");
+        var hudTransform = _mTrans.Find("floatTextGO");
 
         if (hudTransform != null) return hudTransform;
         hudTransform = GetMountHUD();
@@ -1347,7 +1347,7 @@ public class MonsterController : MonoBehaviour
 
     public Transform GetMountDamageffect()
     {
-        var hudTransform = _mTrans.FindChild("damageTextGO");
+        var hudTransform = _mTrans.Find("damageTextGO");
 
         if (hudTransform != null) return hudTransform;
         hudTransform = GetMountHUD();
@@ -1371,7 +1371,7 @@ public class MonsterController : MonoBehaviour
     //获得固定的地面锚点
     public Transform GetBattleGroundMount()
     {
-        var hudTransform = _mTrans.FindChild("groundMountGO");
+        var hudTransform = _mTrans.Find("groundMountGO");
 
         if (hudTransform != null) return hudTransform;
         hudTransform = GetMountShadow();
@@ -1394,13 +1394,13 @@ public class MonsterController : MonoBehaviour
 
     private void DestroyBattleMount()
     {
-        var hudTransform = _mTrans.FindChild("floatTextGO");
+        var hudTransform = _mTrans.Find("floatTextGO");
         if (hudTransform != null)
         {
             Destroy(hudTransform.gameObject);
         }
 
-        hudTransform = _mTrans.FindChild("groundMountGO");
+        hudTransform = _mTrans.Find("groundMountGO");
         if (hudTransform != null)
         {
             Destroy(hudTransform.gameObject);

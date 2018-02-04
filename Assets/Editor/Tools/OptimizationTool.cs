@@ -78,7 +78,7 @@ public class OptimizationTool
 
         foreach (string name in _groupNameList)
         {
-            Transform sourceChildTransform = idLayer.transform.FindChild(name);
+            Transform sourceChildTransform = idLayer.transform.Find(name);
             if (sourceChildTransform != null)
             {
                 GameObject sourceChild = sourceChildTransform.gameObject;
@@ -127,7 +127,7 @@ public class OptimizationTool
             for (int i = 0; i < sourceChildNum; i++)
             {
                 GameObject sourceChildGO = source.transform.GetChild(i).gameObject;
-                Transform targetChildGOTransform = child.transform.FindChild(sourceChildGO.name);
+                Transform targetChildGOTransform = child.transform.Find(sourceChildGO.name);
                 GameObject targetChildGO = null;
                 if (targetChildGOTransform == null)
                 {
@@ -267,7 +267,7 @@ public class OptimizationTool
 	[MenuItem("OptimizationTool/Export NavMeshToObj ")]
     static void ExportNavMeshToObj()
     {
-        var navMeshInfo = NavMesh.CalculateTriangulation();
+        var navMeshInfo = UnityEngine.AI.NavMesh.CalculateTriangulation();
 
         Mesh mesh = new Mesh();
         mesh.vertices = navMeshInfo.vertices;

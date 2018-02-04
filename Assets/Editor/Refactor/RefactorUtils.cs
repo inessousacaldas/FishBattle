@@ -211,7 +211,7 @@ namespace Refactor
 
 		public static void SaveAndRefreshU3D()
 		{
-			EditorApplication.SaveAssets();
+			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
 			UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
 		}

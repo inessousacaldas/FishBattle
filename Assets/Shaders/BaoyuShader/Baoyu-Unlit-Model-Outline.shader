@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Baoyu/Model/Outline"
 {
     Properties
@@ -41,7 +43,7 @@ Shader "Baoyu/Model/Outline"
 			
 			v2f vert (a2v v) {
 				v2f o;
-				o.pos =  mul(UNITY_MATRIX_MVP, v.vertex); 
+				o.pos =  UnityObjectToClipPos(v.vertex); 
 				float3 normal = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal); 
 				float2 offset = TransformViewToProjection(normal.xy);
 				o.pos.xy += offset * _Outline;
@@ -86,7 +88,7 @@ Shader "Baoyu/Model/Outline"
             {
                 v2f v;
 
-                v.pos = mul(UNITY_MATRIX_MVP, ad.vertex);
+                v.pos = UnityObjectToClipPos(ad.vertex);
                 v.tc1 = ad.texcoord;
                 return v;
             }

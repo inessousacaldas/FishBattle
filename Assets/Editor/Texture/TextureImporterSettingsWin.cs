@@ -598,10 +598,10 @@ public class TextureImporterSettingsWin : EditorWindow
 		switch (TextureTypeInt)
 		{
 		case 0:
-			textureImporter.textureType = TextureImporterType.Image;
+			textureImporter.textureType = TextureImporterType.Default;
 			break;
 		case 1:
-			textureImporter.textureType = TextureImporterType.Bump;
+			textureImporter.textureType = TextureImporterType.NormalMap;
 			break;
 		case 2:
 			textureImporter.textureType = TextureImporterType.GUI;
@@ -616,7 +616,7 @@ public class TextureImporterSettingsWin : EditorWindow
 			textureImporter.textureType = TextureImporterType.Lightmap;
 			break;
 		case 6:
-			textureImporter.textureType = TextureImporterType.Advanced;
+			textureImporter.textureType = TextureImporterType.Default;
 			break;
 		}
 		//Max Size 

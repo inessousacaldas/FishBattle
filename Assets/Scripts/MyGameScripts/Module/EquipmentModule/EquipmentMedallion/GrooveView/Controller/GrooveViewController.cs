@@ -30,13 +30,13 @@ public partial class GrooveViewController
         {
             List<Vector3> list = new List<Vector3>();
             var name = string.Format("Type_{0}", i);
-            var typeItem = transform.FindChild(name);
+            var typeItem = transform.Find(name);
             if (typeItem == null)
                 continue;
 
             for(int j=1;j<=i; j++)
             {
-                var itemCase = typeItem.transform.FindChild(string.Format("Item_{0}", j));
+                var itemCase = typeItem.transform.Find(string.Format("Item_{0}", j));
                 if (itemCase == null)
                     continue;
 
@@ -78,7 +78,7 @@ public partial class GrooveViewController
         for (int i = minHoleType; i <= maxHoleType; i++)
         {
             var name = string.Format("Type_{0}", i);
-            var typeItem = transform.FindChild(name);
+            var typeItem = transform.Find(name);
             if (typeItem == null)
                 continue;
 

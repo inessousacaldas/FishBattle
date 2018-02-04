@@ -33,7 +33,7 @@ public class ReplaceView : MonoBehaviour
                     {
                         if (needCheck)
                         {
-                            if (item.FindChild("check") != null)
+                            if (item.Find("check") != null)
                             {
                                 ReplayceObj(e, g1, item, path);
                                 break;
@@ -77,7 +77,7 @@ public class ReplaceView : MonoBehaviour
                 }
                 if (needCheck)
                 {
-                    if (g2Trans.FindChild("check") != null)
+                    if (g2Trans.Find("check") != null)
                     {
                         DestroyImmediate(g2Trans.gameObject);
                         break;

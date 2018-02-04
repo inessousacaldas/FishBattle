@@ -333,7 +333,7 @@ public class PlayerSettingTool : EditorWindow
         {
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("ProductName ： " + PlayerSettings.productName);
-            EditorGUILayout.LabelField("Bundle Identifier ： " + PlayerSettings.bundleIdentifier);
+            EditorGUILayout.LabelField("Bundle Identifier ： " + PlayerSettings.applicationIdentifier);
             EditorGUILayout.LabelField("Bundle Version ： " + PlayerSettings.bundleVersion);
             EditorGUILayout.LabelField("Bundle Version Code： " + PlayerSettings.Android.bundleVersionCode);
             EditorGUILayout.LabelField("HttpRoot： " + _gameSettingData.httpRoot);
@@ -930,7 +930,7 @@ public class PlayerSettingTool : EditorWindow
         //如果是正式包， 则去掉后面的域定义
         bundleIdentifier = bundleIdentifier.Replace("." + "release", "");
 
-        PlayerSettings.bundleIdentifier = bundleIdentifier;
+        PlayerSettings.applicationIdentifier = bundleIdentifier;
     }
 
     private void UpdateBuildToFileName(string channel)

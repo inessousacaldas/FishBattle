@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
 Shader "Baoyu/Unlit/DoubleSide"
 {
@@ -44,7 +46,7 @@ Shader "Baoyu/Unlit/DoubleSide"
 			{
 				v2f v;
 
-    			v.pos = mul( UNITY_MATRIX_MVP, ad.vertex );
+    			v.pos = UnityObjectToClipPos( ad.vertex );
    				v.tc1 = TRANSFORM_TEX(ad.texcoord,_MainTex);
 
 				return v;

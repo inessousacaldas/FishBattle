@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
 Shader "Baoyu/Unlit/RimLight" {
 
@@ -38,7 +40,7 @@ Shader "Baoyu/Unlit/RimLight" {
             {
                 v2f o;
 
-                o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos (v.vertex);
 
                 float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
                 float dotProduct = 1 - dot(v.normal, viewDir);

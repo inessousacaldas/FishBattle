@@ -24,7 +24,7 @@ public static class GameDebugerConsole
 
     private class GameDebugerLogHandler : ILogHandler
     {
-        private ILogHandler _defaultHandler = Debug.logger.logHandler;
+        private ILogHandler _defaultHandler = Debug.unityLogger.logHandler;
 
 //        public GameDebugerLogHandler()
 //        {
@@ -35,11 +35,11 @@ public static class GameDebugerConsole
         {
             if (customLog)
             {
-                Debug.logger.logHandler = this;
+                Debug.unityLogger.logHandler = this;
             }
             else
             {
-                Debug.logger.logHandler = _defaultHandler;
+                Debug.unityLogger.logHandler = _defaultHandler;
             }
         }
 

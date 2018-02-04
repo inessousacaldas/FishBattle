@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
 Shader "Baoyu/Unlit/Transparent"
 {
@@ -44,7 +46,7 @@ Shader "Baoyu/Unlit/Transparent"
             {
                 Varys v;
 
-                v.pos = mul(UNITY_MATRIX_MVP, ad.vertex);
+                v.pos = UnityObjectToClipPos(ad.vertex);
                 v.tc1 = ad.texcoord;
                 return v;
             }

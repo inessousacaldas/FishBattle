@@ -1,4 +1,6 @@
-﻿Shader "Baoyu/UI/CloudEffect"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Baoyu/UI/CloudEffect"
 {
     Properties{
         _MainTex("MainTex", 2D) = "white" {}
@@ -58,7 +60,7 @@
                 v2f vert(appdata_t v)
                 {
                     v2f o;
-                    o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                    o.vertex = UnityObjectToClipPos(v.vertex);
                     o.uv1 = TRANSFORM_TEX(v.texcoord, _MainTex);
                     o.uv2 = TRANSFORM_TEX(v.texcoord, _GTex);
                     o.uv3 = TRANSFORM_TEX(v.texcoord, _BTex);

@@ -113,7 +113,7 @@ namespace Spine.Unity.MeshGeneration {
 		/// <param name="boundsMax">Reference to the running calculated maximum bounds.</param>
 		/// <param name = "renderMeshes">Include MeshAttachments. If false, it will ignore MeshAttachments.</param>
 		public static void FillVerts (Skeleton skeleton, int startSlot, int endSlot, float zSpacing, bool pmaColors, Vector3[] verts, Vector2[] uvs, Color32[] colors, ref int vertexIndex, ref float[] tempVertBuffer, ref Vector3 boundsMin, ref Vector3 boundsMax, bool renderMeshes = true) {
-			Color32 color;
+			Color32 color = default(Color32);
 			var skeletonDrawOrderItems = skeleton.DrawOrder.Items;
 			float a = skeleton.a * 255, r = skeleton.r, g = skeleton.g, b = skeleton.b;
 

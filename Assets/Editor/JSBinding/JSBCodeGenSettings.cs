@@ -458,10 +458,6 @@ public static class JSBCodeGenSettings
 		typeof(WebCamTextureHelper),
 		// 原生 Util
 		typeof(SystemProcess),
-        // tk2d
-        typeof(tk2dCamera),
-        typeof(tk2dSprite),
-        typeof(tk2dSpriteCollectionData),
         // A*
         typeof(NNConstraint),
         typeof(AstarPath),
@@ -689,20 +685,6 @@ public static class JSBCodeGenSettings
         {typeof(GUIStyleState), new HashSet<string>
             {
                 "scaledBackgrounds",
-            }
-        },
-        {typeof(tk2dBaseSprite), new HashSet<string>
-            {
-                "EditMode__CreateCollider",
-            }
-        },
-        {typeof(tk2dCamera), new HashSet<string>
-            {
-                "Editor__Inst",
-                "Editor__gameViewReflectionError",
-                "Editor__GetNativeProjectionMatrix",
-                "Editor__GetFinalProjectionMatrix",
-                "Editor__GetGameViewSize",
             }
         },
         {typeof(ComputeShader), new HashSet<string>

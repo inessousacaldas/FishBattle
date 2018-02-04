@@ -858,9 +858,9 @@ public class UICamera : MonoBehaviour
 			{
 				if (mHover != controller.current)
 				{
-					Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+					UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 					if (mHover.GetComponent<UIKeyNavigation>() != null) controller.current = mHover;
-					Profiler.EndSample();
+					UnityEngine.Profiling.Profiler.EndSample();
 				}
 
 				// Locate the appropriate camera for the new object
@@ -1012,10 +1012,10 @@ public class UICamera : MonoBehaviour
 
 			if (value != null)
 			{
-				Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+				UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 				UIKeyNavigation nav = value.GetComponent<UIKeyNavigation>();
 				if (nav != null) controller.current = value;
-				Profiler.EndSample();
+				UnityEngine.Profiling.Profiler.EndSample();
 			}
 
 			// Set the camera for events
@@ -1040,9 +1040,9 @@ public class UICamera : MonoBehaviour
 			// Set the selection
 			if (mSelected)
 			{
-				Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+				UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 				mInputFocus = (mSelected.activeInHierarchy && mSelected.GetComponent<UIInput>() != null);
-				Profiler.EndSample();
+				UnityEngine.Profiling.Profiler.EndSample();
 				if (onSelect != null) onSelect(mSelected, true);
 				Notify(mSelected, "OnSelect", true);
 			}
@@ -1193,7 +1193,7 @@ public class UICamera : MonoBehaviour
 
 	static Rigidbody FindRootRigidbody (Transform trans)
 	{
-		Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+		UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 
 		while (trans != null)
 		{
@@ -1205,12 +1205,12 @@ public class UICamera : MonoBehaviour
 #endif
 			if (rb != null)
 			{
-				Profiler.EndSample();
+				UnityEngine.Profiling.Profiler.EndSample();
 				return rb;
 			}
 			trans = trans.parent;
 		}
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 		return null;
 	}
 
@@ -1220,7 +1220,7 @@ public class UICamera : MonoBehaviour
 
 	static Rigidbody2D FindRootRigidbody2D (Transform trans)
 	{
-		Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+		UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 
 		while (trans != null)
 		{
@@ -1232,12 +1232,12 @@ public class UICamera : MonoBehaviour
 #endif
 			if (rb != null)
 			{
-				Profiler.EndSample();
+				UnityEngine.Profiling.Profiler.EndSample();
 				return rb;
 			}
 			trans = trans.parent;
 		}
-		Profiler.EndSample();
+		UnityEngine.Profiling.Profiler.EndSample();
 		return null;
 	}
 
@@ -1310,9 +1310,9 @@ public class UICamera : MonoBehaviour
 					for (int b = 0; b < hits.Length; ++b)
 					{
 						GameObject go = hits[b].collider.gameObject;
-						Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+						UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 						UIWidget w = go.GetComponent<UIWidget>();
-						Profiler.EndSample();
+						UnityEngine.Profiling.Profiler.EndSample();
 
 						if (w != null)
 						{
@@ -1358,9 +1358,9 @@ public class UICamera : MonoBehaviour
 				else if (hits.Length == 1)
 				{
 					GameObject go = hits[0].collider.gameObject;
-					Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+					UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 					UIWidget w = go.GetComponent<UIWidget>();
-					Profiler.EndSample();
+					UnityEngine.Profiling.Profiler.EndSample();
 
 					if (w != null)
 					{
@@ -1417,9 +1417,9 @@ public class UICamera : MonoBehaviour
 						for (int b = 0; b < hits.Length; ++b)
 						{
 							GameObject go = hits[b].gameObject;
-							Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+							UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 							UIWidget w = go.GetComponent<UIWidget>();
-							Profiler.EndSample();
+							UnityEngine.Profiling.Profiler.EndSample();
 
 							if (w != null)
 							{
@@ -1462,9 +1462,9 @@ public class UICamera : MonoBehaviour
 					else if (hits.Length == 1)
 					{
 						GameObject go = hits[0].gameObject;
-						Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+						UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 						UIWidget w = go.GetComponent<UIWidget>();
-						Profiler.EndSample();
+						UnityEngine.Profiling.Profiler.EndSample();
 
 						if (w != null)
 						{
@@ -2345,18 +2345,18 @@ public class UICamera : MonoBehaviour
 
 				if (currentTouch.pressed != null)
 				{
-					Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+					UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 					UIKeyNavigation nav = currentTouch.pressed.GetComponent<UIKeyNavigation>();
-					Profiler.EndSample();
+					UnityEngine.Profiling.Profiler.EndSample();
 					if (nav != null) controller.current = currentTouch.pressed;
 				}
 
 				// Set the selection
 				if (mSelected)
 				{
-					Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+					UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 					mInputFocus = (mSelected.activeInHierarchy && mSelected.GetComponent<UIInput>() != null);
-					Profiler.EndSample();
+					UnityEngine.Profiling.Profiler.EndSample();
 					if (onSelect != null) onSelect(mSelected, true);
 					Notify(mSelected, "OnSelect", true);
 				}
@@ -2468,9 +2468,9 @@ public class UICamera : MonoBehaviour
 			// Send a hover message to the object
 			if (isMouse)
 			{
-				Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
+				UnityEngine.Profiling.Profiler.BeginSample("Editor-only GC allocation (GetComponent)");
 				var hasCollider = HasCollider(currentTouch.pressed);
-				Profiler.EndSample();
+				UnityEngine.Profiling.Profiler.EndSample();
 
 				if (hasCollider)
 				{

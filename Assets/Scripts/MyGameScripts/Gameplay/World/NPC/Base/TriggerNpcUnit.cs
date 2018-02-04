@@ -18,7 +18,7 @@ public class TriggerNpcUnit : BaseNpcUnit
 
     private bool _isRunning;
 
-    protected NavMeshAgent _mAgent;
+    protected UnityEngine.AI.NavMeshAgent _mAgent;
     public bool enabled;
     public bool touch;
     public bool waitingTrigger;
@@ -285,12 +285,12 @@ public class TriggerNpcUnit : BaseNpcUnit
         {
             if (_mAgent == null)
             {
-                _mAgent = _unitGo.GetMissingComponent<NavMeshAgent>();
+                _mAgent = _unitGo.GetMissingComponent<UnityEngine.AI.NavMeshAgent>();
                 _mAgent.radius = 0.4f;
                 _mAgent.speed = ModelHelper.DefaultModelSpeed;
                 _mAgent.acceleration = 1000;
                 _mAgent.angularSpeed = 1000;
-                _mAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+                _mAgent.obstacleAvoidanceType = UnityEngine.AI.ObstacleAvoidanceType.NoObstacleAvoidance;
                 _mAgent.autoTraverseOffMeshLink = false;
                 _mAgent.autoRepath = false;
             }

@@ -66,7 +66,7 @@ public class SpineDisplayController : MonolessViewController<SpineDisplayUICompo
 
         var renderTexture = RenderTexture.GetTemporary(newW, newH, 16);
         renderTexture.name = _modelRenderer.name;
-        renderTexture.generateMips = false;
+        renderTexture.autoGenerateMips = false;
         _mCam.targetTexture = renderTexture;
         _mCam.orthographic = true;
         _mCam.orthographicSize = _orthographicSize;

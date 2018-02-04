@@ -16,7 +16,7 @@ public static class ProfileHelper
 #if ProfileHelperDebug
         Debug.LogError(newMessage);
 #endif
-        Profiler.BeginSample(newMessage);
+        UnityEngine.Profiling.Profiler.BeginSample(newMessage);
     }
     public static void ProfilerEnd(string messgae, int index)
     {
@@ -24,7 +24,7 @@ public static class ProfileHelper
 #if ProfileHelperDebug
         Debug.LogError(newMessgae);
 #endif
-        Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
     }
     public static void ProfilerBegin(string message)
     {
@@ -32,7 +32,7 @@ public static class ProfileHelper
 #if ProfileHelperDebug
         Debug.LogError(newMessage);
 #endif
-        Profiler.BeginSample(newMessage);
+        UnityEngine.Profiling.Profiler.BeginSample(newMessage);
     }
     public static void ProfilerEnd(string messgae)
     {
@@ -40,7 +40,7 @@ public static class ProfileHelper
 #if ProfileHelperDebug
         Debug.LogError(newMessgae);
 #endif
-        Profiler.EndSample();
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     private static Dictionary<string, Stopwatch> stopwatches = new Dictionary<string, Stopwatch>(); 

@@ -220,7 +220,7 @@ public class ModelDisplayController : MonolessViewController<ModelDisplayUICompo
         }
         var renderTexture = new RenderTexture(newW, newH, 16);
         renderTexture.name = _modelRenderer.name;
-        renderTexture.generateMips = false;
+        renderTexture.autoGenerateMips = false;
         _mCam.targetTexture = renderTexture;
         _mCam.orthographic = _useOrthographic;
         _mCam.orthographicSize = _orthographicSize;

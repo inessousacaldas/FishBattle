@@ -352,7 +352,7 @@ public static class ChannelSetting
         strs = Regex.Replace(strs, accessKeyFormat,
             match => match.Value.Replace(match.Groups[1].Value, "AZ131KMM66YQ"));
         strs = Regex.Replace(strs, bundleNameFormat,
-            match => match.Value.Replace(match.Groups[1].Value, PlayerSettings.bundleIdentifier));
+            match => match.Value.Replace(match.Groups[1].Value, PlayerSettings.applicationIdentifier));
         FileHelper.WriteAllText(path, strs);
     }
     #endregion

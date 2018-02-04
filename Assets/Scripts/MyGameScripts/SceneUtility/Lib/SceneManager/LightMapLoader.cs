@@ -42,8 +42,8 @@ public class LightMapLoader : BaseCommand{
         for (int i = 0; i < Count; ++i)
         {
             LightmapData Lightmap = new LightmapData();
-            Lightmap.lightmapFar = lightMapAsset.lightmapFar[i];
-            Lightmap.lightmapNear = lightMapAsset.lightmapNear[i];
+            Lightmap.lightmapColor = lightMapAsset.lightmapFar[i];
+            Lightmap.lightmapDir = lightMapAsset.lightmapNear[i];
             lightmapDatas[i] = Lightmap;
         }
 

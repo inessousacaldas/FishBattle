@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
             #include "UnityCG.cginc"  
             #include "Lighting.cginc"  
@@ -30,7 +32,7 @@
             v2f vert (a2v v)  
             {  
                 v2f o;  
-                o.pos = mul( UNITY_MATRIX_MVP, v.vertex);   
+                o.pos = UnityObjectToClipPos( v.vertex);   
                 o.normal  = mul(UNITY_MATRIX_IT_MV, float4(v.normal, 0));// UnityObjectToWorldNormal ( v.normal);
                 o.uv = TRANSFORM_TEX (v.texcoord, _MainTex);    
                 o.lightDir.xyz = _LightDir;

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "cgwell/Additive Zoff" 
@@ -77,7 +79,7 @@ Shader "cgwell/Additive Zoff"
 					#endif //MIRROR_ON 
 					o.vertex = mul(UNITY_MATRIX_VP, worldpos);
 					#else //SCALE_ON
-					 o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+					 o.vertex = UnityObjectToClipPos(v.vertex);
 					#endif //SCALE_ON
 
 					o.color = v.color;

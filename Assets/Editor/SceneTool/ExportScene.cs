@@ -57,8 +57,8 @@ public class ExportScene
         lightmapAsset.ambientSetting = am;
         for (int i = 0; i < count; i++)
         {
-            lightmapAsset.lightmapFar[i] = LightmapSettings.lightmaps[i].lightmapFar;
-            lightmapAsset.lightmapNear[i] = LightmapSettings.lightmaps[i].lightmapNear;
+            lightmapAsset.lightmapFar[i] = LightmapSettings.lightmaps[i].lightmapColor;
+            lightmapAsset.lightmapNear[i] = LightmapSettings.lightmaps[i].lightmapDir;
         }
         string path = ("Assets/GameResources/ArtResources/SceneConfig/LightMap/lightmap_" + sceneName.ToLower() + ".asset");
         AssetDatabase.CreateAsset(lightmapAsset, path);
@@ -287,7 +287,7 @@ public class ExportScene
 
     static void ExportnavMesh()
     {
-        var triangulation = NavMesh.CalculateTriangulation();
+        var triangulation = UnityEngine.AI.NavMesh.CalculateTriangulation();
         Mesh mesh  = new Mesh();
         mesh.vertices = triangulation.vertices;
         mesh.triangles = triangulation.indices;

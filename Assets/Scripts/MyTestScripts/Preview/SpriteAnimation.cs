@@ -18,7 +18,7 @@ namespace Game.Preview
         }
 
         private Animator animator;
-        private NavMeshAgent agent;
+        private UnityEngine.AI.NavMeshAgent agent;
         private CharacterController cc;
 
         private string lastTrigger;
@@ -28,14 +28,14 @@ namespace Game.Preview
         private float moveAngle = 0f;
         private float moveSpeed = 0f;
         private Vector3 rawMoveSpeed;
-        private NavMeshPath path;
+        private UnityEngine.AI.NavMeshPath path;
         private long navPointIndex;
 
         void Awake()
         {
             animator = GetComponent<Animator>();
             cc = GetComponent<CharacterController>();
-            agent = GetComponent<NavMeshAgent>();
+            agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent != null)
             {
                 agent.enabled = false;
@@ -155,10 +155,10 @@ namespace Game.Preview
             {
                 return;
             }
-            NavMeshPath tmpPath = new NavMeshPath();
+            UnityEngine.AI.NavMeshPath tmpPath = new UnityEngine.AI.NavMeshPath();
             agent.enabled = true;
             agent.CalculatePath(point, tmpPath);
-            if (tmpPath.status == NavMeshPathStatus.PathComplete || (tmpPath.status == NavMeshPathStatus.PathPartial && near))
+            if (tmpPath.status == UnityEngine.AI.NavMeshPathStatus.PathComplete || (tmpPath.status == UnityEngine.AI.NavMeshPathStatus.PathPartial && near))
             {
                 moveState = MoveState.Navigate;
                 moveSpeed = speed;

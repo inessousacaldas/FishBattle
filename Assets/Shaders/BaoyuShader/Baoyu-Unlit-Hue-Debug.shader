@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
 //用于检查Mask变色区域贴图边缘
 Shader "Baoyu/Unlit/Hue-Debug"
@@ -42,7 +44,7 @@ Shader "Baoyu/Unlit/Hue-Debug"
 			v2f vert (VertInput v)
             {
                 v2f o;
-                o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos (v.vertex);
                 o.uv = v.texcoord;
                 return o;
             }

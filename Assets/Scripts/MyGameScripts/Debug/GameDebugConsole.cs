@@ -190,9 +190,9 @@ public class GameDebugConsole : MonoBehaviour
     {
         while (true)
         {
-            _useHeapSize = Profiler.usedHeapSize;
-            _monoUsedSize = Profiler.GetMonoUsedSize();
-            _monoHeapSize = Profiler.GetMonoHeapSize();
+            _useHeapSize = UnityEngine.Profiling.Profiler.usedHeapSize;
+            _monoUsedSize = UnityEngine.Profiling.Profiler.GetMonoUsedSize();
+            _monoHeapSize = UnityEngine.Profiling.Profiler.GetMonoHeapSize();
 
             _freeMemory = BaoyugameSdk.getFreeMemory();
             _totalMemory = BaoyugameSdk.getTotalMemory();

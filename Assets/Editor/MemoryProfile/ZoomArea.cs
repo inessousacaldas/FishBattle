@@ -401,11 +401,11 @@ public class ZoomArea
     {
         area.x = 0;
         area.y = 0;
-        int id = GUIUtility.GetControlID(zoomableAreaHash, FocusType.Native, area);
+        int id = GUIUtility.GetControlID(zoomableAreaHash, FocusType.Passive, area);
 
         switch (Event.current.GetTypeForControl(id))
         {
-            case EventType.mouseDown:
+            case EventType.MouseDown:
                 if (area.Contains(Event.current.mousePosition))
                 {
                     // Catch keyboard control when clicked inside zoomable area
@@ -421,7 +421,7 @@ public class ZoomArea
                     }
                 }
                 break;
-            case EventType.mouseUp:
+            case EventType.MouseUp:
                 //Debug.Log("mouse-up!");
                 if (GUIUtility.hotControl == id)
                 {
@@ -433,7 +433,7 @@ public class ZoomArea
                     //Event.current.Use();
                 }
                 break;
-            case EventType.mouseDrag:
+            case EventType.MouseDrag:
                 if (GUIUtility.hotControl != id) break;
 
                 if (IsZoomEvent())
@@ -449,7 +449,7 @@ public class ZoomArea
                     Event.current.Use();
                 }
                 break;
-            case EventType.scrollWheel:
+            case EventType.ScrollWheel:
                 if (!area.Contains(Event.current.mousePosition))
                     break;
                 if (m_IgnoreScrollWheelUntilClicked && GUIUtility.keyboardControl != id)

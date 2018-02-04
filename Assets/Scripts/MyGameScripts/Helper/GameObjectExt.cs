@@ -61,7 +61,7 @@ public static class GameObjectExt
 
         if (root.childCount != 0)
         {
-            var childTransform = root.FindChild(childName);
+            var childTransform = root.Find(childName);
             if (childTransform != null)
             {
                 return childTransform;

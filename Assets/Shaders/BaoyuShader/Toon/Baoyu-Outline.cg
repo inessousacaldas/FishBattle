@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 
 float4 _OutlineColor;
 float  _EdgeThickness = 1.0;
@@ -13,7 +15,7 @@ struct v2f
 v2f vert(appdata_full v)
 {
 	v2f o;
-	o.pos =  mul(UNITY_MATRIX_MVP, v.vertex); 
+	o.pos =  UnityObjectToClipPos(v.vertex); 
 	half3 normal = mul((half3x3)UNITY_MATRIX_IT_MV, v.normal); 
 	half2 offset = TransformViewToProjection(normal.xy);
 	o.pos.xy += offset * _EdgeThickness;

@@ -1699,7 +1699,7 @@ namespace AssetPipeline
         {
             yield return www.Send();
 
-            if (www.isError)
+            if (www.isNetworkError)
             {
                 string error = string.Format("Load url:{0}\nerror:{1}", www.url, www.error);
                 if (onError != null)
@@ -1723,7 +1723,7 @@ namespace AssetPipeline
                 {
                     yield return www.Send();
 
-                    if (www.isError)
+                    if (www.isNetworkError)
                     {
                         if (retry >= maxRetry)
                         {
@@ -3057,7 +3057,7 @@ namespace AssetPipeline
                     Debug.Log("GameResource:Remove GameRes Folder: " + gameResDir);
                 }
 
-                Debug.Log("GameResource:Clean Cache " + Caching.CleanCache());
+                //Debug.Log("GameResource:Clean Cache " + Caching.CleanCache());
             }
             catch (Exception e)
             {

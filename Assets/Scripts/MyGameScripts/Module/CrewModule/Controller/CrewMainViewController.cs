@@ -153,11 +153,11 @@ public partial class CrewMainViewController
         {
             var listGo = _view.ListBtnGroup_Transform.GetChild(i);
             var listBtn = listGo.GetComponent<UIButton>();
-            var listSprite = listGo.FindChild("Sprite").GetComponent<UISprite>();
+            var listSprite = listGo.Find("Sprite").GetComponent<UISprite>();
 
             var tiledGo = _view.BtnGroup_Transform.GetChild(i);
             var tiledBtn = tiledGo.GetComponent<UIButton>();
-            var tiledSprite = tiledGo.FindChild("Sprite").GetComponent<UISprite>();
+            var tiledSprite = tiledGo.Find("Sprite").GetComponent<UISprite>();
 
             _mainBtnList.Add(listBtn);
             _tiledBtnList.Add(tiledBtn);
