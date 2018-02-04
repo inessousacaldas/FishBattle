@@ -70,7 +70,7 @@ public class SimpleWWW : MonoBehaviour
 							postHeader[header.Key] = header.Value;
 						}
 					}
-					postHeader.Add("Connection", "close");
+					//postHeader.Add("Connection", "close");
 					www = new WWW( request.requestURL, null, postHeader );
 				}					
 
