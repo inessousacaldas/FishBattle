@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using AssetPipeline;
 using UnityEngine;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// This is the model class for module GM, use this to manage the data of module GM.</p>
@@ -524,7 +525,8 @@ public class GMModel : IModuleModel
             new GMData("失败退出", OnLoseExit),
 
 #if UNITY_EDITOR
-            new GMData("技能编辑器", OnBattleSkillEditorClick)
+            new GMData("技能编辑器", OnBattleSkillEditorClick),            
+            new GMData("Fish技能编辑器", OnFishBattleSkillEditorClick),
 #endif
         });
         
@@ -858,7 +860,13 @@ public class GMModel : IModuleModel
         ProxyBattleSkillEditor.Open(ProxyBattleSkillEditorPreview.OpenPreview, ProxyBattleSkillEditorPreview.ReplayPreview, ProxyBattleSkillEditorPreview.ClosePreview);
         CloseView();
     }
-
+    
+    private void OnFishBattleSkillEditorClick()
+    {
+        SkillEditor.ProxySkillEditor.EnterSkillEditor();
+        CloseView();
+    }
+    
     private void CloseView()
     {
         UIModuleManager.Instance.CloseModule(NewGMView.NAME);
