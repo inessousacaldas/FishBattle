@@ -266,7 +266,7 @@ Transform:
   m_GameObject: {fileID: 1000014021819512}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.4}
+  m_LocalScale: {x: 1, y: 1, z: 0.3}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000011687243948}
@@ -3943,12 +3943,12 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       minMaxState: 0
     startSize:
-      scalar: 0.7
+      scalar: 0.4
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.5714286
+          value: 0.375
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -4207,25 +4207,20 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.27792245
-          inSlope: 1.4149542
-          outSlope: 1.4149542
-          tangentMode: 34
-        - time: 0.3429473
-          value: 0.76317716
-          inSlope: -0.0033192083
-          outSlope: -0.0033192083
-          tangentMode: 0
-        - time: 0.7157693
-          value: 0.35205352
-          inSlope: 0.0038742805
-          outSlope: 0.0038742805
-          tangentMode: 0
+          value: 0
+          inSlope: 42.119423
+          outSlope: 42.119423
+          tangentMode: 10
+        - time: 0.022505179
+          value: 0.9479051
+          inSlope: 42.119423
+          outSlope: 0.053294275
+          tangentMode: 21
         - time: 1
-          value: 0.8384844
-          inSlope: 0.98914295
-          outSlope: 0.98914295
-          tangentMode: 32
+          value: 1
+          inSlope: 0.053294275
+          outSlope: 0.053294275
+          tangentMode: 10
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 0
@@ -7870,10 +7865,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 3634036650
+          rgba: 3640655871
         key1:
           serializedVersion: 2
-          rgba: 2449517346
+          rgba: 2461073341
         key2:
           serializedVersion: 2
           rgba: 2013309730
@@ -7892,8 +7887,8 @@ ParticleSystem:
         key7:
           serializedVersion: 2
           rgba: 0
-        ctime0: 5975
-        ctime1: 47609
+        ctime0: 4241
+        ctime1: 5975
         ctime2: 47609
         ctime3: 65535
         ctime4: 0
@@ -7908,7 +7903,7 @@ ParticleSystem:
         atime5: 0
         atime6: 0
         atime7: 0
-        m_NumColorKeys: 2
+        m_NumColorKeys: 3
         m_NumAlphaKeys: 4
       minGradient:
         key0:
@@ -14081,7 +14076,7 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 0.13
+      scalar: 0.25
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -14716,10 +14711,10 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 4285464421
+          rgba: 4294967295
         key1:
           serializedVersion: 2
-          rgba: 4037607327
+          rgba: 4039245757
         key2:
           serializedVersion: 2
           rgba: 2024341407
@@ -14738,8 +14733,8 @@ ParticleSystem:
         key7:
           serializedVersion: 2
           rgba: 0
-        ctime0: 9445
-        ctime1: 65535
+        ctime0: 4241
+        ctime1: 9445
         ctime2: 65535
         ctime3: 65535
         ctime4: 0
@@ -14754,7 +14749,7 @@ ParticleSystem:
         atime5: 0
         atime6: 0
         atime7: 0
-        m_NumColorKeys: 2
+        m_NumColorKeys: 3
         m_NumAlphaKeys: 4
       minGradient:
         key0:
@@ -17808,7 +17803,7 @@ ParticleSystemRenderer:
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
-  m_SortingFudge: 20
+  m_SortingFudge: 30
   m_NormalDirection: 1
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
