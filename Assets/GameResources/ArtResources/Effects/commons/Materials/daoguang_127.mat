@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: daoguang_127
-  m_Shader: {fileID: 4800000, guid: 3437e8f40433cd34fb38522c01f5b76c, type: 3}
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -15,6 +15,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 2
     m_TexEnvs:
+    - first:
+        name: _Diss_Tex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - first:
         name: _MainTex
       second:
@@ -27,43 +33,25 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - first:
-        name: _Noise01
-      second:
-        m_Texture: {fileID: 2800000, guid: 887d45145f23c924a94ff8fca910e1ad, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _Noise02
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _Alpha
       second: 1
     - first:
-        name: _Disturbance
-      second: 1
+        name: _Color_Swith
+      second: 0
+    - first:
+        name: _Cutoff
+      second: 0.5
+    - first:
+        name: _Diss
+      second: 0
+    - first:
+        name: _Diss_Swith
+      second: 0
     - first:
         name: _InvFade
       second: 1
-    - first:
-        name: _Power
-      second: 2
-    - first:
-        name: _U_Speed
-      second: 0
-    - first:
-        name: _U_Speed_copy
-      second: 0
-    - first:
-        name: _V_Speed
-      second: 0
-    - first:
-        name: _V_Speed_copy
-      second: 0
     - first:
         name: _ZT
       second: 1

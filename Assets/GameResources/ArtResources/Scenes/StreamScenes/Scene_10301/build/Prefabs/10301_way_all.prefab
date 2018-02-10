@@ -9,34 +9,19 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1000011540561636}
+  m_RootGameObject: {fileID: 1000012395251570}
   m_IsPrefabParent: 1
---- !u!1 &1000011540561636
+--- !u!1 &1000011544488646
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 4000011188791048}
-  m_Layer: 0
-  m_Name: 10301_way_all
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1000014032994994
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 4000013707500548}
-  - 33: {fileID: 33000013389867336}
-  - 23: {fileID: 23000011163707184}
-  - 64: {fileID: 64000013140282708}
+  - 4: {fileID: 4000011488569678}
+  - 33: {fileID: 33000013001913266}
+  - 23: {fileID: 23000014166072758}
+  - 64: {fileID: 64000010350040460}
   m_Layer: 0
   m_Name: scene_shinei_bulaite_xingzouquyu_002
   m_TagString: Untagged
@@ -44,39 +29,54 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4000011188791048
+--- !u!1 &1000012395251570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011803563898}
+  m_Layer: 0
+  m_Name: 10301_way_all
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4000011488569678
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011540561636}
+  m_GameObject: {fileID: 1000011544488646}
+  m_LocalRotation: {x: 0, y: -0.8433915, z: 0, w: 0.5372996}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 4000011803563898}
+  m_RootOrder: 0
+--- !u!4 &4000011803563898
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012395251570}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 4000013707500548}
+  - {fileID: 4000011488569678}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!4 &4000013707500548
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014032994994}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children: []
-  m_Father: {fileID: 4000011188791048}
-  m_RootOrder: 0
---- !u!23 &23000011163707184
+--- !u!23 &23000014166072758
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014032994994}
+  m_GameObject: {fileID: 1000011544488646}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -100,19 +100,19 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &33000013389867336
+--- !u!33 &33000013001913266
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014032994994}
+  m_GameObject: {fileID: 1000011544488646}
   m_Mesh: {fileID: 4300000, guid: 47c667b31d6427a43b15c63ab1099195, type: 3}
---- !u!64 &64000013140282708
+--- !u!64 &64000010350040460
 MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000014032994994}
+  m_GameObject: {fileID: 1000011544488646}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
