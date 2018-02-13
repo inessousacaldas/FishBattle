@@ -76,7 +76,7 @@ public sealed partial class BattleDataManager
         if (_data._gameVideo == null)
             _data.ResetData();
 
-        _data._gameVideo = gv;
+        _data.GameVideo = gv;
 
         NeedPlayPlot = false;
         _data._watchTeamId = watchTeamId;
@@ -85,7 +85,7 @@ public sealed partial class BattleDataManager
             _data.ResetData();
         
         var isSameBattle = _data.IsSameBattle(gv.id);
-        _data._gameVideo = gv; 
+        _data.GameVideo = gv; 
         
         _data.isAIManagement = _data._gameVideo.needPlayerAutoBattle;
         _needRefreshBattle = needRefreshBattle;
@@ -265,7 +265,7 @@ public sealed partial class BattleDataManager
 //			{
 //				GameObject locationGO = new GameObject("TempLocationGO");
 //
-//				Vector3 position = SceneHelper.GetSceneStandPosition(new Vector3(0f, 0f, 0f), Vector3.zero);
+//				Vector3 position = Vector3.zero;
 //				locationGO.transform.position = position;
 //
 //				GamePlayer.CameraManager.DataMgr.SetupCamera (locationGO.transform, LayerManager.DataMgr.GameCameraGo);

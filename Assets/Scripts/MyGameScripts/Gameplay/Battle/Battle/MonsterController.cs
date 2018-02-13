@@ -857,38 +857,30 @@ public class MonsterController : MonoBehaviour
         }
     }
 
+    public void PlayAnimation(ModelHelper.AnimType name)
+    {
+        PlayAnimation(name, false, null);
+    }
+
     public void PlayAnimation(ModelHelper.AnimType name, Action<ModelHelper.AnimType, float> animClipCallBack = null)
     {
         PlayAnimation(name, false, animClipCallBack);
     }
-    
-    public void PlayAnimation(ModelHelper.AnimType name,bool forcePlay, Action<ModelHelper.AnimType, float> animClipCallBack = null )
+
+    private void PlayAnimation(ModelHelper.AnimType name,bool forcePlay, Action<ModelHelper.AnimType, float> animClipCallBack = null )
     {
         //if (name == ModelHelper.AnimType.battle && ShowLogEnable)
         //   GameDebuger.LogError("PlayIdleAnimation");
 
-        if (!forcePlay && !EnableToPlayAnimation(name))
-        {
-            if (null != animClipCallBack)
-                animClipCallBack(name,0);
-            return;
-        }
-
-        bool crossFade = false;
-
-        bool checkSameAnim = false;
+        var checkSameAnim = false;
 
         if (name == ModelHelper.AnimType.randomAttack)
         {
             name = ModelDisplayController.AttackAnimationClipList.Random();
         }
 
-        if (name == ModelHelper.AnimType.death)
-        {
-            checkSameAnim = true;
-        }
-
-        if (name == ModelHelper.AnimType.battle)
+        if (name == ModelHelper.AnimType.death
+            || name == ModelHelper.AnimType.battle)
         {
             checkSameAnim = true;
         }
@@ -901,28 +893,19 @@ public class MonsterController : MonoBehaviour
 
         if (!forcePlay && _modelDisplayer.IsAnimatorReady())
         {
-            AnimatorStateInfo animatorState =
+            var animatorState =
                 _modelDisplayer.GetCurrentAnimatorStateInfo(ModelHelper.Animator_Layer_BattleLayer);
-            if (animatorState.IsName(ModelHelper.AnimType.hit.ToString())/** || animatorState.IsName(ModelHelper.AnimType.hit2*/)
+            if (animatorState.IsName(ModelHelper.AnimType.hit.ToString())/** || animatorState.IsName(ModelHelper.AnimType.hit2*/
+                && name == ModelHelper.AnimType.battle)
             {
-                if (name == ModelHelper.AnimType.battle)
-                {
-                    return;
-                }
+                return;
             }
-        } 
-
-        _modelDisplayer.PlayAnimateWithCallback(name, crossFade, animClipCallBack, checkSameAnim,
+        }
+        
+        _modelDisplayer.PlayAnimateWithCallback(name, false, animClipCallBack, checkSameAnim,
             ModelHelper.Animator_Layer_BattleLayer);
     }
     
-    private bool EnableToPlayAnimation(ModelHelper.AnimType action)
-    {
-        if (null == battleMonsterBuff || action == ModelHelper.AnimType.death)
-            return true;
-        return battleMonsterBuff.EnableToPlayAnimation(action);
-    }
-
 
     protected void Initialize()
     {
@@ -2551,4 +2534,8 @@ public class MonsterController : MonoBehaviour
         return tBattleSkillEffectInfo.MainEffectTime;
     }
 
+    public void Rotate(Vector3 turnOffset)
+    {
+        _mTrans.eulerAngles += turnOffset;
+    }
 }

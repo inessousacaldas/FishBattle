@@ -13,19 +13,17 @@
 	public string AttackerDirections;
 	/**（多段攻击的）攻击时长列表*/
 	public string AttackerDurations;
-	static public BaseActionInfo ToBaseActionInfo(JsonActionInfo json)
+
+	public override void FillInfo(JsonActionInfo json)
 	{
-		NormalActionInfo info = new NormalActionInfo ();
-		info.FillInfo (json);
-		info.startTime = json.startTime;
-		info.delayTime = json.delayTime;
+		base.FillInfo(json);
+		startTime = json.startTime;
+		delayTime = json.delayTime;
 		
-		info.AnimationChangeable = json.AnimationChangeable;
-		info.AttackerActions = json.AttackerActions;
-		info.AttackerDirections = json.AttackerDirections;
-		info.AttackerDurations = json.AttackerDurations;
-		
-		return info;
+		AnimationChangeable = json.AnimationChangeable;
+		AttackerActions = json.AttackerActions;
+		AttackerDirections = json.AttackerDirections;
+		AttackerDurations = json.AttackerDurations;
 	}
 }
 

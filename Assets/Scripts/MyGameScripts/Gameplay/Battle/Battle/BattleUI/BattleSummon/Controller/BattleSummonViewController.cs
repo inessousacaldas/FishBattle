@@ -25,18 +25,19 @@ public class BattleSummonData: IBattleSummomData
 {
     private List<IBattleCrewData> _crewDataList;
     private int _fightedTimes;  // 已召唤次数
-    
+    private int _total;
     public IEnumerable<IBattleCrewData> GetCrewDataList {get { return _crewDataList; } }
     public int GetFightTimes { get { return _fightedTimes; } }
     public int Total {
-        get { return _crewDataList.TryGetLength(); }
+        get { return _total; }
     }
 
-    public static IBattleSummomData Create(List<IBattleCrewData> datalist, int times)
+    public static IBattleSummomData Create(List<IBattleCrewData> datalist, int times, int total)
     {
         BattleSummonData data = new BattleSummonData();
         data._crewDataList = datalist;
         data._fightedTimes = times;
+        data._total = total;
         return data;
     }
 }
@@ -117,9 +118,17 @@ public partial class BattleSummonViewController
                 ShowCrewInfo(crewInfoDto.GetCrewInfoDto);
                 _crewItemList.ForEachI((go, idx) => { go.IsSelect(index == idx); });
             }));
+            item.IsSelect(false);
         }
         _view.PetListGrid_UIGrid.Reposition();
-        ShowCrewInfo(datalist.TryGetValue(0).GetCrewInfoDto);
+        var crewDto = datalist.TryGetValue(0);
+        if (crewDto != null)
+        {
+            ShowCrewInfo(crewDto.GetCrewInfoDto);
+            _crewItemList.TryGetValue(0).IsSelect(true);
+        }
+        else
+            _view.LeftSprite.SetActive(false);
 
         _view.BattleInfoLabel_UILabel.text = string.Format("本场已出战:{0}/{1}", data.GetFightTimes, data.Total);
     }
@@ -129,6 +138,7 @@ public partial class BattleSummonViewController
         if (dto == null || dto.id == _selectCrewId)
             return;
 
+        _view.LeftSprite.SetActive(true);
         var crew = DataCache.getDtoByCls<GeneralCharactor>(dto.crewId) as Crew;
         if (crew == null)
         {

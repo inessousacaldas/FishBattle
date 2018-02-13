@@ -2,7 +2,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using AssetPipeline;
+using Fish;
+using Newtonsoft.Json;
 using AnimType = ModelHelper.AnimType;
+using JsonC = Newtonsoft.Json.JsonConvert;
 
 namespace SkillEditor
 {
@@ -94,13 +97,11 @@ namespace SkillEditor
 
         private void UpdateFontSize(int pTempSize)
         {
-            if (GUI.changed && mFontSize != pTempSize)
-            {
-                mFontSize = pTempSize;
-                GUI.skin.toggle.fontSize = GUI.skin.textField.fontSize = GUI.skin.textArea.fontSize = GUI.skin.scrollView.fontSize = 
-                                GUI.skin.box.fontSize = GUI.skin.label.fontSize = GUI.skin.button.fontSize = mFontSize;
-                SaveFontSizeConfig();
-            }
+            if (!GUI.changed || mFontSize == pTempSize) return;
+            mFontSize = pTempSize;
+            GUI.skin.toggle.fontSize = GUI.skin.textField.fontSize = GUI.skin.textArea.fontSize = GUI.skin.scrollView.fontSize = 
+                GUI.skin.box.fontSize = GUI.skin.label.fontSize = GUI.skin.button.fontSize = mFontSize;
+            SaveFontSizeConfig();
         }
 
         private int _newSkillId = 0;
@@ -431,7 +432,6 @@ namespace SkillEditor
                         DrawActionInfoView(actionInfo,true);
                         GUILayout.Space(5f);
                     }
-
                 }
 
                 GUILayout.Space(10f);
@@ -534,30 +534,30 @@ namespace SkillEditor
 
         private void LoadConfig()
         {
-            JsonBattleConfigInfo configInfo = FileHelper.ReadJsonFile<JsonBattleConfigInfo>(BattleConfig_Path, false);
-
-            if (configInfo != null)
+            var cfgJsonStr = System.IO.File.ReadAllText(BattleConfig_Path);
+            //TODO franky to be delete checking
+            if (cfgJsonStr.Contains("$type"))
             {
-                JsonSkillConfigInfo[] list = configInfo.list.ToArray();
-                Array.Sort(list, delegate(JsonSkillConfigInfo x, JsonSkillConfigInfo y)
-                    {
-                        if (x.id >= y.id)
-                        {
-                            return 1;
-                        }
-                        else
-                        {
-                            return -1;
-                        }
-                    }); 
+                var newCfg = JsonC.DeserializeObject<BattleConfigInfo>(cfgJsonStr);
+                if (newCfg == null) return;
                 _configInfoDic.Clear();
-                SkillConfigInfo tSkillConfigInfo = null;
-                foreach (JsonSkillConfigInfo info in list)
-                {
-                    tSkillConfigInfo = info.ToSkillConfigInfo();
-                    SortSkillConfigInfoByTime(tSkillConfigInfo);
-                    _configInfoDic.Add(tSkillConfigInfo);
-                }
+                newCfg.list.Sort((x, y) => (x.id - y.id));
+                _configInfoDic = newCfg.list;
+                return;
+            }
+
+            var configInfo = JsonC.DeserializeObject<JsonBattleConfigInfo>(cfgJsonStr);
+
+            if (configInfo == null) return;
+            var list = configInfo.list.ToArray();
+            Array.Sort(list, (x,y)=> (x.id - y.id)); 
+            _configInfoDic.Clear();
+            SkillConfigInfo tSkillConfigInfo = null;
+            foreach (JsonSkillConfigInfo info in list)
+            {
+                tSkillConfigInfo = info.ToSkillConfigInfo();
+                SortSkillConfigInfoByTime(tSkillConfigInfo);
+                _configInfoDic.Add(tSkillConfigInfo);
             }
         }
 
@@ -565,19 +565,28 @@ namespace SkillEditor
         {
             if (IsSkillListInited)
             {
-                BattleConfigInfo configInfo = new BattleConfigInfo();
-                configInfo.time = (DateTime.UtcNow.Ticks / 10000).ToString();
-                configInfo.list = _configInfoDic.ToList();
+                var configInfo = new BattleConfigInfo
+                {
+                    time = (DateTime.UtcNow.Ticks / 10000).ToString(),
+                    list = _configInfoDic.ToList()
+                };
 
-                FileHelper.SaveJsonObj(configInfo, BattleConfig_Path, false);
+                // use new json formmat
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    DefaultValueHandling = DefaultValueHandling.Ignore,
+                };
+                jsonSerializerSettings.Converters.Add(new UnityVector3JsonConverter());
+                
+                var jsonStr = JsonC.SerializeObject(configInfo,
+                    Formatting.Indented,
+                    jsonSerializerSettings);
+                FileHelper.SaveJsonText(jsonStr,BattleConfig_Path,false);
 
                 return true;
             }
-            else
-            {
-                Debug.LogError("Battle Config is Empty!");
-                return false;
-            }
+            Debug.LogError("Battle Config is Empty!");
+            return false;
         }
 
         private void LoadFontSizeConfig()
@@ -634,7 +643,7 @@ namespace SkillEditor
             if (GUIHelper.DrawButton("加", GUILayout.Width(30), GUILayout.Height(GUIHelper.DEFAULT_SCROLLVIEW_BTN_HEIGHT)))
             {
 
-                BaseActionInfo actionInfo = GetAddActionInfo();
+                var actionInfo = GetAddActionInfo();
                 if (actionInfo != null)
                 {
                     if (_skillConfigInfo.attackerActions.Contains(info))

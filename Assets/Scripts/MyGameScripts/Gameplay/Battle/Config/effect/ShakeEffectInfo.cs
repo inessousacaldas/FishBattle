@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//using UnityEngine;
+
+using UnityEngine;
 
 public class ShakeEffectInfo : BaseEffectInfo
 {

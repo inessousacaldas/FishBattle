@@ -4,13 +4,11 @@
 	
 	public float time; //move'speed
 
-	static public BaseActionInfo ToBaseActionInfo(JsonActionInfo json)
+
+	public override void FillInfo(JsonActionInfo info)
 	{
-		MoveBackActionInfo info = new MoveBackActionInfo ();
-		info.FillInfo (json);
-		info.time = json.time;
-		
-		return info;
+		base.FillInfo(info);
+		time = info.time;
 	}
 }
 

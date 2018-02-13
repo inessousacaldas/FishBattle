@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using AssetPipeline;
+using JsonC = Newtonsoft.Json.JsonConvert;
 
 public sealed class BattleConfigManager
 {
@@ -24,27 +26,48 @@ public sealed class BattleConfigManager
 
     public void Setup()
     {
-        ResourcePoolManager.Instance.LoadConfig("BattleConfig", (asset) => {
-			if (asset != null) {
-				TextAsset textAsset = asset as TextAsset;
-				if (textAsset != null) {
-					JsonBattleConfigInfo config = JsHelper.ToObject<JsonBattleConfigInfo> (textAsset.text);
-					if (config != null) {
-						_configDict.Clear ();
-						for (int i=0,len=config.list.Count; i<len; i++)
-						{
-							JsonSkillConfigInfo info = config.list[i];
-							if(_configDict.ContainsKey(info.id))
-                                GameDebuger.LogError(string.Format("[错误]BattleConfig这个ID已存在，策划赶紧改下。id:{0},name:{1}",info.id,info.name));
-							else
-								_configDict.Add (info.id, info.ToSkillConfigInfo ());
-						}
-					}
-				}
-			}
-		});
-    }
+	    ResourcePoolManager.Instance.LoadConfig("BattleConfig", (asset) => {
+		    if (asset == null) return;
+		    var textAsset = asset as TextAsset;
+		    if (textAsset == null) return;
+		    var cfgJsonStr = textAsset.text;
+		    //TODO franky to be delete checking
+		    if (cfgJsonStr.Contains("$type"))
+		    {
+			    var newCfg = JsonC.DeserializeObject<BattleConfigInfo>(cfgJsonStr);
+			    if (newCfg == null) return;
+			    _configDict.Clear();
+			    newCfg.list.Sort((x, y) => (x.id - y.id));
+			    newCfg.list.ForEach(info =>
+			    {
+				    if(_configDict.ContainsKey(info.id))
+					    GameDebuger.LogError(string.Format("[错误]BattleConfig这个ID已存在，策划赶紧改下。id:{0},name:{1}",info.id,info.name));
+				    else{
+					    _configDict.Add (info.id, info);
+				    }				    
+			    });
+			    return;
+		    }
+		    var config = JsonC.DeserializeObject<JsonBattleConfigInfo> (cfgJsonStr);
+		    if (config == null) return;
+		    _configDict.Clear ();
 
+		    var list = config.list.ToArray();
+		    Array.Sort(list, (x, y) => (x.id - y.id)); 
+
+		    //SkillConfigInfo tSkillConfigInfo = null;
+		    list.ForEach(info =>
+		    {
+			    if(_configDict.ContainsKey(info.id))
+				    GameDebuger.LogError(string.Format("[错误]BattleConfig这个ID已存在，策划赶紧改下。id:{0},name:{1}",info.id,info.name));
+			    else{
+				    //tSkillConfigInfo = info.ToSkillConfigInfo();
+//                                SortSkillConfigInfoByTime(tSkillConfigInfo);
+				    _configDict.Add (info.id, info.ToSkillConfigInfo ());
+			    }
+		    });
+	    });
+    }
 
 	public SkillConfigInfo getSkillConfigInfo(int skillID)
 	{

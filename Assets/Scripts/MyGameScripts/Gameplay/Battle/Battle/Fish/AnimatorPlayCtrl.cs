@@ -1,18 +1,16 @@
-﻿using UnityEngine;
-
-namespace Fish
+﻿namespace Fish
 {
-    public class TweenPlayCtl:BattlePlayCtlBasic
+    public class AnimatorPlayCtrl : BattlePlayCtlBasic
     {
         private readonly float duaration;
-        private readonly Vector3 pos;
         private readonly MonsterController mc;
-
-        public TweenPlayCtl(MonsterController mc, Vector3 pos, float duaration)
+        private readonly ModelHelper.AnimType animType;
+        // 时间由配置表读入
+        public AnimatorPlayCtrl(MonsterController mc, float duaration, ModelHelper.AnimType animType)
         {
             this.mc = mc;
-            this.pos = pos;
             this.duaration = duaration;
+            this.animType = animType;
         }
 
         protected override IPlayFinishedState GenFinishedState()
@@ -21,10 +19,10 @@ namespace Fish
             var errCode = !started
                 ? PlayErrState.NotStarted
                 : mc == null
-                ? PlayErrState.Exception
-                : CurrentProgress() < duaration
-                ? PlayErrState.NotFinished
-                : PlayErrState.Success;
+                    ? PlayErrState.Exception
+                    : CurrentProgress() < duaration
+                        ? PlayErrState.NotFinished
+                        : PlayErrState.Success;
             return new SimplePlayFinishedState(errCode);
         }
 
@@ -35,7 +33,7 @@ namespace Fish
 
         protected override void CustomStart()
         {
-            mc.DoMove(pos, duaration);
+            mc.PlayAnimation(animType);
         }
     }
 }

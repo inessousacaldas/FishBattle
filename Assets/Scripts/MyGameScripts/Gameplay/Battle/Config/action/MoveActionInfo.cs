@@ -6,14 +6,11 @@
 	public float distance;
 	public bool center;
 
-	static public BaseActionInfo ToBaseActionInfo(JsonActionInfo json)
+	public override void FillInfo(JsonActionInfo json)
 	{
-		MoveActionInfo info = new MoveActionInfo ();
-		info.FillInfo (json);
-		info.time = json.time;
-		info.distance = json.distance;
-		info.center = json.center;
-
-		return info;
+		base.FillInfo(json);
+		time = json.time;
+		distance = json.distance;
+		center = json.center;		
 	}
 }

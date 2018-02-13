@@ -439,50 +439,57 @@ public sealed partial class BattleDataManager
 
         private static void OnCallCrewBtn_UIButtonClick(IBattleDemoViewController ctrl)
         {
-            var summonCtrl = ctrl.ShowBattleSummonPanel();
             var crewDataList = CrewViewDataMgr.DataMgr.GetCrewListInfo();
-            CrewViewDataMgr.CrewViewNetMsg.ResCrewList(() =>
+            if (!crewDataList.ToList().Any())
             {
-                var playerInfoDto = DataMgr._data._gameVideo.playerInfos.Find(info=>info.playerId == ModelManager.IPlayer.GetPlayerId());
-                var cnt = 4 - DataMgr._data.usableCallTime;
-                Func<long, bool> p = null;
-                if (playerInfoDto == null || playerInfoDto.allCrewSoldierIds.IsNullOrEmpty())
-                     p = (id) => true ;
-                else
-                     p = (id) => playerInfoDto.allCrewSoldierIds.IndexOf(id) < 0;
-
-                crewDataList = CrewViewDataMgr.DataMgr.GetCrewListInfo().Filter(d=>
-                    p(d.id)
-                    );
-
-                var l = crewDataList.ToList();
-                    l.Sort((x, y) =>
-                    {
-                        if (x.grade != y.grade)
-                            return y.grade - x.grade;
-                        return (int) (x.id - y.id);
-                    });
-                summonCtrl.OpenSummonView(CrewBattleSummonData(l, Math.Min(cnt, l.Count)));
-                _disposable.Add(summonCtrl.OnSummonBtnHandler.Subscribe(id => { OnSummonPet(id); }));
-            });
-            //var crewDataList = CrewViewDataMgr.DataMgr.GetCrewListInfo();
-            //if (crewDataList.Any())
-            //{
-            //    CrewViewDataMgr.CrewViewNetMsg.ResCrewList(() =>
-            //    {
-            //        crewDataList = CrewViewDataMgr.DataMgr.GetCrewListInfo();
-            //        summonCtrl.OpenSummonView(CrewBattleSummonData(crewDataList, 0));
-            //        _disposable.Add(summonCtrl.OnSummonBtnHandler.Subscribe(id => { OnSummonPet(id); }));
-            //    });
-            //}
-            //else
-            //{
-            //    summonCtrl.OpenSummonView(CrewBattleSummonData(crewDataList, 0));
-            //    _disposable.Add(summonCtrl.OnSummonBtnHandler.Subscribe(id => { OnSummonPet(id); }));
-            //}
+                CrewViewDataMgr.CrewViewNetMsg.ResCrewList(() =>
+                {
+                    ShowBattleSummonPanel(ctrl);
+                });
+            }
+            else
+            {
+                ShowBattleSummonPanel(ctrl);
+            }
         }
 
-        private static IBattleSummomData CrewBattleSummonData(IEnumerable<CrewInfoDto> dataList, int fightTimes)
+        private static void ShowBattleSummonPanel(IBattleDemoViewController ctrl)
+        {
+            var crewDataList = CrewViewDataMgr.DataMgr.GetCrewListInfo();
+            var playerInfoDto =
+                        DataMgr._data._gameVideo.playerInfos.Find(
+                            info => info.playerId == ModelManager.IPlayer.GetPlayerId());
+            var cnt = 4 - DataMgr._data.usableCallTime;
+            Func<long, bool> p = null;
+            if (playerInfoDto == null)
+                p = (id) => true;
+            else
+                p = (id) => playerInfoDto.allCrewSoldierIds.IndexOf(id) < 0;
+
+            crewDataList = CrewViewDataMgr.DataMgr.GetCrewListInfo().Filter(d =>
+                p(d.id)
+                );
+
+            var l = crewDataList.ToList();
+            l.Sort((x, y) =>
+            {
+                if (x.grade != y.grade)
+                    return y.grade - x.grade;
+                return (int)(x.id - y.id);
+            });
+            if (l.Count == 0)
+            {
+                TipManager.AddTip("没有可以召唤的伙伴");
+            }
+            else
+            {
+                var summonCtrl = ctrl.ShowBattleSummonPanel();
+                summonCtrl.OpenSummonView(CrewBattleSummonData(l, cnt, 4));
+                _disposable.Add(summonCtrl.OnSummonBtnHandler.Subscribe(id => { OnSummonPet(id); }));
+            }
+        }
+
+        private static IBattleSummomData CrewBattleSummonData(IEnumerable<CrewInfoDto> dataList, int fightTimes, int total)
         {
             var crewDataList = new List<IBattleCrewData>();
             dataList.ForEach(d =>
@@ -491,7 +498,7 @@ public sealed partial class BattleDataManager
                 var crewdata = BattleCrewData.Create(d, state);
                 crewDataList.Add(crewdata);
             });
-            var battleSummomData = BattleSummonData.Create(crewDataList, fightTimes);
+            var battleSummomData = BattleSummonData.Create(crewDataList, fightTimes, total);
             return battleSummomData;
         }
         #endregion

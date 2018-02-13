@@ -17,8 +17,6 @@ public class BattleMonsterBuff : MonoBehaviour
 
     private MonsterController _monsterController;
 
-    private Dictionary<int,string> mBuffSpecialActionDic;
-
     private const string MCDTASKNAME_FORMAT = "BuffCoolDown_PlayerID_{0}_BuffID_{1}";
 
     public void SetMonster(MonsterController monsterController)
@@ -204,11 +202,6 @@ public class BattleMonsterBuff : MonoBehaviour
     {
         buffList = null;
         _monsterController = null;
-    }
-
-    public bool EnableToPlayAnimation(ModelHelper.AnimType action)
-    {
-        return null == mBuffSpecialActionDic || mBuffSpecialActionDic.Count <= 0;
     }
 }
 

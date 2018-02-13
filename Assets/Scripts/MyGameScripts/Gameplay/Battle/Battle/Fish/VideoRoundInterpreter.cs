@@ -6,11 +6,6 @@ namespace Fish
 {
     public class VideoRoundInterpreter
     {
-        private SkillConfigInfo GetSkillConfig(VideoSkillAction vsAct)
-        {
-            throw new NotImplementedException();
-        }
-
         public IBattlePlayCtl InterpreteVideoRound(VideoRound vRound)
         {
             if (vRound.skillActions.IsNullOrEmpty())
@@ -27,11 +22,17 @@ namespace Fish
                 var playCtl = InterpreteVideoSkillAction(sAct);
                 allSubPlayCtl.Add(playCtl);
             }
-            var combined = new ParallCompositePlayCtl(allSubPlayCtl);
+            var combined = new SeqCompositePlayCtl(allSubPlayCtl);
 
             var overPlayCtl = InterpreteFightOver(vRound);
 
             return combined.Chain(overPlayCtl);
+        }
+
+        private SkillConfigInfo GetSkillConfig(VideoSkillAction vsAct)
+        {
+            //TODO 有特殊情况再说 GameVideoGeneralActionPlayer.DoSkillAction line : 169
+            return BattleConfigManager.Instance.getSkillConfigInfo(vsAct.skillId);
         }
 
         private IBattlePlayCtl InterpreteFightOver(VideoRound vRound)
@@ -39,14 +40,22 @@ namespace Fish
             throw new NotImplementedException();
         }
 
+        private IBattlePlayCtl InterpreteSkillName(VideoSkillAction vsAct)
+        {
+            //TODO ShowSkillNameAndAction
+            throw new NotImplementedException();
+        }
+
         private IBattlePlayCtl InterpreteVideoSkillAction(VideoSkillAction vsAct)
         {
+            //reference : GameVideoGeneralActionPlayer.DoSkillAction
+            var skill = DataCache.getDtoByCls<Skill>(vsAct.skillId);
+            var skillCfg = GetSkillConfig(vsAct);
             if (vsAct.actionSoldierId == 0)
             {
-                return InterpreteTargetStateGroupList(vsAct.targetStateGroups);
+                return InterpreteTargetStateGroupList(vsAct.targetStateGroups, skillCfg, skill);
             }
             
-            var skill = DataCache.getDtoByCls<Skill>(vsAct.skillId);
 
             if (skill == null)
             {
@@ -54,7 +63,6 @@ namespace Fish
                 return null;
             }
             
-            var skillCfg = GetSkillConfig(vsAct);
             if (skillCfg == null)
             {
                 GameLog.Log_BattleError("invalid skillActions: skill config not found"+vsAct.skillId);
@@ -63,48 +71,47 @@ namespace Fish
 
             var playSkillNameCtl = InterpreteSkillName(vsAct);
             
-            var combined = InterpreteTargetStateGroupList(vsAct.targetStateGroups);
+            var combined = InterpreteTargetStateGroupList(vsAct.targetStateGroups,skillCfg,skill);
 
             return playSkillNameCtl.Chain(combined);
         }
 
-        private IBattlePlayCtl InterpreteSkillName(VideoSkillAction vsAct)
-        {
-            throw new NotImplementedException();
-        }
-
-        private IBattlePlayCtl InterpreteTargetStateGroupList(List<VideoTargetStateGroup> vsActTargetStateGroups)
+        private IBattlePlayCtl InterpreteTargetStateGroupList(List<VideoTargetStateGroup> vsActTargetStateGroups,
+            SkillConfigInfo skillCfg, Skill skill)
         {
             //reference: BattleStateHandler.HandleBattleStateGroup
             var allSubPlayCtl = new List<IBattlePlayCtl>(vsActTargetStateGroups.Count);
             for (var i = 0; i < vsActTargetStateGroups.Count; i++)
             {
                 var targetStateGroup = vsActTargetStateGroups[i];
-                var targetPlayCtl = InterpreteTargetStateGroup(targetStateGroup);
+                var targetPlayCtl = InterpreteTargetStateGroup(targetStateGroup,skillCfg,skill);
                 allSubPlayCtl.Add(targetPlayCtl);
             }
             var combined = new ParallCompositePlayCtl(allSubPlayCtl);
             return combined;
         }
 
-        private IBattlePlayCtl InterpreteTargetStateGroup(VideoTargetStateGroup targetStateGroup)
+        private IBattlePlayCtl InterpreteTargetStateGroup(VideoTargetStateGroup targetStateGroup,
+            SkillConfigInfo skillCfg, Skill skill)
         {
             var videoTargetStates = targetStateGroup.targetStates;
             var allSubPlayCtl = new List<IBattlePlayCtl>(videoTargetStates.Count);
             for (var i = 0; i < videoTargetStates.Count; i++)
             {
                 var targetState = videoTargetStates[i];
-                var targetPlayCtl = InterpreteTargetState(targetState);
+                var targetPlayCtl = InterpreteTargetState(targetState,targetStateGroup,skillCfg,skill);
                 allSubPlayCtl.Add(targetPlayCtl);
             }
             var combined = new ParallCompositePlayCtl(allSubPlayCtl);
             return combined;
         }
 
-        private IBattlePlayCtl InterpreteTargetState(VideoTargetState targetState)
+        private IBattlePlayCtl InterpreteTargetState(VideoTargetState targetState,
+            VideoTargetStateGroup targetStateGroup, SkillConfigInfo skillCfg, Skill skill)
         {
+            //reference: BattleStateHandler.PlayState
             //for each type of VideoTargetState, do their own interpretation!
-            return targetState.Interprete();
+            return targetState.Interpret(targetStateGroup,skillCfg,skill);
         }
     }
 }

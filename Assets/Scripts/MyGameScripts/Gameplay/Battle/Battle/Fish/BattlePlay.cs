@@ -74,13 +74,15 @@ namespace Fish
 
         private BattlePlayingState _playState;
 
-        protected MonsterController _mc;
-        //TODO invoke by timer
+        private JSTimer.TimerTask _timer;
+        private readonly int _instaceId = ++_customInstanceId;
+        private static int _customInstanceId;
+
+        //invoke by timer
         void Update()
         {
             if (_playState != BattlePlayingState.Started) return;
-            //TODO update _elapseTime
-
+            _elapseTime = _timer.ElapseTime;
             if (_elapseTime > Duaration())
             {
                 var playFinishedState = GenFinishedState();
@@ -92,13 +94,20 @@ namespace Fish
         protected void CallOnEnd(IPlayFinishedState playFinishedState)
         {
             GameUtil.SafeRun(OnEnd, playFinishedState);
-            
             _playState = BattlePlayingState.Pause;
         }
 
         private void StartTimer()
         {
-            //TODO might need to tell timer to start
+            DisposeTimer();
+            _timer = JSTimer.Instance.SetupTimer(GetType().ToString()+_instaceId, Update);
+        }
+
+        private void DisposeTimer()
+        {
+            if (_timer == null) return;
+            _timer.Cancel();
+            _timer = null;
         }
 
         protected bool IsStarted()
@@ -123,6 +132,8 @@ namespace Fish
             if (_playState == BattlePlayingState.Dispose) return null;
             _elapseTime = 0;
             _playState = BattlePlayingState.Pause;
+            DisposeTimer();
+            
             var playFinishedState = CustomCancel();
             return playFinishedState;
         }
@@ -135,9 +146,9 @@ namespace Fish
         public void Dispose()
         {
             if (_playState == BattlePlayingState.Dispose) return;
-            
             CustomDispose();
             OnEnd = null;
+            DisposeTimer();
             _playState = BattlePlayingState.Dispose;
         }
 
@@ -189,22 +200,7 @@ namespace Fish
             return _duration;
         }
     }
-
-    public class SimplePlayFinishedState : IPlayFinishedState
-    {
-        private readonly PlayErrState _st;
-
-        public SimplePlayFinishedState(PlayErrState st)
-        {
-            _st = st;
-        }
-
-        public PlayErrState LastError()
-        {
-            return _st;
-        }
-    }
-
+    
     //顺序复合多个动画
     public class SeqCompositePlayCtl : BattlePlayCtlBasic
     {
@@ -251,12 +247,10 @@ namespace Fish
 
         protected override void CustomStart()
         {
-            if (_playIdx < _playCtlList.Length)
-            {
-                var battlePlay = _playCtlList[_playIdx];
-                battlePlay.OnEnd += NextPlay;
-                battlePlay.Play();
-            }
+            if (_playIdx >= _playCtlList.Length) return;
+            var battlePlay = _playCtlList[_playIdx];
+            battlePlay.OnEnd += NextPlay;
+            battlePlay.Play();
         }
 
         private void NextPlay(IPlayFinishedState lastPlayState)
@@ -309,22 +303,6 @@ namespace Fish
             _abnormalList = null;
             _playIdx = 0;
             return currentAb.IsNullOrEmpty() ? null : new MultiPlayFinishedState(PlayErrState.Exception, _abnormalList);
-        }
-    }
-
-    //多个动画复合的完成状态
-    public class MultiPlayFinishedState : SimplePlayFinishedState
-    {
-        private readonly ICollection<Tuple<int, IPlayFinishedState>> _errLst;
-
-        public MultiPlayFinishedState(PlayErrState st, ICollection<Tuple<int, IPlayFinishedState>> errLst) : base(st)
-        {
-            _errLst = errLst;
-        }
-
-        public ICollection<Tuple<int, IPlayFinishedState>> GetErrorList()
-        {
-            return _errLst;
         }
     }
 
@@ -545,12 +523,10 @@ namespace Fish
         private void BranchEnd(IPlayFinishedState obj)
         {
             _branchThread.OnEnd -= BranchEnd;
-            if (obj != null)
+            if (obj == null) return;
+            if (obj.LastError() != PlayErrState.Success)
             {
-                if (obj.LastError() != PlayErrState.Success)
-                {
-                    _branchError = obj;
-                }
+                _branchError = obj;
             }
         }
 
@@ -578,3 +554,98 @@ namespace Fish
         }
     }
 }
+/*
+{
+      "$type": "SkillConfigInfo, Assembly-CSharp",
+      "id": 1329,
+      "name": "普攻",
+      "attackerActions": [
+        {
+          "$type": "MoveActionInfo, Assembly-CSharp",
+		  var totalDis = Vector3.Distance(_mTrans.position, position);
+		  var time = totalDis /(catchMode ? ModelHelper.DefaultBattleCatchSpeed * (turn ? 2f : 1f) : ModelHelper.DefaultBattleModelSpeed);
+          "distance": 1.8,
+          "type": "move",
+          "name": "forward",
+          "effects": []
+        },
+        {
+          "$type": "NormalActionInfo, Assembly-CSharp",
+		  anim.GetClipLength(action.ToString())//actack animation
+		  should config Dao Guang
+		  PlayDaoGuangEffect(_mc, tActionName);
+          "type": "normal",
+          "name": "attack",
+          "effects": [
+            {
+              "$type": "TakeDamageEffectInfo, Assembly-CSharp",
+			  PlayInjureHandle(ids[i], i, mAttacker);
+			  no timing
+              "type": "TakeDamage"
+            },
+            {
+              "$type": "NormalEffectInfo, Assembly-CSharp",
+            var normalEffectInfo = (NormalEffectInfo)node;
+            if (_isAttack == false)
+            {
+                bool hasDodge = HasVideoDodgeTargetState(_stateGroup.targetStates);
+                if (hasDodge && normalEffectInfo.hitEff)
+                    return;
+            }
+            PlayNormalEffect(normalEffectInfo);
+			
+			PlaySpecialEffect(node, skillName, _mc, mc, clientSkillScale);
+			
+			default time of effect is 5
+              "name": "skill_eff_1329_att",
+              "mount": "Mount_Shadow",
+              "faceToTarget": true,
+              "type": "Normal"
+            }
+          ]
+        },
+        {
+          "$type": "MoveBackActionInfo, Assembly-CSharp",
+          var totalDis = Vector3.Distance(_mTrans.position, position);
+          time = totalDis / (catchMode ? ModelHelper.DefaultBattleCatchSpeed : ModelHelper.DefaultBattleModelSpeed);
+
+          "type": "moveBack",
+          "name": "forward",
+          "effects": []
+        }
+      ],
+      "injurerActions": [
+        {
+          "$type": "NormalActionInfo, Assembly-CSharp",
+			  float delayTime = node.delayTime;
+			  if (actionName == ModelHelper.AnimType.hit)
+              {
+              //这里要特殊处理，因为防御动作结束后不需要播放hit， 需要直接回到battle
+              delayTime += 0.3f;
+              }
+          "startTime": 0.8,
+          "delayTime": 0.166666,
+          "type": "normal",
+          "effects": [
+            {
+              "$type": "ShowInjureEffectInfo, Assembly-CSharp",
+			  ShowInjureEffect(ShowInjureEffectInfo node)
+			  no timing
+              "type": "ShowInjure",
+              "playTime": 0.8
+            },
+            {
+              "$type": "NormalEffectInfo, Assembly-CSharp",
+              "name": "skill_eff_1329_hit",
+              "mount": "Mount_Hit",
+              "hitEff": true,
+              "type": "Normal",
+              "playTime": 0.8
+            }
+          ]
+        }
+      ]
+    }
+
+
+ */

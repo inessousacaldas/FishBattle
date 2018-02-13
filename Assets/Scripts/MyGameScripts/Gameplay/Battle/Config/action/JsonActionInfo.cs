@@ -37,19 +37,26 @@ public class JsonActionInfo
 
 	public List<JsonEffectInfo> effects = new List<JsonEffectInfo>();
 
+    /// <summary>
+    /// 如果 type 存的是类名的话，这玩意也可以省掉
+    /// </summary>
+    private static readonly Dictionary<string, Type> ActionInfoExchangeDict = new Dictionary<string, Type>()
+    {
+        {MoveActionInfo.TYPE, typeof(MoveActionInfo) },
+        {MoveBackActionInfo.TYPE, typeof(MoveBackActionInfo) },
+        {NormalActionInfo.TYPE, typeof(NormalActionInfo) },
+    };
+
+
     public BaseActionInfo ToBaseActionInfo()
     {
+        Type realType;
         BaseActionInfo info = null;
-        switch (type){
-            case MoveActionInfo.TYPE:
-                info = MoveActionInfo.ToBaseActionInfo(this);
-                break;
-            case MoveBackActionInfo.TYPE:
-                info = MoveBackActionInfo.ToBaseActionInfo(this);
-                break;
-            case NormalActionInfo.TYPE:
-                info = NormalActionInfo.ToBaseActionInfo(this);
-                break;
+        if (ActionInfoExchangeDict.TryGetValue(type, out realType))
+        {
+            info = (BaseActionInfo)Activator.CreateInstance(realType);
+	        //bug: FillInfo must be virtual to handle different inherit types!
+            info.FillInfo(this);
         }
         return info;
     }
