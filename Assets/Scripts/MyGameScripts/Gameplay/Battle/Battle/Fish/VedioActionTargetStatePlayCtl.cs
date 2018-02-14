@@ -6,22 +6,29 @@ namespace Fish
     {
         private VideoActionTargetState _state;
         private VideoTargetStateGroup _group;
+        private SkillConfigInfo _skillCfg;
+        private Skill _skill;
 
         public VedioActionTargetStatePlayCtl(VideoActionTargetState videoActionTargetState,
-            VideoTargetStateGroup targetStateGroup)
+            VideoTargetStateGroup targetStateGroup, SkillConfigInfo skillCfg, Skill skill)
         {
             _state = videoActionTargetState;
             _group = targetStateGroup;
+            _skillCfg = skillCfg;
+            _skill = skill;
         }
 
         protected override IPlayFinishedState GenFinishedState()
         {
-            throw new System.NotImplementedException();
+            var started = IsStarted();
+            if (!started) return new SinglePlayFinishedState(null, PlayErrState.NotStarted);
+            
+            return null;
         }
 
         public override float Duaration()
         {
-            throw new System.NotImplementedException();
+            return LessThanOneFrame;
         }
 
         protected override IPlayFinishedState CustomCancel()

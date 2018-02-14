@@ -22,7 +22,7 @@ namespace Fish
                 var playCtl = InterpreteVideoSkillAction(sAct);
                 allSubPlayCtl.Add(playCtl);
             }
-            var combined = new SeqCompositePlayCtl(allSubPlayCtl);
+            var combined = SeqCompositePlayCtl.Create(allSubPlayCtl);
 
             var overPlayCtl = InterpreteFightOver(vRound);
 
@@ -55,7 +55,6 @@ namespace Fish
             {
                 return InterpreteTargetStateGroupList(vsAct.targetStateGroups, skillCfg, skill);
             }
-            
 
             if (skill == null)
             {
@@ -69,11 +68,74 @@ namespace Fish
                 return null;
             }
 
+            return InterpreteSkillInfo(skillCfg, skill, vsAct);
+
+            /*
             var playSkillNameCtl = InterpreteSkillName(vsAct);
             
             var combined = InterpreteTargetStateGroupList(vsAct.targetStateGroups,skillCfg,skill);
 
             return playSkillNameCtl.Chain(combined);
+            */
+        }
+
+        private IBattlePlayCtl InterpreteSkillInfo(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+        {
+            var beforeAttack = InterpreteBeforeAttack(skillCfg, skill, vsAct);
+            var attackPlayCtl = new List<IBattlePlayCtl>();
+            for (var i = 0; i < skillCfg.attackerActions.Count; i++)
+            {
+                var attPlay = InterpreteActionInfo(skillCfg.attackerActions[i], skillCfg, skill,vsAct);
+                if (attPlay == null) continue;
+                attackPlayCtl.Add(attPlay);
+            }
+            var attPlays = SeqCompositePlayCtl.Create(attackPlayCtl);
+            var afterAttack=InterpreteAfterAttack(skillCfg, skill, vsAct);
+            var allAttackPlay = beforeAttack.Chain(attPlays).Chain(afterAttack);
+            
+            var beforeHit=InterpreteBeforeHit(skillCfg, skill, vsAct);
+            var hitPlayCtl = new List<IBattlePlayCtl>();
+            for (var i = 0; i < skillCfg.injurerActions.Count; i++)
+            {
+                var hitPlay = InterpreteActionInfo(skillCfg.injurerActions[i], skillCfg, skill,vsAct);
+                if (hitPlay == null) continue;
+                hitPlayCtl.Add(hitPlay);
+            }
+            var hitPlays=SeqCompositePlayCtl.Create(hitPlayCtl);
+            var afterHit=InterpreteAfterHit(skillCfg, skill, vsAct);
+            var allHitPlay = beforeHit.Chain(hitPlays).Chain(afterHit);
+
+            return allAttackPlay.Parall(allHitPlay);
+        }
+
+        private IBattlePlayCtl InterpreteAfterHit(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+        {
+            return null;
+            throw new NotImplementedException();
+        }
+
+        private IBattlePlayCtl InterpreteBeforeHit(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+        {
+            return null;
+            throw new NotImplementedException();
+        }
+
+        private IBattlePlayCtl InterpreteAfterAttack(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+        {
+            return null;
+            throw new NotImplementedException();
+        }
+
+        private IBattlePlayCtl InterpreteBeforeAttack(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+        {
+            return null;
+            throw new NotImplementedException();
+        }
+
+        private IBattlePlayCtl InterpreteActionInfo(BaseActionInfo skillCfgAttackerAction, SkillConfigInfo skillCfg,
+            Skill skill, VideoSkillAction vsAct)
+        {
+            return skillCfgAttackerAction.Interprete(skillCfg,skill,vsAct);
         }
 
         private IBattlePlayCtl InterpreteTargetStateGroupList(List<VideoTargetStateGroup> vsActTargetStateGroups,
@@ -87,7 +149,7 @@ namespace Fish
                 var targetPlayCtl = InterpreteTargetStateGroup(targetStateGroup,skillCfg,skill);
                 allSubPlayCtl.Add(targetPlayCtl);
             }
-            var combined = new ParallCompositePlayCtl(allSubPlayCtl);
+            var combined = ParallCompositePlayCtl.Create(allSubPlayCtl);
             return combined;
         }
 
@@ -102,7 +164,7 @@ namespace Fish
                 var targetPlayCtl = InterpreteTargetState(targetState,targetStateGroup,skillCfg,skill);
                 allSubPlayCtl.Add(targetPlayCtl);
             }
-            var combined = new ParallCompositePlayCtl(allSubPlayCtl);
+            var combined = ParallCompositePlayCtl.Create(allSubPlayCtl);
             return combined;
         }
 

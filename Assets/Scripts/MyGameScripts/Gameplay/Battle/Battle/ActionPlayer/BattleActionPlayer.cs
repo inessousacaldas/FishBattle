@@ -1664,20 +1664,16 @@ public class BattleActionPlayer : MonoBehaviour
         {
             if (node.isHit)
             {
-                bool hasIt = false;
+                var hasIt = false;
                 for (int i = 0; i < _gameAction.targetStateGroups.Count; i++)
                 {
-                    if (_gameAction.targetStateGroups[i] != null &&
-                        _gameAction.targetStateGroups[i].targetStates != null)
+                    if (_gameAction.targetStateGroups[i] == null ||
+                        _gameAction.targetStateGroups[i].targetStates == null) continue;
+                    for (int j = 0; j < _gameAction.targetStateGroups[i].targetStates.Count; j++)
                     {
-                        for (int j = 0; j < _gameAction.targetStateGroups[i].targetStates.Count; j++)
-                        {
-                            if (_gameAction.targetStateGroups[i].targetStates[j] is VideoActionTargetState)
-                            {
-                                hasIt = true;
-                                break;
-                            }
-                        }
+                        if (!(_gameAction.targetStateGroups[i].targetStates[j] is VideoActionTargetState)) continue;
+                        hasIt = true;
+                        break;
                     }
                 }
 

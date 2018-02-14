@@ -17,7 +17,7 @@ namespace AppDto
         public override IBattlePlayCtl Interpret(VideoTargetStateGroup targetStateGroup, SkillConfigInfo skillCfg,
             Skill skill)
         {
-            return new VedioActionTargetStatePlayCtl(this,targetStateGroup);
+            return new VedioActionTargetStatePlayCtl(this, targetStateGroup, skillCfg, skill);
         }
     }
 

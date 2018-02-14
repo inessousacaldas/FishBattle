@@ -62,7 +62,14 @@ namespace Fish
         {
             if (first == null) return second;
             if (second == null) return first;
-            return new SeqCompositePlayCtl(new[] {first, second});
+            return SeqCompositePlayCtl.Create(new[] {first, second});
+        }
+
+        public static IBattlePlayCtl Parall(this IBattlePlayCtl first, IBattlePlayCtl second)
+        {
+            if (first == null) return second;
+            if (second == null) return first;
+            return ParallCompositePlayCtl.Create(new[] {first, second});
         }
     }
 
@@ -70,6 +77,7 @@ namespace Fish
     /// 实现不依赖具体动画，而是根据时间来计算，保证OnEnd一定能够被调用，并收集结束时的各种错误。
     public abstract class BattlePlayCtlBasic : IBattlePlayCtl
     {
+        public const float LessThanOneFrame = 0.001f;
         private float _elapseTime;
 
         private BattlePlayingState _playState;
@@ -204,12 +212,24 @@ namespace Fish
     //顺序复合多个动画
     public class SeqCompositePlayCtl : BattlePlayCtlBasic
     {
+        public static SeqCompositePlayCtl Create(IBattlePlayCtl[] lst)
+        {
+            return new SeqCompositePlayCtl(lst);
+        }
+
+        public static SeqCompositePlayCtl Create(List<IBattlePlayCtl> playList)
+        {
+            //TODO check null elements
+            return Create(playList.ToArray());
+        }
+
         private IBattlePlayCtl[] _playCtlList;
         private readonly float _totalTime;
         private int _playIdx;
         private List<Tuple<int, IPlayFinishedState>> _abnormalList;
 
-        public SeqCompositePlayCtl(IBattlePlayCtl[] lst)
+        //intensionally not check (playList != null),thow exception if null
+        private SeqCompositePlayCtl(IBattlePlayCtl[] lst)
         {
             _playCtlList = lst;
             for (var i = 0; i < _playCtlList.Length; i++)
@@ -220,11 +240,6 @@ namespace Fish
             _abnormalList = new List<Tuple<int, IPlayFinishedState>>();
         }
         
-        //intensionally not check (playList != null),thow exception if null
-        public SeqCompositePlayCtl(List<IBattlePlayCtl> playList):this(playList.ToArray())
-        {
-        }
-
         protected override IPlayFinishedState GenFinishedState()
         {
             var started = IsStarted();
@@ -309,12 +324,23 @@ namespace Fish
     //并行复合多个动画
     public class ParallCompositePlayCtl : BattlePlayCtlBasic
     {
+        public static ParallCompositePlayCtl Create(IBattlePlayCtl[] playCtlList)
+        {
+            return new ParallCompositePlayCtl(playCtlList);
+        }
+
+        public static ParallCompositePlayCtl Create(List<IBattlePlayCtl> playList)
+        {
+            //TODO check null elements
+            return Create(playList.ToArray());
+        }
+
         private IBattlePlayCtl[] _playCtlList;
         private readonly float _totalTime;
         private List<Tuple<int, IPlayFinishedState>> _abnormalList;
         private PlayEnd _cb;
 
-        public ParallCompositePlayCtl(IBattlePlayCtl[] playCtlList)
+        private ParallCompositePlayCtl(IBattlePlayCtl[] playCtlList)
         {
             _playCtlList = playCtlList;
             for (var i = 0; i < _playCtlList.Length; i++)
@@ -326,10 +352,6 @@ namespace Fish
                 }
             }
             _abnormalList = new List<Tuple<int, IPlayFinishedState>>();
-        }
-        
-        public ParallCompositePlayCtl(List<IBattlePlayCtl> playList):this(playList.ToArray())
-        {
         }
 
         protected override IPlayFinishedState GenFinishedState()
@@ -448,13 +470,18 @@ namespace Fish
     //分支动画
     public class BranchCompositePlayCtl : BattlePlayCtlBasic
     {
+        public static BranchCompositePlayCtl Create(IBattlePlayCtl mainThread, IBattlePlayCtl branchThread)
+        {
+            return new BranchCompositePlayCtl(mainThread, branchThread);
+        }
+
         private IBattlePlayCtl _mainThread;
         private IBattlePlayCtl _branchThread;
         private IPlayFinishedState _branchError;
         private IPlayFinishedState _mainThreadErr;
         private bool _isFinished;
 
-        public BranchCompositePlayCtl(IBattlePlayCtl mainThread, IBattlePlayCtl branchThread)
+        private BranchCompositePlayCtl(IBattlePlayCtl mainThread, IBattlePlayCtl branchThread)
         {
             _mainThread = mainThread;
             _branchThread = branchThread;

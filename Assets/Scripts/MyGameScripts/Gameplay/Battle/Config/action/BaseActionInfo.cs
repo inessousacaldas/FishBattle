@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using AppDto;
+using Fish;
 using Newtonsoft.Json;
 
 public class BaseActionInfo
@@ -37,5 +39,10 @@ public class BaseActionInfo
 		}
 		
 		return list;
+	}
+
+	public virtual IBattlePlayCtl Interprete(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+	{
+		return null;
 	}
 }

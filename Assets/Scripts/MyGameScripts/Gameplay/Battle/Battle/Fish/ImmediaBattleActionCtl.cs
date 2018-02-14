@@ -52,7 +52,7 @@ namespace Fish
 
         public override float Duaration()
         {
-            return 0.001f;
+            return LessThanOneFrame;
         }
     }
 }
