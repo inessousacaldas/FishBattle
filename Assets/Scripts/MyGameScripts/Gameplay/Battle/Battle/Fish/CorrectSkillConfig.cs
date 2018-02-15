@@ -1,4 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using AppDto;
+using Fish;
+using Newtonsoft.Json;
+
+public class CorrectBattleConfigInfo
+{
+    public string time = "";
+    public List<CorrectSkillConfig> list;
+}
 
 public class CorrectSkillConfig
 {
@@ -32,13 +41,13 @@ public static class CorrectSkillConfigExt
     }
 }
 
-public abstract class BattlePhraseBase
+public abstract partial class BattlePhraseBase
 {
     [JsonIgnore]
     public abstract float Duaration { get; }
 }
 
-public class SeqPhrase : BattlePhraseBase
+public partial class SeqPhrase : BattlePhraseBase
 {
     [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]
     private BattlePhraseBase[] _lst;
@@ -66,7 +75,7 @@ public class SeqPhrase : BattlePhraseBase
     }
 }
 
-public class ParPhrase : BattlePhraseBase
+public partial class ParPhrase : BattlePhraseBase
 {
     [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]
     private BattlePhraseBase[] _lst;
@@ -95,7 +104,7 @@ public class ParPhrase : BattlePhraseBase
     }
 }
 
-public class BranchPhrase : BattlePhraseBase
+public partial class BranchPhrase : BattlePhraseBase
 {
     [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     private BattlePhraseBase _main;
@@ -123,7 +132,7 @@ public class BranchPhrase : BattlePhraseBase
     }
 }
 
-public class WaitPhrase : BattlePhraseBase
+public partial class WaitPhrase : BattlePhraseBase
 {
     [JsonProperty]
     private float _duration;
@@ -147,7 +156,7 @@ public class WaitPhrase : BattlePhraseBase
     }
 }
 
-public class ActionPhrase : BattlePhraseBase
+public partial class ActionPhrase : BattlePhraseBase
 {
     [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     private BaseActionInfo _actInfo;
@@ -172,7 +181,7 @@ public class ActionPhrase : BattlePhraseBase
     }
 }
 
-public class EffectPhrase : BattlePhraseBase
+public partial class EffectPhrase : BattlePhraseBase
 {
     [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     private BaseEffectInfo _effCfg;

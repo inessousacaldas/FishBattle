@@ -6,11 +6,11 @@ namespace Fish
     {
         private VideoActionTargetState _state;
         private VideoTargetStateGroup _group;
-        private SkillConfigInfo _skillCfg;
+        private CorrectSkillConfig _skillCfg;
         private Skill _skill;
 
         public VedioActionTargetStatePlayCtl(VideoActionTargetState videoActionTargetState,
-            VideoTargetStateGroup targetStateGroup, SkillConfigInfo skillCfg, Skill skill)
+            VideoTargetStateGroup targetStateGroup, CorrectSkillConfig skillCfg, Skill skill)
         {
             _state = videoActionTargetState;
             _group = targetStateGroup;

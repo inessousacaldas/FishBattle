@@ -67,7 +67,23 @@ public sealed class BattleConfigManager
 			    }
 		    });
 	    });
+	    
+#if UNITY_EDITOR
+	    var cfg= SimulateCorrectSkillConfig.SimulateNormalAttack();
+	    _correctCfg.Add(cfg.id,cfg);
+#endif
     }
+	
+#if UNITY_EDITOR
+	private static Dictionary<int,CorrectSkillConfig> _correctCfg = new Dictionary<int, CorrectSkillConfig>();
+	public CorrectSkillConfig GetCorrectConfig(int skillId)
+	{
+		CorrectSkillConfig result;
+		_correctCfg.TryGetValue(skillId, out result);
+		return result;
+	}
+#endif
+	
 
 	public SkillConfigInfo getSkillConfigInfo(int skillID)
 	{

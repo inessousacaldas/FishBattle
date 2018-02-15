@@ -17,17 +17,20 @@ public class SimulateCorrectSkillConfig
         {
             type = NormalActionInfo.TYPE,
             name = "attack"
-        }).Branch(EffectPhrase.Create(new NormalEffectInfo
+        }).Branch(ParPhrase.Create(new BattlePhraseBase[]
+        {
+            EffectPhrase.Create(new NormalEffectInfo
             {
                 type = NormalEffectInfo.TYPE,
                 name = "skill_eff_1329_att",
                 mount = "Mount_Shadow",
                 faceToTarget = true,
-            })
-            .Parall(EffectPhrase.Create(new TakeDamageEffectInfo
+            }),
+            EffectPhrase.Create(new TakeDamageEffectInfo
             {
                 type = TakeDamageEffectInfo.TYPE
-            })));
+            })
+        }));
 
         var movebackPhrase = ActionPhrase.Create(new MoveBackActionInfo
         {
@@ -40,19 +43,22 @@ public class SimulateCorrectSkillConfig
             type = NormalActionInfo.TYPE,
             startTime = 0.8f,
             delayTime = 0.167f,
-        }).Branch(EffectPhrase.Create(new NormalEffectInfo
+        }).Branch(ParPhrase.Create(new BattlePhraseBase[]
+        {
+            EffectPhrase.Create(new NormalEffectInfo
             {
                 type = NormalEffectInfo.TYPE,
                 name = "skill_eff_1329_hit",
                 mount = "Mount_Hit",
                 hitEff = true,
                 playTime = 0.8f
-            })
-            .Parall(EffectPhrase.Create(new ShowInjureEffectInfo
+            }),
+            EffectPhrase.Create(new ShowInjureEffectInfo
             {
                 type = ShowInjureEffectInfo.TYPE,
                 playTime = 0.8f
-            })));
+            })
+        }));
 
         var attackAndHitPhrase = attackPhrase.Parall(injurePhrase);
         var wholePhrase = SeqPhrase.Create(new[]

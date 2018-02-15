@@ -14,8 +14,13 @@ public class BaseEffectInfo
 		playTime = info.playTime;
 	}
 
-	public virtual IBattlePlayCtl Interprete(BaseActionInfo actInfo, SkillConfigInfo skillCfg, Skill skill,
+	public virtual IBattlePlayCtl Interprete(MoveActionInfo actInfo, SkillConfigInfo skillCfg, Skill skill,
 		VideoSkillAction vsAct)
+	{
+		return null;
+	}
+	
+	public virtual IBattlePlayCtl Interprete(Skill skill,VideoSkillAction vsAct)
 	{
 		return null;
 	}

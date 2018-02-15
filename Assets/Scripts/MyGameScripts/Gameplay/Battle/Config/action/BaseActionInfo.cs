@@ -45,4 +45,9 @@ public class BaseActionInfo
 	{
 		return null;
 	}
+	
+	public virtual IBattlePlayCtl Interprete(Skill skill, VideoSkillAction vsAct)
+	{
+		return null;
+	}
 }

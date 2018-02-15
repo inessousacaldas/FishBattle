@@ -29,10 +29,11 @@ namespace Fish
             return combined.Chain(overPlayCtl);
         }
 
-        private SkillConfigInfo GetSkillConfig(VideoSkillAction vsAct)
+        private CorrectSkillConfig GetSkillConfig(VideoSkillAction vsAct)
         {
             //TODO 有特殊情况再说 GameVideoGeneralActionPlayer.DoSkillAction line : 169
-            return BattleConfigManager.Instance.getSkillConfigInfo(vsAct.skillId);
+            //return BattleConfigManager.Instance.getSkillConfigInfo(vsAct.skillId);
+            return BattleConfigManager.Instance.GetCorrectConfig(vsAct.skillId);
         }
 
         private IBattlePlayCtl InterpreteFightOver(VideoRound vRound)
@@ -79,9 +80,15 @@ namespace Fish
             */
         }
 
-        private IBattlePlayCtl InterpreteSkillInfo(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
+        private IBattlePlayCtl InterpreteBattlePhrase(BattlePhraseBase phrase, Skill skill, VideoSkillAction vsAct)
         {
-            var beforeAttack = InterpreteBeforeAttack(skillCfg, skill, vsAct);
+            return phrase.Interprete(skill, vsAct);
+        }
+        
+        private IBattlePlayCtl InterpreteSkillInfo(CorrectSkillConfig skillCfg, Skill skill, VideoSkillAction vsAct)
+        {
+            return InterpreteBattlePhrase(skillCfg.battlePhrase,skill,vsAct);
+            /*var beforeAttack = InterpreteBeforeAttack(skillCfg, skill, vsAct);
             var attackPlayCtl = new List<IBattlePlayCtl>();
             for (var i = 0; i < skillCfg.attackerActions.Count; i++)
             {
@@ -105,7 +112,7 @@ namespace Fish
             var afterHit=InterpreteAfterHit(skillCfg, skill, vsAct);
             var allHitPlay = beforeHit.Chain(hitPlays).Chain(afterHit);
 
-            return allAttackPlay.Parall(allHitPlay);
+            return allAttackPlay.Parall(allHitPlay);*/
         }
 
         private IBattlePlayCtl InterpreteAfterHit(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
@@ -139,7 +146,7 @@ namespace Fish
         }
 
         private IBattlePlayCtl InterpreteTargetStateGroupList(List<VideoTargetStateGroup> vsActTargetStateGroups,
-            SkillConfigInfo skillCfg, Skill skill)
+            CorrectSkillConfig skillCfg, Skill skill)
         {
             //reference: BattleStateHandler.HandleBattleStateGroup
             var allSubPlayCtl = new List<IBattlePlayCtl>(vsActTargetStateGroups.Count);
@@ -154,7 +161,7 @@ namespace Fish
         }
 
         private IBattlePlayCtl InterpreteTargetStateGroup(VideoTargetStateGroup targetStateGroup,
-            SkillConfigInfo skillCfg, Skill skill)
+            CorrectSkillConfig skillCfg, Skill skill)
         {
             var videoTargetStates = targetStateGroup.targetStates;
             var allSubPlayCtl = new List<IBattlePlayCtl>(videoTargetStates.Count);
@@ -169,7 +176,7 @@ namespace Fish
         }
 
         private IBattlePlayCtl InterpreteTargetState(VideoTargetState targetState,
-            VideoTargetStateGroup targetStateGroup, SkillConfigInfo skillCfg, Skill skill)
+            VideoTargetStateGroup targetStateGroup, CorrectSkillConfig skillCfg, Skill skill)
         {
             //reference: BattleStateHandler.PlayState
             //for each type of VideoTargetState, do their own interpretation!
