@@ -149,7 +149,7 @@ public class WaitPhrase : BattlePhraseBase
 
 public class ActionPhrase : BattlePhraseBase
 {
-    [JsonProperty]
+    [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     private BaseActionInfo _actInfo;
     private float _duration;
     
@@ -174,7 +174,7 @@ public class ActionPhrase : BattlePhraseBase
 
 public class EffectPhrase : BattlePhraseBase
 {
-    [JsonProperty]
+    [JsonProperty(TypeNameHandling = TypeNameHandling.Auto)]
     private BaseEffectInfo _effCfg;
     private float _duration;
 
