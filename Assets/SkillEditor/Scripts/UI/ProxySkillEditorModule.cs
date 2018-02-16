@@ -14,6 +14,11 @@ namespace SkillEditor
                 ModuleLayer.Base, false);
         }
 
+        public static void CloseMainView()
+        {
+            SkillEditorModuleManager.Instance.CloseModule(SkillEditorMainView.NAME);
+        }
+
         public static void OpenSelectView<T>(List<T> infoList, Action<T> closeAction, Func<T, string> getNameFunc, T info = default(T))
         {
             var controller = SkillEditorModuleManager.Instance.OpenFunModule<SkillEditorSelectViewController<T>>(SkillEditorSelectView.NAME,

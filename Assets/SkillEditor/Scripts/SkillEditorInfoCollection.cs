@@ -6,7 +6,9 @@ using System.Text;
 using AppDto;
 using AssetPipeline;
 using UnityEngine;
-
+using Fish;
+using Newtonsoft.Json;
+using JsonC = Newtonsoft.Json.JsonConvert;
 
 namespace SkillEditor
 {
@@ -106,6 +108,16 @@ namespace SkillEditor
             var skillConfig = new BattleConfigInfo();
             skillConfig.time = (DateTime.UtcNow.Ticks / 10000).ToString();
             skillConfig.list = skillInfos;
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+            };
+            jsonSerializerSettings.Converters.Add(new UnityVector3JsonConverter());
+                
+            var jsonStr = JsonC.SerializeObject(skillConfig,
+                Formatting.Indented,
+                jsonSerializerSettings);
+            FileHelper.SaveJsonText(jsonStr,SkillEditorConst.BattleConfigPath,false);
 
             FileHelper.SaveJsonObj(skillConfig, SkillEditorConst.BattleConfigPath);
             UnityEditor.AssetDatabase.Refresh();

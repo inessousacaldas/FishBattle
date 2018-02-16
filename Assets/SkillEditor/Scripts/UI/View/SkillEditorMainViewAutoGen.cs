@@ -23,6 +23,7 @@ public sealed class SkillEditorMainView : BaseView
     public UIInput TeamAInput_UIInput;
     public UIInput TeamBInput_UIInput;
     public UIButton PlayBtn_UIButton;
+    public UIButton ExitBtn_UIButton;
     public UIInput TargetNumInput_UIInput;
     public UIToggle AtOnceToggle_UIToggle;
     public UIInput MultiPartInput_UIInput;
@@ -53,6 +54,7 @@ public sealed class SkillEditorMainView : BaseView
         TeamAInput_UIInput = root.FindScript<UIInput>("Top/Back/SceneInfo/Btns/TeamAInput");
         TeamBInput_UIInput = root.FindScript<UIInput>("Top/Back/SceneInfo/Btns/TeamBInput");
         PlayBtn_UIButton = root.FindScript<UIButton>("Top/Back/PlayBtn");
+        ExitBtn_UIButton = root.FindScript<UIButton>("Top/Back/ExitBtn");
         TargetNumInput_UIInput = root.FindScript<UIInput>("Top/Back/BattleInfo/Btns/TargetNumInput");
         AtOnceToggle_UIToggle = root.FindScript<UIToggle>("Top/Back/BattleInfo/Btns/AtOnceToggle");
         MultiPartInput_UIInput = root.FindScript<UIInput>("Top/Back/BattleInfo/Btns/MultiPartInput");

@@ -23,7 +23,7 @@ public class AudioManager
     private float _soundVolume = 0.75f;
 
     private bool _toggleDubbing;
-    private bool _toggleMusic = true;
+    private bool _toggleMusic = false;
     private bool _toggleSound = true;
 
     private AudioManager()

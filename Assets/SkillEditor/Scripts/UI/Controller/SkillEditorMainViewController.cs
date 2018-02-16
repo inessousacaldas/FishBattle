@@ -49,6 +49,14 @@ namespace SkillEditor
             EventDelegate.Set(_view.UpInfoBtn_UIButton.onClick, UpBtnOnClick);
             EventDelegate.Set(_view.DownInfoBtn_UIButton.onClick, DownBtnOnClick);
             EventDelegate.Set(_view.LineBtn_UIButton.onClick, LineBtnOnClick);
+            EventDelegate.Set(_view.ExitBtn_UIButton.onClick, ExitBtnOnClick);
+        }
+
+        private void ExitBtnOnClick()
+        {
+            ProxySkillEditorModule.CloseMainView();
+            GamePlayer.CameraManager.Instance.BattleCameraController.ResetCamera();
+            SkillEditor.CameraManager.Instance.ShowGameUI ();
         }
 
         protected override void OnDispose()
@@ -342,12 +350,10 @@ namespace SkillEditor
             foreach (var effectInfo in info.effects)
             {
                 nodeList.Add(new SkillEditorInfoNode(info, effectInfo, isAttack));
-                if (!hasCountInjuire)
+                if (hasCountInjuire) continue;
+                if (effectInfo is TakeDamageEffectInfo)
                 {
-                    if (effectInfo is TakeDamageEffectInfo)
-                    {
-                        isDamageNode = true;
-                    }
+                    isDamageNode = true;
                 }
             }
 
