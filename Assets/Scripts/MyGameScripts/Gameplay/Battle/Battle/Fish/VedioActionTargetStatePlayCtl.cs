@@ -31,15 +31,12 @@ namespace Fish
             return LessThanOneFrame;
         }
 
-        protected override IPlayFinishedState CustomCancel()
-        {
-            //throw new System.NotImplementedException();
-            return base.CustomCancel();
-        }
-
         protected override void CustomDispose()
         {
             _state = null;
+            _group = null;
+            _skillCfg = null;
+            _skill = null;
         }
 
         protected override void CustomStart()

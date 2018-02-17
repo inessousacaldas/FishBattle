@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
-using AppDto;
-using Fish;
+﻿/*
+public enum VictimTag
+{
+	First,//第一个受击者
+	Last,//最后一个受击者
+	Next,//下一个受击者
+}
+*/
 
-public class MoveActionInfo : BaseActionInfo
+public partial class MoveActionInfo : BaseActionInfo
 {
 	public const string TYPE = "move";
-
+//public VictimTag target;//移动到的目标
 	public float time;
 	public float distance;
 	public bool center;
@@ -16,20 +21,5 @@ public class MoveActionInfo : BaseActionInfo
 		time = json.time;
 		distance = json.distance;
 		center = json.center;		
-	}
-
-	public override IBattlePlayCtl Interprete(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
-	{
-		var allEff = new List<IBattlePlayCtl>();
-		for (var i = 0; i < effects.Count; i++)
-		{
-			var eff = effects[i];
-			var effCtl = eff.Interprete(this,skillCfg,skill,vsAct);
-			if (effCtl == null) continue;
-			allEff.Add(effCtl);
-		}
-		var palEff= ParallCompositePlayCtl.Create(allEff);
-		//TODO
-		return null;
 	}
 }

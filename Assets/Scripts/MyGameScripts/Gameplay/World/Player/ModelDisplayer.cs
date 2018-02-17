@@ -1366,6 +1366,20 @@ public class ModelDisplayer
 
     #region 动作相关处理
 
+    public float GetAnimationDuration(ModelHelper.AnimType animate)
+    {
+        if (_mAnimator == null)
+            return 0f;
+        
+        var clipName = animate.ToString();
+        return _mAnimator.GetClipLength(clipName);
+        /*
+        var info = _mAnimator.GetCurrentAnimatorStateInfo(ModelHelper.Animator_Layer_BattleLayer);
+        if (info.IsName(clipName))
+            return _mAnimator.GetClipLength(clipName);
+
+        return 0;*/
+    }
     public void PlayAnimateWithCallback(ModelHelper.AnimType animate, bool crossFade, Action<ModelHelper.AnimType, float> animClipCallBack = null,
                                         bool checkSameAnim = false, int layer = 0)
     {

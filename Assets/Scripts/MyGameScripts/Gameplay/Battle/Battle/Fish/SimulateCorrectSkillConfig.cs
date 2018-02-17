@@ -10,39 +10,39 @@ public class SimulateCorrectSkillConfig
         {
             type = MoveActionInfo.TYPE,
             name = "forward",
-            distance = 1.8f
+            distance = 1.8f,
+            time=1f,
+            initiator = ActionInitiator.Attacker,
         });
 
         var attackPhrase = ActionPhrase.Create(new NormalActionInfo
         {
             type = NormalActionInfo.TYPE,
-            name = "attack"
-        }).Branch(ParPhrase.Create(new BattlePhraseBase[]
+            name = "attack",
+            initiator = ActionInitiator.Attacker,
+        }).Branch(EffectPhrase.Create(new NormalEffectInfo
         {
-            EffectPhrase.Create(new NormalEffectInfo
-            {
-                type = NormalEffectInfo.TYPE,
-                name = "skill_eff_1329_att",
-                mount = "Mount_Shadow",
-                faceToTarget = true,
-            }),
-            EffectPhrase.Create(new TakeDamageEffectInfo
-            {
-                type = TakeDamageEffectInfo.TYPE
-            })
+            type = NormalEffectInfo.TYPE,
+            name = "skill_eff_1329_att",
+            mount = "Mount_Shadow",
+            faceToTarget = true,
         }));
 
         var movebackPhrase = ActionPhrase.Create(new MoveBackActionInfo
         {
             type = MoveBackActionInfo.TYPE,
-            name = "forward"
+            name = "forward",
+            time=1f,
+            initiator = ActionInitiator.Attacker,
         });
 
         var injurePhrase = ActionPhrase.Create(new NormalActionInfo
         {
             type = NormalActionInfo.TYPE,
-            startTime = 0.8f,
+            name = "hit",
+            //startTime = 0.8f,
             delayTime = 0.167f,
+            initiator = ActionInitiator.Victim,
         }).Branch(ParPhrase.Create(new BattlePhraseBase[]
         {
             EffectPhrase.Create(new NormalEffectInfo
@@ -51,18 +51,20 @@ public class SimulateCorrectSkillConfig
                 name = "skill_eff_1329_hit",
                 mount = "Mount_Hit",
                 hitEff = true,
-                playTime = 0.8f
+                //playTime = 0.8f
             }),
             EffectPhrase.Create(new ShowInjureEffectInfo
             {
                 type = ShowInjureEffectInfo.TYPE,
-                playTime = 0.8f
+                //playTime = 0.8f
             })
         }));
 
         var attackAndHitPhrase = attackPhrase.Parall(injurePhrase);
         var wholePhrase = SeqPhrase.Create(new[]
             {movePhrase, attackAndHitPhrase, movebackPhrase, WaitPhrase.Create(0.5f)});
+
+        //wholePhrase = SeqPhrase.Create(new BattlePhraseBase[]{movePhrase});
         return new CorrectSkillConfig
         {
             id = 1329,
@@ -161,7 +163,7 @@ public class SimulateCorrectSkillConfig
               delayTime += 0.3f;
               }
           "startTime": 0.8,
-          "delayTime": 0.166666,
+          "delayTime": 0.166666,受击后恢复到原始站位的时间
           "type": "normal",
           "effects": [
             {

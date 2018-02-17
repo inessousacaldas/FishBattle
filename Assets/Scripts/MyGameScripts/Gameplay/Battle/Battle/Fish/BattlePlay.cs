@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Fish
 {
@@ -17,7 +18,7 @@ namespace Fish
 
         //取消执行并还原到初始状态，返回当前执行已知错误
         IPlayFinishedState Cancel();
-        
+
         //释放内部所有引用，例如OnEnd事件关联的Delegates
         void Dispose();
 
@@ -45,6 +46,7 @@ namespace Fish
         NotFinished,
         Success,
         Timeout,
+
         ///出错但是完成了！
         Exception,
     }
@@ -108,7 +110,7 @@ namespace Fish
         private void StartTimer()
         {
             DisposeTimer();
-            _timer = JSTimer.Instance.SetupTimer(GetType().ToString()+_instaceId, Update);
+            _timer = JSTimer.Instance.SetupTimer(GetType().ToString() + _instaceId, Update);
         }
 
         private void DisposeTimer()
@@ -127,9 +129,9 @@ namespace Fish
 
         public BattlePlayingState CurrentState
         {
-           get { return _playState; }
+            get { return _playState; }
         }
-        
+
         public float CurrentProgress()
         {
             return _elapseTime;
@@ -141,7 +143,7 @@ namespace Fish
             _elapseTime = 0;
             _playState = BattlePlayingState.Pause;
             DisposeTimer();
-            
+
             var playFinishedState = CustomCancel();
             return playFinishedState;
         }
@@ -208,19 +210,29 @@ namespace Fish
             return _duration;
         }
     }
-    
+
     //顺序复合多个动画
     public class SeqCompositePlayCtl : BattlePlayCtlBasic
     {
-        public static SeqCompositePlayCtl Create(IBattlePlayCtl[] lst)
+        //more efficient
+        public static IBattlePlayCtl Create(IBattlePlayCtl[] playList)
         {
-            return new SeqCompositePlayCtl(lst);
+            if (playList.Length <= 0)
+                return null;
+            if (playList.Length == 1)
+                return playList[0];
+            return new SeqCompositePlayCtl(playList);
         }
 
-        public static SeqCompositePlayCtl Create(List<IBattlePlayCtl> playList)
+        public static IBattlePlayCtl Create(List<IBattlePlayCtl> playList)
         {
-            //TODO check null elements
-            return Create(playList.ToArray());
+            if (playList.Count <= 0)
+                return null;
+            if (playList.Count == 1)
+                return playList[0];
+
+            var arr = playList.Filter(p => p != null).ToArray();
+            return Create(arr);
         }
 
         private IBattlePlayCtl[] _playCtlList;
@@ -237,9 +249,10 @@ namespace Fish
                 var play = _playCtlList[i];
                 _totalTime += play.Duaration();
             }
+
             _abnormalList = new List<Tuple<int, IPlayFinishedState>>();
         }
-        
+
         protected override IPlayFinishedState GenFinishedState()
         {
             var started = IsStarted();
@@ -278,6 +291,7 @@ namespace Fish
                     _abnormalList.Add(Tuple.Create(_playIdx, lastPlayState));
                 }
             }
+
             _playCtlList[_playIdx].OnEnd -= NextPlay;
             _playIdx++;
             if (_playIdx == _playCtlList.Length)
@@ -288,6 +302,7 @@ namespace Fish
                 CallOnEnd(new MultiPlayFinishedState(errCode, _abnormalList));
                 return;
             }
+
             CustomStart();
         }
 
@@ -300,7 +315,7 @@ namespace Fish
                     _playCtlList[i].Dispose();
                 }
             }
-            
+
             _playCtlList = null;
             _abnormalList = null;
         }
@@ -314,6 +329,7 @@ namespace Fish
                     _playCtlList[i].Cancel();
                 }
             }
+
             var currentAb = _abnormalList;
             _abnormalList = null;
             _playIdx = 0;
@@ -324,15 +340,24 @@ namespace Fish
     //并行复合多个动画
     public class ParallCompositePlayCtl : BattlePlayCtlBasic
     {
-        public static ParallCompositePlayCtl Create(IBattlePlayCtl[] playCtlList)
+        //more efficient
+        public static IBattlePlayCtl Create(IBattlePlayCtl[] playCtlList)
         {
+            if (playCtlList.Length <= 0)
+                return null;
+            if (playCtlList.Length == 1)
+                return playCtlList[0];
             return new ParallCompositePlayCtl(playCtlList);
         }
 
-        public static ParallCompositePlayCtl Create(List<IBattlePlayCtl> playList)
+        public static IBattlePlayCtl Create(List<IBattlePlayCtl> playList)
         {
-            //TODO check null elements
-            return Create(playList.ToArray());
+            if (playList.Count <= 0)
+                return null;
+            if (playList.Count == 1)
+                return playList[0];
+            var arr = playList.Filter(p => p != null).ToArray();
+            return Create(arr);
         }
 
         private IBattlePlayCtl[] _playCtlList;
@@ -345,12 +370,21 @@ namespace Fish
             _playCtlList = playCtlList;
             for (var i = 0; i < _playCtlList.Length; i++)
             {
-                var totalTime = _playCtlList[i].Duaration();
+                var p = _playCtlList[i];
+                if (p == null)
+                {
+                    GameDebuger.LogError("battlePlay == null");
+                    continue;
+                }
+
+                var totalTime = p.Duaration();
+                GameDebuger.LogError("totaltime  ---" + totalTime);
                 if (_totalTime < totalTime)
                 {
                     _totalTime = totalTime;
                 }
             }
+
             _abnormalList = new List<Tuple<int, IPlayFinishedState>>();
         }
 
@@ -373,7 +407,7 @@ namespace Fish
         {
             return _totalTime;
         }
-        
+
         protected override IPlayFinishedState CustomCancel()
         {
             if (_playCtlList != null)
@@ -383,6 +417,7 @@ namespace Fish
                     _playCtlList[i].Cancel();
                 }
             }
+
             var currentAb = _abnormalList;
             _abnormalList = null;
             _cb = null;
@@ -398,6 +433,7 @@ namespace Fish
                     _playCtlList[i].Dispose();
                 }
             }
+
             _playCtlList = null;
             _abnormalList = null;
             _cb = null;
@@ -424,6 +460,7 @@ namespace Fish
                     _abnormalList.Add(Tuple.Create(index, lastPlayState));
                 }
             }
+
             _playCtlList[index].OnEnd -= _cb.EndOn(index);
             _cb.Remove(index);
             if (_cb.IsAllFinish())
@@ -438,15 +475,18 @@ namespace Fish
 
         private class PlayEnd
         {
-            private readonly List<Action<IPlayFinishedState>> _actLst;
+            private readonly Action<IPlayFinishedState>[] _actLst;
 
             public PlayEnd(int count, ParallCompositePlayCtl ctx)
             {
-                _actLst = new List<Action<IPlayFinishedState>>(count);
-                for (var i = 0; i < _actLst.Count; i++)
+                _actLst = new Action<IPlayFinishedState>[count];
+                for (var i = 0; i < count; i++)
                 {
                     var index = i;
-                    _actLst[i] = state => { ctx.SomePlayEnd(index, state); };
+                    _actLst[i] = state =>
+                    {
+                        ctx.SomePlayEnd(index, state);
+                    };
                 }
             }
 
@@ -462,7 +502,7 @@ namespace Fish
 
             public bool IsAllFinish()
             {
-                return _actLst.Find<Action<IPlayFinishedState>>(act=>act != null) != null;
+                return _actLst.All(act => act == null);
             }
         }
     }
@@ -569,110 +609,18 @@ namespace Fish
                     _mainThreadErr = obj;
                 }
             }
+
             _isFinished = true;
             if (_branchError == null)
                 CallOnEnd(obj);
             else
             {
-                var playErrState = obj!=null ? obj.LastError() : PlayErrState.Success;
-                var abnormalList = mainErr ? new []{Tuple.Create(0,obj),Tuple.Create(1,_branchError)} : new []{Tuple.Create(1,_branchError)};
+                var playErrState = obj != null ? obj.LastError() : PlayErrState.Success;
+                var abnormalList = mainErr
+                    ? new[] {Tuple.Create(0, obj), Tuple.Create(1, _branchError)}
+                    : new[] {Tuple.Create(1, _branchError)};
                 CallOnEnd(new MultiPlayFinishedState(playErrState, abnormalList));
             }
         }
     }
 }
-/*
-{
-      "$type": "SkillConfigInfo, Assembly-CSharp",
-      "id": 1329,
-      "name": "普攻",
-      "attackerActions": [
-        {
-          "$type": "MoveActionInfo, Assembly-CSharp",
-		  var totalDis = Vector3.Distance(_mTrans.position, position);
-		  var time = totalDis /(catchMode ? ModelHelper.DefaultBattleCatchSpeed * (turn ? 2f : 1f) : ModelHelper.DefaultBattleModelSpeed);
-          "distance": 1.8,
-          "type": "move",
-          "name": "forward",
-          "effects": []
-        },
-        {
-          "$type": "NormalActionInfo, Assembly-CSharp",
-		  anim.GetClipLength(action.ToString())//actack animation
-		  should config Dao Guang
-		  PlayDaoGuangEffect(_mc, tActionName);
-          "type": "normal",
-          "name": "attack",
-          "effects": [
-            {
-              "$type": "TakeDamageEffectInfo, Assembly-CSharp",
-			  PlayInjureHandle(ids[i], i, mAttacker);
-			  no timing
-              "type": "TakeDamage"
-            },
-            {
-              "$type": "NormalEffectInfo, Assembly-CSharp",
-            var normalEffectInfo = (NormalEffectInfo)node;
-            if (_isAttack == false)
-            {
-                bool hasDodge = HasVideoDodgeTargetState(_stateGroup.targetStates);
-                if (hasDodge && normalEffectInfo.hitEff)
-                    return;
-            }
-            PlayNormalEffect(normalEffectInfo);
-			
-			PlaySpecialEffect(node, skillName, _mc, mc, clientSkillScale);
-			
-			default time of effect is 5
-              "name": "skill_eff_1329_att",
-              "mount": "Mount_Shadow",
-              "faceToTarget": true,
-              "type": "Normal"
-            }
-          ]
-        },
-        {
-          "$type": "MoveBackActionInfo, Assembly-CSharp",
-          var totalDis = Vector3.Distance(_mTrans.position, position);
-          time = totalDis / (catchMode ? ModelHelper.DefaultBattleCatchSpeed : ModelHelper.DefaultBattleModelSpeed);
-
-          "type": "moveBack",
-          "name": "forward",
-          "effects": []
-        }
-      ],
-      "injurerActions": [
-        {
-          "$type": "NormalActionInfo, Assembly-CSharp",
-			  float delayTime = node.delayTime;
-			  if (actionName == ModelHelper.AnimType.hit)
-              {
-              //这里要特殊处理，因为防御动作结束后不需要播放hit， 需要直接回到battle
-              delayTime += 0.3f;
-              }
-          "startTime": 0.8,
-          "delayTime": 0.166666,
-          "type": "normal",
-          "effects": [
-            {
-              "$type": "ShowInjureEffectInfo, Assembly-CSharp",
-			  ShowInjureEffect(ShowInjureEffectInfo node)
-			  no timing
-              "type": "ShowInjure",
-              "playTime": 0.8
-            },
-            {
-              "$type": "NormalEffectInfo, Assembly-CSharp",
-              "name": "skill_eff_1329_hit",
-              "mount": "Mount_Hit",
-              "hitEff": true,
-              "type": "Normal",
-              "playTime": 0.8
-            }
-          ]
-        }
-      ]
-    }
-
-
- */

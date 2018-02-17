@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AppDto;
+using Fish;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 #if ENABLE_SKILLEDITOR
 
@@ -157,8 +160,8 @@ namespace SkillEditor
             SkillEditorInfoCollection.SaveBattleConfig(_skillInfoList);
         }
         #endregion
-
-
+        
+        private VideoRoundInterpreter _interpreter;
         public void PlayBattle(int teamANum, int teamBNum, SkillConfigInfo info, long attackUid, long defendUid, int targetNum, bool atOnce,
             int multipart)
         {
@@ -175,8 +178,19 @@ namespace SkillEditor
                 UpdateBattle(teamANum, teamBNum, _curChar);
             }
 
+            if (_interpreter == null)
+                _interpreter = new VideoRoundInterpreter();
+            var videoRound = CreateVideoRound(info, attackUid, defendUid, targetNum, atOnce, multipart);
+            var play = _interpreter.InterpreteVideoRound(videoRound);
+            try{
+                play.Play();
+            }
+            catch(Exception e){
+                GameDebuger.LogError(e);
+            }
+            return;
             var player = new GameVideoGeneralActionPlayer();
-            player.Excute(CreateVideoRound(info, attackUid, defendUid, targetNum, atOnce, multipart).skillActions[0]);
+            player.Excute(videoRound.skillActions[0]);
         }
 
 

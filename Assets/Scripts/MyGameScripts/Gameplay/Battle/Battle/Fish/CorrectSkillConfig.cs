@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using AppDto;
-using Fish;
 using Newtonsoft.Json;
 
 public class CorrectBattleConfigInfo

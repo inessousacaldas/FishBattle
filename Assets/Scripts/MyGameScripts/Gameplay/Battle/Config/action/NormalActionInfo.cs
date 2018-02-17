@@ -1,4 +1,4 @@
-﻿public class NormalActionInfo : BaseActionInfo
+﻿public partial class NormalActionInfo : BaseActionInfo
 {
 	public const string TYPE = "normal";
 

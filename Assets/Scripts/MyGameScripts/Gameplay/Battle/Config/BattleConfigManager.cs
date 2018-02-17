@@ -78,6 +78,7 @@ public sealed class BattleConfigManager
 	private static Dictionary<int,CorrectSkillConfig> _correctCfg = new Dictionary<int, CorrectSkillConfig>();
 	public CorrectSkillConfig GetCorrectConfig(int skillId)
 	{
+		return SimulateCorrectSkillConfig.SimulateNormalAttack(); // for test:fish
 		CorrectSkillConfig result;
 		_correctCfg.TryGetValue(skillId, out result);
 		return result;

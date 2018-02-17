@@ -43,7 +43,8 @@ public partial class BranchPhrase
     {
         var m = _main.Interprete(skill, vsAct);
         var o = _other.Interprete(skill, vsAct);
-
+        if (o == null)
+            return m;
         return BranchCompositePlayCtl.Create(m, o);
     }
 }

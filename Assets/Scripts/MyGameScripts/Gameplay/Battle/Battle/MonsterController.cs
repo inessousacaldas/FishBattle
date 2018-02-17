@@ -390,7 +390,7 @@ public class MonsterController : MonoBehaviour
         _mTrans.LookAt(target);
         _mTrans.eulerAngles = new Vector3(rotation.x, _mTrans.eulerAngles.y, rotation.z);
 
-        Goto(targetPosition, animation, 0, false, false, needFinishTurn);
+        Goto(targetPosition, animation, 0, false, false, needFinishTurn,time);
     }
 
     public float Goto(Vector3 position, float delay = 0, bool turn = false,
@@ -419,7 +419,7 @@ public class MonsterController : MonoBehaviour
     }
 
     public float Goto(Vector3 position, ModelHelper.AnimType animationName, float delay = 0, bool turn = false,
-                      bool catchMode = false, bool needFinishTurn = false)
+                      bool catchMode = false, bool needFinishTurn = false, float time=-1)
     {
         PlayAnimation(animationName);
         
@@ -430,8 +430,11 @@ public class MonsterController : MonoBehaviour
         }
 
         var totalDis = Vector3.Distance(_mTrans.position, position);
-        var time = totalDis /
-        (catchMode ? ModelHelper.DefaultBattleCatchSpeed * (turn ? 2f : 1f) : ModelHelper.DefaultBattleModelSpeed);
+        if (time<float.Epsilon)
+        {
+            time = totalDis /
+                   (catchMode ? ModelHelper.DefaultBattleCatchSpeed * (turn ? 2f : 1f) : ModelHelper.DefaultBattleModelSpeed);
+        }
 
 //        ModelCopy.ShowCopy();
 //        _selectView.UpdateFollowTarget(ModelCopy.Copy);
@@ -494,7 +497,10 @@ public class MonsterController : MonoBehaviour
         _mTrans.eulerAngles = originRotation + rotation;
 
         var totalDis = Vector3.Distance(_mTrans.position, position);
-        time = totalDis / (catchMode ? ModelHelper.DefaultBattleCatchSpeed : ModelHelper.DefaultBattleModelSpeed);
+        if (time < float.Epsilon)
+        {
+            time = totalDis / (catchMode ? ModelHelper.DefaultBattleCatchSpeed : ModelHelper.DefaultBattleModelSpeed);
+        }
 
         //		iTween.MoveTo(gameObject, iTween.Hash("x", position.x, "y", position.y, "z", position.z, "time", time, "delay", delayTime,
         //		                                      "easetype", "linear", "oncomplete", "GotoBackComplete",
@@ -857,6 +863,11 @@ public class MonsterController : MonoBehaviour
         }
     }
 
+    public float GetAnimationDuration(ModelHelper.AnimType animate)
+    {
+        return _modelDisplayer.GetAnimationDuration(animate);
+    }
+    
     public void PlayAnimation(ModelHelper.AnimType name)
     {
         PlayAnimation(name, false, null);
@@ -2338,7 +2349,8 @@ public class MonsterController : MonoBehaviour
             }
         }
 
-        MoveTo(targetTransform, distance, EnumParserHelper.TryParse(node.name, ModelHelper.AnimType.battle), node.time, new Vector3(node.rotateX, node.rotateY, node.rotateZ), needFinishTurn);
+        ;
+        MoveTo(targetTransform, distance, node.AnimationType, node.time, new Vector3(node.rotateX, node.rotateY, node.rotateZ), needFinishTurn);
         Destroy(go);
     }
 
@@ -2380,9 +2392,9 @@ public class MonsterController : MonoBehaviour
         PlayNormalActionInfo(EnumParserHelper.TryParse(node.name, ModelHelper.AnimType.battle), node.delayTime,node.mountFollow);
     }
 
-    public void PlayMoveBackNode(MoveBackActionInfo node, bool catchMode = false)
+    public void PlayMoveBackNode(MoveBackActionInfo node)
     {
-        GoBack(node.time, new Vector3(node.rotateX, 180, node.rotateZ), EnumParserHelper.TryParse(node.name, ModelHelper.AnimType.run), true, 0, catchMode);
+        GoBack(node.time, new Vector3(node.rotateX, 180, node.rotateZ), node.AnimationType, true, 0, false);
     }
 
     #endregion

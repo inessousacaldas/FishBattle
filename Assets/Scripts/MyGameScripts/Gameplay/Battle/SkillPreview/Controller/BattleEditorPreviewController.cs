@@ -3,6 +3,7 @@ using UnityEngine;
 using AppDto;
 using System.Collections.Generic;
 using MonsterManager = BattleDataManager.MonsterManager;
+using Fish;
 
 namespace SkillEditor
 {
@@ -15,7 +16,7 @@ namespace SkillEditor
         #region property and field
 
         public Video PreviewVideo { get; private set; }
-
+        private VideoRoundInterpreter _interpreter;
         #endregion
 
         #region implement functions
@@ -25,6 +26,10 @@ namespace SkillEditor
 
         #region interface
 
+        public void Awake()
+        {
+            _interpreter = new VideoRoundInterpreter();
+        }
         public void OpenPreview(int pEnemyCount,int pEnemyFormation)
         {
             MonsterManager.Instance.ResetData();
@@ -37,6 +42,14 @@ namespace SkillEditor
             var tSkill = DataCache.getDtoByCls<Skill>(pSkillId);
             UnityEngine.Assertions.Assert.IsNotNull(tSkill, string.Format("技能（id={0}）不在表中！", pSkillId));
             var tVideoRound = BattleEditorPreviewSimulater.SimulateVideoRound(PreviewVideo.ateam.teamSoldiers, PreviewVideo.bteam.teamSoldiers, BattleEditorPreviewSimulater.PlayerDto.id, tSkill);
+            /*var play = _interpreter.InterpreteVideoRound(tVideoRound);
+            try{
+                play.Play();
+            }
+            catch(Exception e){
+                GameDebuger.LogError(e);
+            }
+            return;*/
             var tPlayer = Activator.CreateInstance<SBGameVideoGeneralActionPlayer>();
             tPlayer.Excute(tVideoRound.skillActions[0]);
         }

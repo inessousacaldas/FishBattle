@@ -588,7 +588,7 @@ public class BattleActionPlayer : MonoBehaviour
             {
                 GameDebuger.TODO(@"VideoCaptureState captureState = GetCaptureState();
                 _mc.PlayMoveBackNode((MoveBackActionInfo)node, captureState != null);");
-                _mc.PlayMoveBackNode((MoveBackActionInfo)node, false);
+                _mc.PlayMoveBackNode((MoveBackActionInfo)node);
             }
         }
 

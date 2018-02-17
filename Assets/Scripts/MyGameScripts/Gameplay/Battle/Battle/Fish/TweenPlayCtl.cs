@@ -1,18 +1,31 @@
-﻿using UnityEngine;
+﻿using AppDto;
 
 namespace Fish
 {
-    public class TweenPlayCtl:BattlePlayCtlBasic
+    public class TweenMovePlayCtl : BattlePlayCtlBasic
     {
-        private readonly float duaration;
-        private readonly Vector3 pos;
-        private readonly MonsterController mc;
-
-        public TweenPlayCtl(MonsterController mc, Vector3 pos, float duaration)
+        public static TweenMovePlayCtl Create(MoveActionInfo moveActionInfo, Skill skill, VideoSkillAction vsAct,
+            long initiator, long targetId)
         {
-            this.mc = mc;
-            this.pos = pos;
-            this.duaration = duaration;
+            return new TweenMovePlayCtl(moveActionInfo, skill, vsAct, initiator, targetId);
+        }
+
+        private readonly float _duration;
+        private MonsterController _initiator;
+        private MonsterController _target;
+        private MoveActionInfo _actInfo;
+        private Skill _skill;
+        private VideoSkillAction _vsAct;
+
+        private TweenMovePlayCtl(MoveActionInfo moveActionInfo, Skill skill, VideoSkillAction vsAct, long initiator,
+            long targetId)
+        {
+            _actInfo = moveActionInfo;
+            _skill = skill;
+            _vsAct = vsAct;
+            _duration = moveActionInfo.time;
+            _initiator = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(initiator);
+            _target = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(targetId);
         }
 
         protected override IPlayFinishedState GenFinishedState()
@@ -20,22 +33,94 @@ namespace Fish
             var started = IsStarted();
             var errCode = !started
                 ? PlayErrState.NotStarted
-                : mc == null
-                ? PlayErrState.Exception
-                : CurrentProgress() < duaration
-                ? PlayErrState.NotFinished
-                : PlayErrState.Success;
+                : _initiator == null
+                    ? PlayErrState.Exception
+                    : CurrentProgress() < _duration
+                        ? PlayErrState.NotFinished
+                        : PlayErrState.Success;
             return new SimplePlayFinishedState(errCode);
+        }
+
+        protected override void CustomDispose()
+        {
+            _initiator = null;
+            _target = null;
+            _actInfo = null;
+            _skill = null;
+            _vsAct = null;
         }
 
         public override float Duaration()
         {
-            return duaration;
+            return _duration;
         }
 
         protected override void CustomStart()
         {
-            mc.DoMove(pos, duaration);
+            //_initiator.DoMove(_target.transform.position, _duration);
+            _initiator.SetSkillTarget(_target);
+            _initiator.PlayMoveNode(_actInfo);
+        }
+    }
+
+    public class TweenMoveBackPlayCtl : BattlePlayCtlBasic
+    {
+        public static TweenMoveBackPlayCtl Create(MoveBackActionInfo moveActionInfo, Skill skill,
+            VideoSkillAction vsAct, long initiator, long targetId)
+        {
+            return new TweenMoveBackPlayCtl(moveActionInfo, skill, vsAct, initiator, targetId);
+        }
+
+        private readonly float _duration;
+        private MonsterController _initiator;
+        private MonsterController _target;
+        private MoveBackActionInfo _actInfo;
+        private Skill _skill;
+        private VideoSkillAction _vsAct;
+
+        private TweenMoveBackPlayCtl(MoveBackActionInfo moveActionInfo, Skill skill, VideoSkillAction vsAct,
+            long initiator, long targetId)
+        {
+            _actInfo = moveActionInfo;
+            _skill = skill;
+            _vsAct = vsAct;
+            _duration = moveActionInfo.time;
+            _initiator = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(initiator);
+            _target = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(targetId);
+        }
+
+        protected override IPlayFinishedState GenFinishedState()
+        {
+            var started = IsStarted();
+            var errCode = !started
+                ? PlayErrState.NotStarted
+                : _initiator == null
+                    ? PlayErrState.Exception
+                    : CurrentProgress() < _duration
+                        ? PlayErrState.NotFinished
+                        : PlayErrState.Success;
+            return new SimplePlayFinishedState(errCode);
+        }
+
+        protected override void CustomDispose()
+        {
+            _initiator = null;
+            _target = null;
+            _actInfo = null;
+            _skill = null;
+            _vsAct = null;
+        }
+
+        public override float Duaration()
+        {
+            return _duration;
+        }
+
+        protected override void CustomStart()
+        {
+            //_initiator.DoMove(_target.transform.position, _duration);
+            _initiator.SetSkillTarget(_target);
+            _initiator.PlayMoveBackNode(_actInfo);
         }
     }
 }

@@ -24,9 +24,9 @@ namespace Fish
             }
             var combined = SeqCompositePlayCtl.Create(allSubPlayCtl);
 
-            var overPlayCtl = InterpreteFightOver(vRound);
-
-            return combined.Chain(overPlayCtl);
+            //var overPlayCtl = InterpreteFightOver(vRound);
+            return combined;
+            //return combined.Chain(overPlayCtl);
         }
 
         private CorrectSkillConfig GetSkillConfig(VideoSkillAction vsAct)
@@ -50,7 +50,7 @@ namespace Fish
         private IBattlePlayCtl InterpreteVideoSkillAction(VideoSkillAction vsAct)
         {
             //reference : GameVideoGeneralActionPlayer.DoSkillAction
-            var skill = DataCache.getDtoByCls<Skill>(vsAct.skillId);
+            var skill = vsAct.skill;
             var skillCfg = GetSkillConfig(vsAct);
             if (vsAct.actionSoldierId == 0)
             {

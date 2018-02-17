@@ -1,11 +1,26 @@
 ﻿using System.Collections.Generic;
-using AppDto;
-using Fish;
 using Newtonsoft.Json;
 
-public class BaseActionInfo
+public enum ActionInitiator
+{
+	Attacker,//攻击者
+	Victim,//受击者
+	//Pet,//宠物
+}
+
+//动作模板实例化模式
+public enum ActionSchemeInstantiationMode
+{
+	Seq,//按服务器发送目标的顺序串联
+	Par,//多目标并联
+	//LastVictim,//上一个受击者
+}
+
+public partial class BaseActionInfo
 {
 	public string type;//动作类型
+	public ActionInitiator initiator;//执行动作的对象：攻击者，受击者，宠物
+	public ActionSchemeInstantiationMode instMode;//动作模板实例化模式
 	public string name; // 播放动作名//
 	public int rotateX;
 	public int rotateY;
@@ -16,7 +31,7 @@ public class BaseActionInfo
 	
 	[JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]
 	public List<BaseEffectInfo> effects;
-
+	
 	public virtual void FillInfo(JsonActionInfo info)
 	{
 		type = info.type;
@@ -39,15 +54,5 @@ public class BaseActionInfo
 		}
 		
 		return list;
-	}
-
-	public virtual IBattlePlayCtl Interprete(SkillConfigInfo skillCfg, Skill skill, VideoSkillAction vsAct)
-	{
-		return null;
-	}
-	
-	public virtual IBattlePlayCtl Interprete(Skill skill, VideoSkillAction vsAct)
-	{
-		return null;
 	}
 }

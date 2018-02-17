@@ -265,7 +265,7 @@ public sealed partial class BattleDataManager
                 mc.ClearSkill();
             MonsterManager.Instance.UpdateOptionState(pVideoRound.id, MonsterOptionStateManager.MonsterOptionState.Disable);
             BattleInstController.Instance.AddVideoRound(pVideoRound);
-
+            DataMgr.IsGameOver = pVideoRound.over;
             if (DataMgr.IsInBattle && DataMgr.BattleDemo.battleState != BattleSceneStat.BATTLE_PRESTART)
             {
                 //EnterBattleMode();

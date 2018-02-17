@@ -1,4 +1,4 @@
-﻿public class MoveBackActionInfo : BaseActionInfo
+﻿public partial class MoveBackActionInfo : BaseActionInfo
 {
 	public const string TYPE = "moveBack";
 	

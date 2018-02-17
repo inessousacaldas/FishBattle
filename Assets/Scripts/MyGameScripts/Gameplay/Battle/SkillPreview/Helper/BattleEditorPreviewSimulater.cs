@@ -109,7 +109,13 @@ namespace SkillEditor
 
         #endregion
 
-        private static bool SimulateActionPlayerInfo(out long tCurAttackId, out long tDefenderId, out VideoSoldier tVideoSoldier, List<VideoSoldier> pTeamSoldiersPlayer, List<VideoSoldier> pTeamSoldiersEnemy, long pAttackId = 0)
+        private static bool SimulateActionPlayerInfo(
+            out long tCurAttackId
+            , out long tDefenderId
+            , out VideoSoldier tVideoSoldier
+            , List<VideoSoldier> pTeamSoldiersPlayer
+            , List<VideoSoldier> pTeamSoldiersEnemy
+            , long pAttackId = 0)
         {
             UnityEngine.Assertions.Assert.IsNotNull(pTeamSoldiersEnemy, "敌人队伍数据不得为空！");
             tCurAttackId = PlayerDto.id;
