@@ -73,6 +73,22 @@ namespace Fish
             if (second == null) return first;
             return ParallCompositePlayCtl.Create(new[] {first, second});
         }
+
+        public static IBattlePlayCtl Branch(this IBattlePlayCtl mainThread, IBattlePlayCtl otherThread)
+        {
+            if (otherThread == null) return mainThread;
+            return BranchCompositePlayCtl.Create(mainThread, otherThread);
+        }
+
+        public static IBattlePlayCtl ToSequence(this List<IBattlePlayCtl> lst)
+        {
+            return SeqCompositePlayCtl.Create(lst);
+        }
+
+        public static IBattlePlayCtl ToParallel(this List<IBattlePlayCtl> lst)
+        {
+            return ParallCompositePlayCtl.Create(lst);
+        }
     }
 
     /// 基类需要提供计时操作，底层框架对计时器进行优化。
@@ -476,7 +492,7 @@ namespace Fish
         private class PlayEnd
         {
             private readonly Action<IPlayFinishedState>[] _actLst;
-
+ 
             public PlayEnd(int count, ParallCompositePlayCtl ctx)
             {
                 _actLst = new Action<IPlayFinishedState>[count];
@@ -510,8 +526,9 @@ namespace Fish
     //分支动画
     public class BranchCompositePlayCtl : BattlePlayCtlBasic
     {
-        public static BranchCompositePlayCtl Create(IBattlePlayCtl mainThread, IBattlePlayCtl branchThread)
+        public static IBattlePlayCtl Create(IBattlePlayCtl mainThread, IBattlePlayCtl branchThread)
         {
+            if (branchThread == null) return mainThread;
             return new BranchCompositePlayCtl(mainThread, branchThread);
         }
 

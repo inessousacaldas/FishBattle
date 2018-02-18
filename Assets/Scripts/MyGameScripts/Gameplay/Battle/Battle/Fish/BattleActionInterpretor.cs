@@ -106,9 +106,9 @@ public partial class NormalActionInfo
                 switch (instMode)
                 {
                     case ActionSchemeInstantiationMode.Seq:
-                        return SeqCompositePlayCtl.Create(aniPlayList);
+                        return aniPlayList.ToSequence();
                     case ActionSchemeInstantiationMode.Par:
-                        return ParallCompositePlayCtl.Create(aniPlayList);
+                        return aniPlayList.ToParallel();
                 }
             }
                 break;

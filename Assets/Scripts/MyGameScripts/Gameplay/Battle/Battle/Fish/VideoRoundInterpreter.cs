@@ -22,7 +22,7 @@ namespace Fish
                 var playCtl = InterpreteVideoSkillAction(sAct);
                 allSubPlayCtl.Add(playCtl);
             }
-            var combined = SeqCompositePlayCtl.Create(allSubPlayCtl);
+            var combined = allSubPlayCtl.ToSequence();
 
             //var overPlayCtl = InterpreteFightOver(vRound);
             return combined;
@@ -156,7 +156,7 @@ namespace Fish
                 var targetPlayCtl = InterpreteTargetStateGroup(targetStateGroup,skillCfg,skill);
                 allSubPlayCtl.Add(targetPlayCtl);
             }
-            var combined = ParallCompositePlayCtl.Create(allSubPlayCtl);
+            var combined = allSubPlayCtl.ToParallel();
             return combined;
         }
 
@@ -171,7 +171,7 @@ namespace Fish
                 var targetPlayCtl = InterpreteTargetState(targetState,targetStateGroup,skillCfg,skill);
                 allSubPlayCtl.Add(targetPlayCtl);
             }
-            var combined = ParallCompositePlayCtl.Create(allSubPlayCtl);
+            var combined = allSubPlayCtl.ToParallel();
             return combined;
         }
 

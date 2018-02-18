@@ -8,19 +8,10 @@ public enum ActionInitiator
 	//Pet,//宠物
 }
 
-//动作模板实例化模式
-public enum ActionSchemeInstantiationMode
-{
-	Seq,//按服务器发送目标的顺序串联
-	Par,//多目标并联
-	//LastVictim,//上一个受击者
-}
-
 public partial class BaseActionInfo
 {
 	public string type;//动作类型
 	public ActionInitiator initiator;//执行动作的对象：攻击者，受击者，宠物
-	public ActionSchemeInstantiationMode instMode;//动作模板实例化模式
 	public string name; // 播放动作名//
 	public int rotateX;
 	public int rotateY;

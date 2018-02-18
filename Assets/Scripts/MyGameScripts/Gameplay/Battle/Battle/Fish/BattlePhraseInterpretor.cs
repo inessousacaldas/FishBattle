@@ -18,7 +18,7 @@ public partial class SeqPhrase
             ctlList.Add(ctl);
         }
 
-        return SeqCompositePlayCtl.Create(ctlList);
+        return ctlList.ToSequence();
     }
 }
 
@@ -33,7 +33,7 @@ public partial class ParPhrase
             ctlList.Add(ctl);
         }
 
-        return ParallCompositePlayCtl.Create(ctlList);
+        return ctlList.ToParallel();
     }
 }
 
@@ -43,9 +43,7 @@ public partial class BranchPhrase
     {
         var m = _main.Interprete(skill, vsAct);
         var o = _other.Interprete(skill, vsAct);
-        if (o == null)
-            return m;
-        return BranchCompositePlayCtl.Create(m, o);
+        return m.Branch(o);
     }
 }
 
