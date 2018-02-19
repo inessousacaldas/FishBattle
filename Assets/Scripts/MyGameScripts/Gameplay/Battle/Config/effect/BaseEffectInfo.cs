@@ -1,7 +1,4 @@
-﻿using AppDto;
-using Fish;
-
-public class BaseEffectInfo
+﻿public partial class BaseEffectInfo
 {
 	public string type;
 	public float playTime;
@@ -12,16 +9,5 @@ public class BaseEffectInfo
 	{
 		type = info.type;
 		playTime = info.playTime;
-	}
-
-	public virtual IBattlePlayCtl Interprete(MoveActionInfo actInfo, SkillConfigInfo skillCfg, Skill skill,
-		VideoSkillAction vsAct)
-	{
-		return null;
-	}
-	
-	public virtual IBattlePlayCtl Interprete(Skill skill,VideoSkillAction vsAct)
-	{
-		return null;
 	}
 }

@@ -76,7 +76,7 @@ public class BattleSkillEffectCMPT : IDisposable
             effectTime.time = 5;
         }
 
-        BattleSkillEffectInfo tBattleSkillEffectInfo = new BattleSkillEffectInfo();
+        var tBattleSkillEffectInfo = new BattleSkillEffectInfo();
         tBattleSkillEffectInfo.MainEffectTime = effectTime;
         tBattleSkillEffectInfo.EffectDisposeCallback = (pPoolEffect) =>
         {

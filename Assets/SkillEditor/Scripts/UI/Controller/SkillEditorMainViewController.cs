@@ -55,8 +55,9 @@ namespace SkillEditor
         private void ExitBtnOnClick()
         {
             ProxySkillEditorModule.CloseMainView();
-            GamePlayer.CameraManager.Instance.BattleCameraController.ResetCamera();
             SkillEditor.CameraManager.Instance.ShowGameUI ();
+            GamePlayer.CameraManager.Instance.BattleCameraController.ResetCamera();
+            
         }
 
         protected override void OnDispose()

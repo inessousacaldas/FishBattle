@@ -644,7 +644,7 @@ public class BattleActionPlayer : MonoBehaviour
             return;
         NormalEffectInfo node = new NormalEffectInfo();
         node.fly = false;
-        node.target = 0;
+        node.target = EffectTargetType.defaultVal;
         node.mount = ModelHelper.Mount_shadow;
         var tDaoGuangEffectName = EffHelper.GetDaoGuangEffectName(_mc.GetModel(), action);
         PlaySpecialEffect(node, tDaoGuangEffectName, _mc, mc, 1);
@@ -821,7 +821,7 @@ public class BattleActionPlayer : MonoBehaviour
     {
         var node = new NormalEffectInfo();
         node.fly = false;
-        node.target = 0;
+        node.target = EffectTargetType.defaultVal;
         node.mount = ModelHelper.Mount_hit;
         PlaySpecialEffect(node, GameEffectConst.GameEffectConstEnum.Effect_Defence, _mc, mc, 1);
     }
@@ -830,7 +830,7 @@ public class BattleActionPlayer : MonoBehaviour
     {
         NormalEffectInfo node = new NormalEffectInfo();
         node.fly = false;
-        node.target = 0;
+        node.target = EffectTargetType.defaultVal;
         node.mount = ModelHelper.Mount_shadow;
         PlaySpecialEffect(node, GameEffectConst.GameEffectConstEnum.Effect_Sing, _mc, mc, 1);
 
@@ -1123,7 +1123,7 @@ public class BattleActionPlayer : MonoBehaviour
             //GameLog.Log_Battle(GetAttackType() + " finishAction=" + _finishAction + " finishTime=" + _finishTime + " completed=" + _completed + " playActionIndex=" + _actionIndex + "/" + _actionList.Count);
             //LogBeforeNextMove(1128,true); //GameDebuger.LogError(string.Format("force next action in Suspicious State, passTime:{0},_needWaitNormalAction:{1},_waitingEffects:{2}", passTime, _needWaitNormalAction, _waitingEffects));
             //_logSusipiciousStartTimeChanges = false;
-//            BattleActionPlayerPoolManager.Instance.DebugQueue.ForEachI<BattleActionPlayer>((p,i) =>
+//            BattleActionPlayerPoolManager.Instance----.DebugQueue.ForEachI<BattleActionPlayer>((p,i) =>
 //            {
 //                p.LogBeforeNextMove(1129, true);
 //            });
@@ -1242,7 +1242,7 @@ public class BattleActionPlayer : MonoBehaviour
         }
         else
         {
-            if (node.target == 0)
+            if (node.target == EffectTargetType.defaultVal)
             {
                 if (_mc != null)
                 {
@@ -1266,7 +1266,7 @@ public class BattleActionPlayer : MonoBehaviour
         var effname = PathHelper.GetEffectPath(eff);
         PlaySpecialEffect(node, effname, monster, target, clientSkillScale);
     }
-    
+
     public void PlaySpecialEffect(
         NormalEffectInfo node
         , string skillName,
@@ -1304,8 +1304,7 @@ public class BattleActionPlayer : MonoBehaviour
             clientSkillScale = 10000;
         }
 
-        int targetType = node.target;
-        string mountName = node.mount;
+        var mountName = node.mount;
 
         var tSkillNames = skillName.Split(',').ToList();
         if (tSkillNames.IsNullOrEmpty())
@@ -1330,46 +1329,7 @@ public class BattleActionPlayer : MonoBehaviour
                 return;
             }
 
-            //位移
-            Vector3 offVec = new Vector3(node.offX, node.offY, node.offZ);
-            /**加一段偏移位移的世界坐标版*/
-            Vector3 effectStartPosition = tEffectRoot.transform.TransformVector(offVec);
-
-            switch (targetType)
-            {
-                case 0: //默认
-                    Transform mountTransform = null;
-                    if (string.IsNullOrEmpty(mountName) == false)
-                    {
-                        mountTransform = monster.transform.GetChildTransform(mountName);
-                    }
-                    if (mountTransform == null)
-                    {
-                        mountTransform = monster.gameObject.transform;
-                    }
-                    if (mountName == ModelHelper.Mount_shadow)
-                    {
-                        effectStartPosition += new Vector3(mountTransform.position.x, mountTransform.position.y, mountTransform.position.z);
-                    }
-                    else
-                    {
-                        effectStartPosition += mountTransform.position;
-                    }
-                    break;
-                case 1: //场景中心
-                    effectStartPosition += Vector3.zero;
-                    break;
-                case 2: //我方中心
-                    effectStartPosition += BattlePositionCalculator.GetZonePosition(monster.side);
-                    break;
-                case 3: //敌方中心
-                    effectStartPosition =
-                        BattlePositionCalculator.GetZonePosition(monster.side ==
-                                                                 BattlePosition.MonsterSide.Player
-                            ? BattlePosition.MonsterSide.Enemy
-                            : BattlePosition.MonsterSide.Player);
-                    break;
-            }
+            var effectStartPosition = node.GetEffStartPos(tEffectRoot, monster);
 
             //特效时间
             var effectTime = monster.CreateEffectTime(
@@ -1462,7 +1422,7 @@ public class BattleActionPlayer : MonoBehaviour
                 Vector3 targetPoint = Vector3.zero;
                 switch (node.flyTarget)
                 {
-                    case 0: //默认
+                    case EffectTargetType.defaultVal: //默认
                         Transform flyTargetTransform = null;
                         if (target == null)
                         {
@@ -1486,14 +1446,14 @@ public class BattleActionPlayer : MonoBehaviour
                             targetPoint = flyTargetTransform.position;
                         }
                         break;
-                    case 1: //场景中心
+                    case EffectTargetType.scene: //场景中心
                         targetPoint = Vector3.zero;
                         break;
-                    case 2: //我方中心
-                        //effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
+                    case EffectTargetType.player: //我方中心
+                        effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
                         break;
-                    case 3: //敌方中心
-                        //effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side == MonsterController.MonsterSide.Player ? MonsterController.MonsterSide.Enemy : MonsterController.MonsterSide.Player);
+                    case EffectTargetType.enemy: //敌方中心
+                        effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side == BattlePosition.MonsterSide.Player ? BattlePosition.MonsterSide.Enemy : BattlePosition.MonsterSide.Player);
                         break;
                 }
 
@@ -1609,7 +1569,7 @@ public class BattleActionPlayer : MonoBehaviour
             tAction(tSkillNames[tCounter], tCounter);
         }
     }
-
+    
     private void ShowHideEffect(HideEffectInfo node)
     {
         _mc.PlayHideEffect(node.playTime);
@@ -1863,7 +1823,7 @@ public class BattleActionPlayer : MonoBehaviour
     {
         var node = new NormalEffectInfo();
         node.fly = false;
-        node.target = 0;
+        node.target = EffectTargetType.defaultVal;
         node.mount = mount;
         node.loop = true;
 
@@ -1923,7 +1883,7 @@ public class BattleActionPlayer : MonoBehaviour
 
         switch (node.target)
         {
-           case 0: //默认
+           case EffectTargetType.defaultVal: //默认
                Transform mountTransform = null;
                if (!string.IsNullOrEmpty(mountName))
                {
@@ -1942,13 +1902,13 @@ public class BattleActionPlayer : MonoBehaviour
                    effectStartPosition = mountTransform.position;
                }
                break;
-            case 1: //场景中心
+            case EffectTargetType.scene: //场景中心
                 effectStartPosition = Vector3.zero;
                 break;
-            case 2: //我方中心
+            case EffectTargetType.player: //我方中心
                 effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
                 break;
-            case 3: //敌方中心
+            case EffectTargetType.enemy: //敌方中心
                 effectStartPosition =
                     BattlePositionCalculator.GetZonePosition(monster.side ==
                                                              BattlePosition.MonsterSide.Player
@@ -1970,15 +1930,12 @@ public class BattleActionPlayer : MonoBehaviour
             , monster.GetBattleGroundMount().gameObject
             , createWhenNotExist:true);
 
-        effectTime.time = 5;
         effectTime.OnFinish = delegate(EffectTime time)
         {
             OnEffectTimeFinish(time, monster.GetId());
         };
-        if (node.delayTime > 0)
-        {
-            effectTime.time = node.delayTime;
-        }
+        effectTime.time = node.delayTime > 0 ? node.delayTime : 5f; 
+        
         if (node.loop)
         {
             effectTime.loopCount = node.loopCount;
@@ -2021,7 +1978,7 @@ public class BattleActionPlayer : MonoBehaviour
             var targetPoint = Vector3.zero;
             switch (node.flyTarget)
             {
-                case 0: //默认
+                case EffectTargetType.defaultVal: //默认
                     Transform flyTargetTransform = null;
                     if (target == null)
                     {
@@ -2046,14 +2003,14 @@ public class BattleActionPlayer : MonoBehaviour
                         targetPoint = flyTargetTransform.position;
                     }
                     break;
-                case 1: //场景中心
+                case EffectTargetType.scene: //场景中心
                     targetPoint = Vector3.zero;
                     break;
-                case 2: //我方中心
-                    //effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
+                case EffectTargetType.player: //我方中心
+                    effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
                     break;
-                case 3: //敌方中心
-                    //effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side == BattlePosition.MonsterSide.Player ? BattlePosition.MonsterSide.Enemy : BattlePosition.MonsterSide.Player);
+                case EffectTargetType.enemy: //敌方中心
+                    effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side == BattlePosition.MonsterSide.Player ? BattlePosition.MonsterSide.Enemy : BattlePosition.MonsterSide.Player);
                     break;
             }
 

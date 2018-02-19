@@ -1,10 +1,19 @@
-﻿public class NormalEffectInfo : BaseEffectInfo
+﻿public enum EffectTargetType
+{
+	//特效目标  0默认， 1，场景中心 2，我方中心   3， 敌军中心
+	defaultVal
+	, scene
+	, player
+	, enemy
+}
+
+public partial class NormalEffectInfo : BaseEffectInfo
 {
 	public const string TYPE = "Normal";
 
 	public string name;
 	public float delayTime;
-	public int target;//特效目标  0默认， 1，场景中心 2，我方中心   3， 敌军中心
+	public EffectTargetType target;
 	public string mount; //特效绑定点， 只有当特效目标为0时才生效， 留空则表示人物站立点
 	public bool loop;//是否循环
 	public int loopCount;//循环次数
@@ -17,7 +26,7 @@
 	public bool faceToTarget;//朝向目标
 	public bool hitEff; //是否受击特效
 	public bool fly; //是否飞行特效
-	public int flyTarget; //飞行指向目标 0默认(技能作用目标)， 1，场景中心 2，我方中心   3， 敌军中心
+	public EffectTargetType flyTarget;
 	public float flyTime; //飞行时间
 	public string flyMount; //飞行指向目标绑定点
 	
@@ -36,14 +45,14 @@
 	public float flyOffY; //飞行位移y
 	public float flyOffZ; //飞行位移z
 
-	static public BaseEffectInfo ToBaseEffectInfo(JsonEffectInfo json)
+	public static BaseEffectInfo ToBaseEffectInfo(JsonEffectInfo json)
 	{
 		NormalEffectInfo info = new NormalEffectInfo ();
 		info.FillInfo (json);
 
 		info.name = json.name;
 		info.delayTime = json.delayTime;
-		info.target = json.target;
+		info.target = (EffectTargetType)json.target;
 		info.mount = json.mount;
 		info.loop = json.loop;
 		info.loopCount = json.loopCount;

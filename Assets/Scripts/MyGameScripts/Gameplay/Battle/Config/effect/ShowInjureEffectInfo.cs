@@ -1,4 +1,4 @@
-﻿public class ShowInjureEffectInfo : BaseEffectInfo
+﻿public partial class ShowInjureEffectInfo : BaseEffectInfo
 {
 	public const string TYPE = "ShowInjure";
 

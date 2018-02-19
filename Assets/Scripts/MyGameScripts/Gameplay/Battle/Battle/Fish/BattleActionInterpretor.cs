@@ -28,58 +28,6 @@ public partial class BaseActionInfo
             return _animationName.Value;
         }
     }
-
-
-    private List<long> _victimList;
-
-    protected List<long> GetVictimList(VideoSkillAction vsAct, Skill skill)
-    {
-        if (_victimList != null) return _victimList;
-        
-        _victimList = new List<long>();
-        var vsActTargetStateGroups = vsAct.targetStateGroups;
-        List<long> callSoldierIds=new List<long>();
-        for (var i = 0; i < vsActTargetStateGroups.Count; i++)
-        {
-            var injureId = GetInjureId(vsActTargetStateGroups[i], callSoldierIds);
-            if (injureId >0)
-                _victimList.Add(injureId);
-        }
-
-        return _victimList;
-    }
-
-    private long GetInjureId(VideoTargetStateGroup group,List<long> callSoldierIds)
-    {
-        var groupTargetStates = group.targetStates;
-        for (var i = 0; i < groupTargetStates.Count; i++)
-        {
-            var state = groupTargetStates[i];
-            if (state is VideoRetreatState)
-                continue;
-			
-            var videoBuffAddTargetState = state as VideoBuffAddTargetState;
-            if (videoBuffAddTargetState != null)
-            {
-                if (callSoldierIds.Contains(videoBuffAddTargetState.id))
-                {
-                    continue;
-                }
-
-                //当只有buff添加state的时候， 才考虑加入受击者，如果不是， 就不需要加入受击者
-                if (groupTargetStates.Count > 1)
-                {
-                    continue;
-                }
-            }
-            if (state.id > 0)
-            {
-                return state.id;
-            }
-        }
-
-        return 0;
-    }
 }
 
 public partial class NormalActionInfo
@@ -90,16 +38,16 @@ public partial class NormalActionInfo
         {
             case ActionInitiator.Attacker:
             {
-                return AnimatorPlayCtrl.Create(this, skill, vsAct,vsAct.actionSoldierId);
+                return AnimatorPlayCtrl.Create(this, skill, vsAct,vsAct.actionSoldierId,vsAct.GetAttackerStateGroup(0));
             }
             
             case ActionInitiator.Victim:
             {
-                var victimList = GetVictimList(vsAct,skill);
-                var aniPlayList = new List<IBattlePlayCtl>(victimList.Count);
-                for (var i = 0; i < victimList.Count; i++)
+                var victimList = vsAct.GetVictimStateGroups();
+                var aniPlayList = new List<IBattlePlayCtl>(vsAct.GetVictimStateGroupCount());
+                foreach (var tuple in victimList)
                 {
-                    var ctl = AnimatorPlayCtrl.Create(this, skill, vsAct,victimList[i]);
+                    var ctl = AnimatorPlayCtrl.Create(this, skill, vsAct,tuple.p1,tuple.p2);
                     aniPlayList.Add(ctl);
                 }
 
@@ -130,8 +78,7 @@ public partial class MoveActionInfo
         switch (initiator)
         {
             case ActionInitiator.Attacker:
-                var victimList = GetVictimList(vsAct,skill);
-                return TweenMovePlayCtl.Create(this,skill,vsAct,vsAct.actionSoldierId,victimList[0]);
+                return TweenMovePlayCtl.Create(this,skill,vsAct,vsAct.actionSoldierId,vsAct.GetVictim(0));
         }
 
         return null;
@@ -165,8 +112,7 @@ public partial class MoveBackActionInfo
         switch (initiator)
         {
             case ActionInitiator.Attacker:
-                var victimList = GetVictimList(vsAct,skill);
-                return TweenMoveBackPlayCtl.Create(this,skill,vsAct,vsAct.actionSoldierId,victimList[0]);
+                return TweenMoveBackPlayCtl.Create(this,skill,vsAct,vsAct.actionSoldierId,vsAct.GetVictim(0));
         }
 
         return null;

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using NJson = Newtonsoft.Json;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
@@ -20,13 +21,17 @@ public class SimulateCorrectSkillConfig
             type = NormalActionInfo.TYPE,
             name = "attack",
             initiator = ActionInitiator.Attacker,
-        }).Branch(EffectPhrase.Create(new NormalEffectInfo
-        {
-            type = NormalEffectInfo.TYPE,
-            name = "skill_eff_1329_att",
-            mount = "Mount_Shadow",
-            faceToTarget = true,
-        }));
+            effects = new List<BaseEffectInfo>
+            {
+                new NormalEffectInfo
+                {
+                    type = NormalEffectInfo.TYPE,
+                    name = "skill_eff_1329_att",
+                    mount = "Mount_Shadow",
+                    faceToTarget = true,
+                },
+            }
+        });
 
         var movebackPhrase = ActionPhrase.Create(new MoveBackActionInfo
         {
@@ -43,22 +48,23 @@ public class SimulateCorrectSkillConfig
             //startTime = 0.8f,
             delayTime = 0.167f,
             initiator = ActionInitiator.Victim,
-        }).Branch(ParPhrase.Create(new BattlePhraseBase[]
-        {
-            EffectPhrase.Create(new NormalEffectInfo
+            effects = new List<BaseEffectInfo>
             {
-                type = NormalEffectInfo.TYPE,
-                name = "skill_eff_1329_hit",
-                mount = "Mount_Hit",
-                hitEff = true,
-                //playTime = 0.8f
-            }),
-            EffectPhrase.Create(new ShowInjureEffectInfo
-            {
-                type = ShowInjureEffectInfo.TYPE,
-                //playTime = 0.8f
-            })
-        }));
+                new NormalEffectInfo
+                {
+                    type = NormalEffectInfo.TYPE,
+                    name = "skill_eff_1329_hit",
+                    mount = "Mount_Hit",
+                    hitEff = true,
+                    //playTime = 0.8f
+                },
+                new ShowInjureEffectInfo
+                {
+                    type = ShowInjureEffectInfo.TYPE,
+                    //playTime = 0.8f
+                }
+            }
+        });
 
         var attackAndHitPhrase = attackPhrase.Parall(injurePhrase);
         var wholePhrase = SeqPhrase.Create(new[]

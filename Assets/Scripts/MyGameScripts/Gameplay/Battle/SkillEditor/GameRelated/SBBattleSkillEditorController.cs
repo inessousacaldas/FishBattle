@@ -135,7 +135,7 @@ namespace SkillEditor
 
             bool hitEff = GUIHelper.DrawToggle("是否受击", info.hitEff, 30, false);
 
-            int target = DrawActTargetType(info.GetHashCode().ToString(), "作用目标", info.target);
+            var target = DrawActTargetType(info.GetHashCode().ToString(), "作用目标", info.target);
             MountType mountType = DrawMountType(info.GetHashCode().ToString(), "作用锚点", info.mount);
 
             bool fixRotation = GUIHelper.DrawToggle("固定旋转", info.fixRotation, 30, false);
@@ -146,7 +146,7 @@ namespace SkillEditor
             bool IsEffectHasCamera = GUIHelper.DrawToggle("特效带镜头", info.IsEffectHasCamera, 30, false);
             
             bool fly = GUIHelper.DrawToggle("是否飞行", info.fly, 30, false);
-            int flyTarget = GUIHelper.DrawIntField("飞向目标", info.flyTarget, 30, false, 60);
+            var flyTarget = GUIHelper.DrawIntField("飞向目标", (int)info.flyTarget, 30, false, 60);
             float flyTime = GUIHelper.DrawFloatField("飞行停顿时间", info.flyTime, 30, false);
             bool follow = GUIHelper.DrawToggle("是否跟随", info.follow, 30, false);
             float offX = GUIHelper.DrawFloatField("起点偏移X", info.offX, 30, false);
@@ -163,7 +163,7 @@ namespace SkillEditor
                     info.name = effectType.ToString();
                 }
                 info.delayTime = delayTime;
-                info.target = target;
+                info.target = (EffectTargetType)target;
                 info.mount = mountType.ToString();
                 info.fixRotation = fixRotation;
                 info.faceToPrevious = faceToPrevious;
@@ -172,7 +172,7 @@ namespace SkillEditor
 
                 info.IsEffectHasCamera = IsEffectHasCamera;
                 
-                info.flyTarget = flyTarget;
+                info.flyTarget = (EffectTargetType)flyTarget;
                 if (info.fly != fly)
                 {
                     info.fly = fly;
@@ -200,10 +200,10 @@ namespace SkillEditor
             GUILayout.EndVertical();
         }
 
-        private int DrawActTargetType(string pGUIDPrefix, string title, int target)
+        private int DrawActTargetType(string pGUIDPrefix, string title, EffectTargetType target)
         {
             GUIHelper.DrawBox(title);
-            return GUIHelper.EnumPopup(pGUIDPrefix, "", (ActTargetType)target, GUILayout.Width(50));
+            return GUIHelper.EnumPopup(pGUIDPrefix, "", target, GUILayout.Width(50));
         }
 
         private void DrawShakeEffectInfoView(BaseActionInfo actionInfo, ShakeEffectInfo info)
@@ -472,15 +472,6 @@ namespace SkillEditor
         fly,
         full,
         follow,
-    }
-
-    public enum ActTargetType
-    {
-        //特效目标  0默认， 1，场景中心 2，我方中心   3， 敌军中心
-        defaultVal
-        , scene
-        , player
-        , enemy
     }
 
     #endregion

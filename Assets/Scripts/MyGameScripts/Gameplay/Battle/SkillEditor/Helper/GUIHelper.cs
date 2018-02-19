@@ -120,7 +120,7 @@ namespace SkillEditor
             return newValue;
         }
 
-        static public int EnumPopup(string pGUIDPrefix, string label, Enum selected, params GUILayoutOption[] options)
+        public static int EnumPopup(string pGUIDPrefix, string label, Enum selected, params GUILayoutOption[] options)
         {
             Type tEnumType = selected.GetType();
             string[] tEnumNames = Enum.GetNames(tEnumType);

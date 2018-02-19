@@ -28,7 +28,7 @@ namespace SkillEditor
             base.Init();
 
             _rootController = SkillEditorHelper.CreateAndSetItemFast<SkillEditorGUIController>(SkillEditorGUI.NAME);
-            Object.DontDestroyOnLoad(_rootController.BaseView.gameObject);
+//            Object.DontDestroyOnLoad(_rootController.BaseView.gameObject);
         }
 
         public C OpenFunModule<C>(string name, ModuleLayer layer, bool bgClose = true, bool bgMaskClose = true) where C : IViewController, new()

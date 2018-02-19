@@ -47,6 +47,18 @@ public static class GameObjectExt
         return t;
     }
 
+    public static T GetMissingComponent<T>(this Component go) where T : Component
+    {
+        if (go == null) return null;
+        var t = go.GetComponent<T>();
+        if (t == null)
+        {
+            t = go.gameObject.AddComponent<T>();
+        }
+
+        return t;
+    }
+    
     #region find by Name
 
     /// <summary>

@@ -15,7 +15,7 @@
 //#define Log_Battle_Anim
 //#define Log_Battle_RESP
 //#define Log_Battle_Debug
-//#define Log_BattleError
+#define Log_BattleError
 #endif
 
 public class GameLog

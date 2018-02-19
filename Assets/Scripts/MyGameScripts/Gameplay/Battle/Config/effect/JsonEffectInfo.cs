@@ -18,7 +18,7 @@ public class JsonEffectInfo
 
 	public bool hitEff; //是否受击特效
 	public bool fly; //是否飞行特效
-	public int flyTarget; //飞行指向目标 0默认(技能作用目标)， 1，场景中心 2，我方中心   3， 敌军中心
+	public EffectTargetType flyTarget; //飞行指向目标 0默认(技能作用目标)， 1，场景中心 2，我方中心   3， 敌军中心
 	public float flyTime; //飞行时间
 	public string flyMount; //飞行指向目标绑定点
 	

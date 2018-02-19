@@ -23,7 +23,7 @@ namespace Fish
                 allSubPlayCtl.Add(playCtl);
             }
             var combined = allSubPlayCtl.ToSequence();
-
+            var a = combined as SeqCompositePlayCtl;
             //var overPlayCtl = InterpreteFightOver(vRound);
             return combined;
             //return combined.Chain(overPlayCtl);

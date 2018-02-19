@@ -4,9 +4,10 @@ namespace Fish
 {
     public class AnimatorPlayCtrl : BattlePlayCtlBasic
     {
-        public static AnimatorPlayCtrl Create(NormalActionInfo normalActionInfo, Skill skill, VideoSkillAction vsAct, long targetId)
+        public static AnimatorPlayCtrl Create(NormalActionInfo normalActionInfo, Skill skill, VideoSkillAction vsAct,
+            long targetId, VideoTargetStateGroup stateGroup)
         {
-            return new AnimatorPlayCtrl(normalActionInfo, skill, vsAct, targetId);
+            return new AnimatorPlayCtrl(normalActionInfo, skill, vsAct, targetId,stateGroup);
         }
 
         private NormalActionInfo _actInfo;
@@ -18,13 +19,16 @@ namespace Fish
         private readonly float _duration;
         private readonly ModelHelper.AnimType _animationName;
         private readonly long _monsterId;
+        private VideoTargetStateGroup _stateGroup;
 
-        private AnimatorPlayCtrl(NormalActionInfo normalActionInfo, Skill skill, VideoSkillAction vsAct, long monsterId)
+        private AnimatorPlayCtrl(NormalActionInfo normalActionInfo, Skill skill, VideoSkillAction vsAct, long monsterId,
+            VideoTargetStateGroup stateGroup)
         {
             _actInfo = normalActionInfo;
             _skill = skill;
             _vsAct = vsAct;
             _monsterId = monsterId;
+            _stateGroup = stateGroup;
             _mc = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(monsterId);
             _animationName = _actInfo.AnimationType;
             _duration = _mc.GetAnimationDuration(_animationName) + _actInfo.delayTime;
@@ -59,6 +63,13 @@ namespace Fish
         protected override void CustomStart()
         {
             _mc.PlayAnimation(_animationName);
+            if (_stateGroup != null)
+                BattleStateHandler.HandleBattleState(_monsterId, _stateGroup.targetStates, BattleDataManager.DataMgr.IsInBattle);
+            
+            foreach (var eff in _actInfo.effects)
+            {
+                eff.Play(_mc, _actInfo, _vsAct, _stateGroup);
+            }
         }
     }
 }
