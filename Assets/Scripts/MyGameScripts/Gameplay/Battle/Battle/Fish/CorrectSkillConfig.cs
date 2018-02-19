@@ -37,6 +37,20 @@ public static class CorrectSkillConfigExt
         if (other == null) return main;
         return BranchPhrase.Create(main,other);
     }
+
+    public static BattlePhraseBase ToSeq(this BattlePhraseBase[] lst)
+    {
+        if (lst.Length == 1)
+            return lst[0];
+        return SeqPhrase.Create(lst);
+    }
+
+    public static BattlePhraseBase ToPar(this BattlePhraseBase[] lst)
+    {
+        if (lst.Length == 1)
+            return lst[0];
+        return ParPhrase.Create(lst);
+    }
 }
 
 public abstract partial class BattlePhraseBase

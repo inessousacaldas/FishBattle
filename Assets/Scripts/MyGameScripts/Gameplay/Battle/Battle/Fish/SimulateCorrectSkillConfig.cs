@@ -56,12 +56,12 @@ public class SimulateCorrectSkillConfig
                     name = "skill_eff_1329_hit",
                     mount = "Mount_Hit",
                     hitEff = true,
-                    //playTime = 0.8f
+                    playTime = 0.8f
                 },
                 new ShowInjureEffectInfo
                 {
                     type = ShowInjureEffectInfo.TYPE,
-                    //playTime = 0.8f
+                    playTime = 0.8f
                 }
             }
         });
@@ -70,7 +70,6 @@ public class SimulateCorrectSkillConfig
         var wholePhrase = SeqPhrase.Create(new[]
             {movePhrase, attackAndHitPhrase, movebackPhrase, WaitPhrase.Create(0.5f)});
 
-        //wholePhrase = SeqPhrase.Create(new BattlePhraseBase[]{movePhrase});
         return new CorrectSkillConfig
         {
             id = 1329,
@@ -79,6 +78,70 @@ public class SimulateCorrectSkillConfig
         };
     }
 
+    public static CorrectSkillConfig SimulateNormalAttack1609()
+    {
+        var attackPhrase = ActionPhrase.Create(new NormalActionInfo
+        {
+            type = NormalActionInfo.TYPE,
+            name = "attack",
+            initiator = ActionInitiator.Attacker,
+            effects = new List<BaseEffectInfo>
+            {
+                new NormalEffectInfo
+                {
+                    type = NormalEffectInfo.TYPE,
+                    name = "skill_eff_1609_att",
+                    mount = "Mount_Shadow",
+                    faceToTarget = true,
+                    playTime = 0.05f,
+                },
+                new NormalEffectInfo
+                {
+                    type = NormalEffectInfo.TYPE,
+                    name = "skill_eff_1609_fly",
+                    delayTime=0.2333f,
+                    mount = "Mount_Hit",
+                    faceToTarget = true,
+                    fly = true,
+                    playTime = 0.25f,
+                },
+            }
+        });
+
+        var injurePhrase = ActionPhrase.Create(new NormalActionInfo
+        {
+            type = NormalActionInfo.TYPE,
+            name = "hit",
+            //startTime = 0.55f,
+            delayTime = 0.3f,
+            initiator = ActionInitiator.Victim,
+            effects = new List<BaseEffectInfo>
+            {
+                new NormalEffectInfo
+                {
+                    type = NormalEffectInfo.TYPE,
+                    name = "skill_eff_1609_hit",
+                    mount = "Mount_Hit",
+                    hitEff = true,
+                    //playTime = 0.55f
+                },
+                new ShowInjureEffectInfo
+                {
+                    type = ShowInjureEffectInfo.TYPE,
+                    //playTime = 0.55f
+                }
+            }
+        });
+
+        var attackAndHitPhrase = attackPhrase.Parall(injurePhrase);
+
+        return new CorrectSkillConfig
+        {
+            id = 1609,
+            name = "normal attack",
+            battlePhrase = attackAndHitPhrase
+        };
+    }
     public static void SaveSimulatedNormalAttack()
     {
         var newjson = SimulateNormalAttack();
@@ -191,6 +254,4 @@ public class SimulateCorrectSkillConfig
         }
       ]
     }
-
-
  */
