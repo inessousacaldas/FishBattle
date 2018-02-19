@@ -226,6 +226,12 @@ namespace Fish
         {
             return _duration;
         }
+
+        public static IBattlePlayCtl Create(float delayTime)
+        {
+            var p = new KeepStatePlayCtl(delayTime);
+            return p;
+        }
     }
 
     //顺序复合多个动画

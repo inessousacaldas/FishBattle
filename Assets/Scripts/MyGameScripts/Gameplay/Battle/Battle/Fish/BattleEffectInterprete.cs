@@ -46,7 +46,7 @@ public partial class NormalEffectInfo
     {
         if (mc == null)
         {
-            //TODO collect error
+            //todo fish: collect error
             return;
         }
         var skillName = BattleHelper.GetSkillEffectName(vsAct.skill, name);
@@ -67,8 +67,8 @@ public partial class NormalEffectInfo
         {
             if (fly && flyTarget == 0)
             {
-                var victims = vsAct.GetVictims();
-                foreach (var victim in victims)
+                var victimIDs = vsAct.GetVictims();
+                foreach (var victim in victimIDs)
                 {
                     var injuredMc = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(victim);
                     PlaySpecialEffect(skillName, mc, injuredMc, clientSkillScale,tSkillNames,actInfo);

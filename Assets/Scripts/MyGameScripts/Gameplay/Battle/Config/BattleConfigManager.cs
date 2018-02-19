@@ -71,6 +71,8 @@ public sealed class BattleConfigManager
 #if UNITY_EDITOR
 	    var cfg= SimulateCorrectSkillConfig.SimulateNormalAttack();
 	    _correctCfg.Add(cfg.id,cfg);
+	    cfg=SimulateCorrectSkillConfig.SimulateNormalAttack1609();
+	    _correctCfg.Add(cfg.id,cfg);
 #endif
     }
 	

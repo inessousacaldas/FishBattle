@@ -4,10 +4,20 @@ namespace Fish
 {
     public class AnimatorPlayCtrl : BattlePlayCtlBasic
     {
-        public static AnimatorPlayCtrl Create(NormalActionInfo normalActionInfo, Skill skill, VideoSkillAction vsAct,
-            long targetId, VideoTargetStateGroup stateGroup)
+        //index用以标记攻击者(-1)以及受击者(0开始)，方便链式攻击特效寻找目标
+        public static IBattlePlayCtl Create(NormalActionInfo normalActionInfo, Skill skill, VideoSkillAction vsAct,
+            long targetId, VideoTargetStateGroup stateGroup, int index)
         {
-            return new AnimatorPlayCtrl(normalActionInfo, skill, vsAct, targetId,stateGroup);
+            var delayTime = normalActionInfo.delayTime;
+            var ctl = new AnimatorPlayCtrl(normalActionInfo, skill, vsAct, targetId, stateGroup);
+            if (delayTime > 0f)
+            {
+                return KeepStatePlayCtl.Create(delayTime).Chain(ctl);
+            }
+            else
+            {
+                return ctl;
+            }
         }
 
         private NormalActionInfo _actInfo;
@@ -53,6 +63,7 @@ namespace Fish
             _skill = null;
             _vsAct = null;
             _mc = null;
+            _stateGroup = null;
         }
 
         public override float Duaration()
@@ -64,7 +75,13 @@ namespace Fish
         {
             _mc.PlayAnimation(_animationName);
             if (_stateGroup != null)
+            {
+                if (_actInfo.initiator == ActionInitiator.Victim)
+                {
+                    
+                }
                 BattleStateHandler.HandleBattleState(_monsterId, _stateGroup.targetStates, BattleDataManager.DataMgr.IsInBattle);
+            }
             
             foreach (var eff in _actInfo.effects)
             {
@@ -72,4 +89,5 @@ namespace Fish
             }
         }
     }
+    
 }

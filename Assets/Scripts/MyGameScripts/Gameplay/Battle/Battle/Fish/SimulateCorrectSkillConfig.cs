@@ -112,7 +112,7 @@ public class SimulateCorrectSkillConfig
         {
             type = NormalActionInfo.TYPE,
             name = "hit",
-            //startTime = 0.55f,
+            startTime = 0.55f,
             delayTime = 0.3f,
             initiator = ActionInitiator.Victim,
             effects = new List<BaseEffectInfo>
@@ -142,6 +142,7 @@ public class SimulateCorrectSkillConfig
             battlePhrase = attackAndHitPhrase
         };
     }
+    
     public static void SaveSimulatedNormalAttack()
     {
         var newjson = SimulateNormalAttack();

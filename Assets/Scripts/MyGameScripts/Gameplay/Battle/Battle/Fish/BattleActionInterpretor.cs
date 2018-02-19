@@ -38,16 +38,18 @@ public partial class NormalActionInfo
         {
             case ActionInitiator.Attacker:
             {
-                return AnimatorPlayCtrl.Create(this, skill, vsAct,vsAct.actionSoldierId,vsAct.GetAttackerStateGroup(0));
+                return AnimatorPlayCtrl.Create(this, skill, vsAct,vsAct.actionSoldierId,vsAct.GetAttackerStateGroup(0),-1);
             }
             
             case ActionInitiator.Victim:
             {
                 var victimList = vsAct.GetVictimStateGroups();
                 var aniPlayList = new List<IBattlePlayCtl>(vsAct.GetVictimStateGroupCount());
+                var index = 0;
                 foreach (var tuple in victimList)
                 {
-                    var ctl = AnimatorPlayCtrl.Create(this, skill, vsAct,tuple.p1,tuple.p2);
+                    var ctl = AnimatorPlayCtrl.Create(this, skill, vsAct,tuple.p1,tuple.p2,index);
+                    index++;
                     aniPlayList.Add(ctl);
                 }
 
