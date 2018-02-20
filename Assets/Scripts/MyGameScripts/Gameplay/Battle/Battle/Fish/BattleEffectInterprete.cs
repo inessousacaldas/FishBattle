@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AppDto;
+using DG.Tweening;
 using Fish;
 using UnityEngine;
 
@@ -107,7 +108,7 @@ public partial class NormalEffectInfo
             NGUITools.Destroy(root);
             return;
         }
-        var effectStartPosition = this.GetEffStartPos(root, initiator);
+        var effectStartPosition = this.GetEffStartPos(root, initiator, new Vector3(offX, offY, offZ));
         //特效时间
         var effectTime = initiator.CreateEffectTime(
             root
@@ -169,7 +170,59 @@ public partial class NormalEffectInfo
         else if (fly)
         {
             //TODO fish: BattleActionPlayer Line 1422
+            /*var targetPoint = Vector3.zero;
+            switch (flyTarget)
+            {
+                case EffectTargetType.defaultVal: //默认
+                    Transform flyTargetTransform = null;
+                    if (skillTarget == null)
+                    {
+                        targetPoint = Vector3.zero;
+                        break;
+                    }
+                    if (string.IsNullOrEmpty(mount) == false)
+                    {
+                        flyTargetTransform = skillTarget.transform.GetChildTransform(mount);
+                    }
+                    if (flyTargetTransform == null)
+                    {
+                        flyTargetTransform = skillTarget.gameObject.transform;
+                    }
+                    if (mount == ModelHelper.Mount_shadow)
+                    {
+                        targetPoint = new Vector3(flyTargetTransform.position.x, flyTargetTransform.position.y, flyTargetTransform.position.z);
+                    }
+                    else
+                    {
+                        targetPoint = flyTargetTransform.position;
+                    }
+                    break;
+                case EffectTargetType.scene: //场景中心
+                    targetPoint = Vector3.zero;
+                    break;
+                case EffectTargetType.player: //我方中心
+                    targetPoint = BattlePositionCalculator.GetZonePosition(initiator.side);
+                    break;
+                case EffectTargetType.enemy: //敌方中心
+                    targetPoint = BattlePositionCalculator.GetZonePosition(initiator.side == BattlePosition.MonsterSide.Player ? BattlePosition.MonsterSide.Enemy : BattlePosition.MonsterSide.Player);
+                    break;
+            }
+
+            //飞行位移
+            var flyOffVec = new Vector3(flyOffX, flyOffY, flyOffZ);
+            targetPoint = targetPoint + flyOffVec;*/
+
+            var targetPoint = this.GetEffStartPos(root,skillTarget,new Vector3(flyOffX, flyOffY, flyOffZ));
+            effectTime.time = delayTime + flyTime;
+            var delay = delayTime;
+            if (delay < float.Epsilon)
+            {
+                delay = 1f;
+            }
+            effectTime.transform.LookAt(targetPoint);
+            effectTime.transform.DOMove(targetPoint, delay);
         }
+        
         if (IsEffectHasCamera && BattleDataManager.NeedBattleMap)
         {
             var tCameraParent = effectTime.transform.GetChildTransform("WarCameraRotate");

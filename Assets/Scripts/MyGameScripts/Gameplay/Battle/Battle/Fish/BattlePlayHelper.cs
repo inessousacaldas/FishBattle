@@ -87,12 +87,11 @@ public static class BattlePlayHelper
         }
     }
 
-    public static Vector3 GetEffStartPos(this NormalEffectInfo eff, GameObject root, MonsterController monster)
+    public static Vector3 GetEffStartPos(this NormalEffectInfo eff, GameObject root, MonsterController monster, Vector3 offset)
     {
         //位移
-        var offVec = new Vector3(eff.offX, eff.offY, eff.offZ);
         /**加一段偏移位移的世界坐标版*/
-        var startPos = root.transform.TransformVector(offVec);
+        var startPos = root.transform.TransformVector(offset);
 
         switch (eff.target)
         {

@@ -1329,7 +1329,7 @@ public class BattleActionPlayer : MonoBehaviour
                 return;
             }
 
-            var effectStartPosition = node.GetEffStartPos(tEffectRoot, monster);
+            var effectStartPosition = node.GetEffStartPos(tEffectRoot, monster, new Vector3(node.offX, node.offY, node.offZ));
 
             //特效时间
             var effectTime = monster.CreateEffectTime(

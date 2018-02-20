@@ -1373,15 +1373,9 @@ public class ModelDisplayer
         
         var clipName = animate.ToString();
         return _mAnimator.GetClipLength(clipName);
-        /*
-        var info = _mAnimator.GetCurrentAnimatorStateInfo(ModelHelper.Animator_Layer_BattleLayer);
-        if (info.IsName(clipName))
-            return _mAnimator.GetClipLength(clipName);
-
-        return 0;*/
     }
-    public void PlayAnimateWithCallback(ModelHelper.AnimType animate, bool crossFade, Action<ModelHelper.AnimType, float> animClipCallBack = null,
-                                        bool checkSameAnim = false, int layer = 0)
+    
+    public void PlayAnimateWithCallback(ModelHelper.AnimType animate, bool crossFade, Action<ModelHelper.AnimType, float> animClipCallBack = null,bool checkSameAnim = false, int layer = 0)
     {
         if (_mAnimator == null)
         {
