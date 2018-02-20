@@ -76,11 +76,10 @@ namespace Fish
             _mc.PlayAnimation(_animationName);
             if (_stateGroup != null)
             {
-                if (_actInfo.initiator == ActionInitiator.Victim)
-                {
-                    
+                if (_actInfo.initiator != ActionInitiator.Victim)
+                {//受击扣血会多播一次，因此限制只要攻击方才播放
+                    BattleStateHandler.HandleBattleState(_monsterId, _stateGroup.targetStates, BattleDataManager.DataMgr.IsInBattle);
                 }
-                BattleStateHandler.HandleBattleState(_monsterId, _stateGroup.targetStates, BattleDataManager.DataMgr.IsInBattle);
             }
             
             foreach (var eff in _actInfo.effects)
