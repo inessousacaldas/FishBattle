@@ -104,12 +104,13 @@ namespace Fish
         private JSTimer.TimerTask _timer;
         private readonly int _instaceId = ++_customInstanceId;
         private static int _customInstanceId;
+        private float _startTime;
 
-        //invoke by timer
+        //invoke by timer,Time.time - _startTime
         void Update()
         {
             if (_playState != BattlePlayingState.Started) return;
-            _elapseTime = _timer.ElapseTime;
+            _elapseTime = Time.time - _startTime;
             if (_elapseTime > Duaration())
             {
                 var playFinishedState = GenFinishedState();
@@ -128,6 +129,7 @@ namespace Fish
         {
             DisposeTimer();
             _timer = JSTimer.Instance.SetupTimer(GetType().ToString() + _instaceId, Update);
+            _startTime = Time.time;
         }
 
         private void DisposeTimer()
@@ -135,6 +137,7 @@ namespace Fish
             if (_timer == null) return;
             _timer.Cancel();
             _timer = null;
+            _startTime = 0;
         }
 
         protected bool IsStarted()

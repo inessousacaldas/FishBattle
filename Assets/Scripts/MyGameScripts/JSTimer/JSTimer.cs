@@ -33,16 +33,13 @@ public class JSTimer : MonoBehaviour
         public bool timeScale;
         //是否有效
         public bool isValid;
-
-        public abstract float ElapseTime { get; }
-    }
+   }
 
     public class TimerTask : Task
     {
         public delegate void OnTimerUpdate();
 
         public OnTimerUpdate onUpdate;
-        private float _elapseTime;
 
         public TimerTask(string taskName, OnTimerUpdate onUpdate, float updateFrequence, bool timeScale)
         {
@@ -67,7 +64,6 @@ public class JSTimer : MonoBehaviour
 
         public void DoUpdate()
         {
-            _elapseTime += timeScale ? Time.deltaTime : Time.unscaledDeltaTime;
             if (onUpdate != null)
                 onUpdate();
         }
@@ -75,11 +71,6 @@ public class JSTimer : MonoBehaviour
         public void Dispose()
         {
             onUpdate = null;
-        }
-
-        public override float ElapseTime
-        {
-            get { return _elapseTime; }
         }
     }
 
@@ -96,7 +87,6 @@ public class JSTimer : MonoBehaviour
         public float totalTime;
         //剩余时间（单位：秒）
         public float remainTime;
-        private float _elapseTime;
 
         public CdTask(string taskName, float totalTime, OnCdUpdate onUpdate, OnCdFinish onFinished, float updateFrequence, bool timeScale)
         {
@@ -128,7 +118,6 @@ public class JSTimer : MonoBehaviour
 
         public void DoUpdate()
         {
-            _elapseTime += timeScale ? Time.deltaTime : Time.unscaledDeltaTime;
             if (onUpdate != null)
                 onUpdate(this.remainTime);
         }
@@ -137,11 +126,6 @@ public class JSTimer : MonoBehaviour
         {
             onUpdate = null;
             onFinished = null;
-        }
-
-        public override float ElapseTime
-        {
-            get { return _elapseTime; }
         }
     }
 
