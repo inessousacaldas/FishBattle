@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using AssetPipeline;
 using Fish;
-using Newtonsoft.Json;
 using AnimType = ModelHelper.AnimType;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
@@ -47,7 +46,6 @@ namespace SkillEditor
 
         #endregion
 
-        private const string BattleConfig_Path = "Assets/GameResources/ConfigFiles/BattleConfig/BattleConfig.bytes";
 
         private List<SkillConfigInfo> _configInfoDic = new List<SkillConfigInfo>();
 
@@ -534,31 +532,34 @@ namespace SkillEditor
 
         private void LoadConfig()
         {
-            var cfgJsonStr = System.IO.File.ReadAllText(BattleConfig_Path);
-            //TODO franky to be delete checking
-            if (cfgJsonStr.Contains("$type"))
+            var cfgJsonStr = System.IO.File.ReadAllText(OldBattleConfigConverter.BattleConfig_Path);
+            //TODO fish: change to new config class CorrectBattleConfigInfo
+            if (!cfgJsonStr.Contains("$type"))//reformatted json contain $type
             {
-                var newCfg = JsonC.DeserializeObject<BattleConfigInfo>(cfgJsonStr);
-                if (newCfg == null) return;
+                var json = JsonC.DeserializeObject<JsonBattleConfigInfo>(cfgJsonStr);
+                var reformated = new BattleConfigInfo
+                {
+                    time = json.time,
+                    list = new List<SkillConfigInfo>(json.list.Count)
+                };
+                foreach (var jsonSkillConfigInfo in json.list)
+                {
+                    reformated.list.Add(jsonSkillConfigInfo.ToSkillConfigInfo());
+                }
+
+                var reformatedJson = reformated.ToBattleJsonStr();
+                System.IO.File.WriteAllText(OldBattleConfigConverter.BattleConfig_Path,reformatedJson);
                 _configInfoDic.Clear();
-                newCfg.list.Sort((x, y) => (x.id - y.id));
-                _configInfoDic = newCfg.list;
+                reformated.list.Sort((x, y) => (x.id - y.id));
+                _configInfoDic = reformated.list;
                 return;
             }
-
-            var configInfo = JsonC.DeserializeObject<JsonBattleConfigInfo>(cfgJsonStr);
-
-            if (configInfo == null) return;
-            var list = configInfo.list.ToArray();
-            Array.Sort(list, (x,y)=> (x.id - y.id)); 
+            var newCfg = JsonC.DeserializeObject<BattleConfigInfo>(cfgJsonStr);
+            if (newCfg == null) return;
             _configInfoDic.Clear();
-            SkillConfigInfo tSkillConfigInfo = null;
-            foreach (JsonSkillConfigInfo info in list)
-            {
-                tSkillConfigInfo = info.ToSkillConfigInfo();
-                SortSkillConfigInfoByTime(tSkillConfigInfo);
-                _configInfoDic.Add(tSkillConfigInfo);
-            }
+            newCfg.list.Sort((x, y) => (x.id - y.id));
+            _configInfoDic = newCfg.list;
+            return;
         }
 
         private bool SaveConfig()
@@ -572,16 +573,8 @@ namespace SkillEditor
                 };
 
                 // use new json formmat
-                var jsonSerializerSettings = new JsonSerializerSettings
-                {
-                    DefaultValueHandling = DefaultValueHandling.Ignore,
-                };
-                jsonSerializerSettings.Converters.Add(new UnityVector3JsonConverter());
-                
-                var jsonStr = JsonC.SerializeObject(configInfo,
-                    Formatting.Indented,
-                    jsonSerializerSettings);
-                FileHelper.SaveJsonText(jsonStr,BattleConfig_Path,false);
+                var jsonStr = configInfo.ToBattleJsonStr();
+                FileHelper.SaveJsonText(jsonStr,OldBattleConfigConverter.BattleConfig_Path,false);
 
                 return true;
             }

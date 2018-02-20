@@ -33,8 +33,6 @@ namespace SkillEditor
         #endregion
 
         #region 技能配置
-        public static readonly string BattleConfigPath =
-            "Assets/GameResources/ConfigFiles/BattleConfig/BattleConfig.bytes";
         public static readonly string DefaultTargetNum = "1";
         public static readonly bool DefaultAtOnce = true;
         public static readonly string DefaultMultiPart = "1";

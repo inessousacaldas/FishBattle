@@ -40,6 +40,8 @@ public static class CorrectSkillConfigExt
 
     public static BattlePhraseBase ToSeq(this BattlePhraseBase[] lst)
     {
+        if (lst.Length == 0)
+            return null;
         if (lst.Length == 1)
             return lst[0];
         return SeqPhrase.Create(lst);
@@ -47,6 +49,8 @@ public static class CorrectSkillConfigExt
 
     public static BattlePhraseBase ToPar(this BattlePhraseBase[] lst)
     {
+        if (lst.Length == 0)
+            return null;
         if (lst.Length == 1)
             return lst[0];
         return ParPhrase.Create(lst);

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using System.IO;
+using Fish;
 using NJson = Newtonsoft.Json;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
@@ -146,12 +148,7 @@ public class SimulateCorrectSkillConfig
     public static void SaveSimulatedNormalAttack()
     {
         var newjson = SimulateNormalAttack();
-        var jsonSerializerSettings = new NJson.JsonSerializerSettings
-        {
-            DefaultValueHandling = NJson.DefaultValueHandling.Ignore,
-        };
-        jsonSerializerSettings.Converters.Add(new Fish.UnityVector3JsonConverter());
-        var serializeObject = JsonC.SerializeObject(newjson, NJson.Formatting.Indented,jsonSerializerSettings);
+        var serializeObject = newjson.ToBattleJsonStr();
         File.WriteAllText("CorrectBattleConfig.json", serializeObject);
     }
 
@@ -162,6 +159,7 @@ public class SimulateCorrectSkillConfig
         System.Console.ReadLine();
     }
 }
+#endif
 
 /*
 {

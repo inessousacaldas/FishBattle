@@ -92,7 +92,7 @@ namespace SkillEditor
 
         public static List<SkillConfigInfo> LoadBattleConfig()
         {
-            var configInfo = FileHelper.ReadJsonFile<JsonBattleConfigInfo>(SkillEditorConst.BattleConfigPath);
+            var configInfo = FileHelper.ReadJsonFile<JsonBattleConfigInfo>(OldBattleConfigConverter.BattleConfig_Path);
 
             if (configInfo != null)
             {
@@ -108,18 +108,8 @@ namespace SkillEditor
             var skillConfig = new BattleConfigInfo();
             skillConfig.time = (DateTime.UtcNow.Ticks / 10000).ToString();
             skillConfig.list = skillInfos;
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-            };
-            jsonSerializerSettings.Converters.Add(new UnityVector3JsonConverter());
-                
-            var jsonStr = JsonC.SerializeObject(skillConfig,
-                Formatting.Indented,
-                jsonSerializerSettings);
-            FileHelper.SaveJsonText(jsonStr,SkillEditorConst.BattleConfigPath,false);
-
-            FileHelper.SaveJsonObj(skillConfig, SkillEditorConst.BattleConfigPath);
+            var jsonStr = skillConfig.ToBattleJsonStr();
+            FileHelper.SaveJsonObj(skillConfig, OldBattleConfigConverter.BattleConfig_Path);
             UnityEditor.AssetDatabase.Refresh();
         }
 

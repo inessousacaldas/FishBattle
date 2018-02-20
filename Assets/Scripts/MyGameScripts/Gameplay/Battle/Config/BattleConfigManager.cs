@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using AssetPipeline;
+using Fish;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
 public sealed class BattleConfigManager
@@ -31,7 +32,7 @@ public sealed class BattleConfigManager
 		    var textAsset = asset as TextAsset;
 		    if (textAsset == null) return;
 		    var cfgJsonStr = textAsset.text;
-		    //TODO franky to be delete checking
+		    //TODO fish: change to new config class CorrectBattleConfigInfo
 		    if (cfgJsonStr.Contains("$type"))
 		    {
 			    var newCfg = JsonC.DeserializeObject<BattleConfigInfo>(cfgJsonStr);
@@ -69,10 +70,7 @@ public sealed class BattleConfigManager
 	    });
 	    
 #if UNITY_EDITOR
-	    var cfg= SimulateCorrectSkillConfig.SimulateNormalAttack();
-	    _correctCfg.Add(cfg.id,cfg);
-	    cfg=SimulateCorrectSkillConfig.SimulateNormalAttack1609();
-	    _correctCfg.Add(cfg.id,cfg);
+	    _correctCfg = OldBattleConfigConverter.LoadConvertedBattleConfig();
 #endif
     }
 	
