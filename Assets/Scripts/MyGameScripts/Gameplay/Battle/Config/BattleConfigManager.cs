@@ -112,4 +112,16 @@ public sealed class BattleConfigManager
             _configDict.Add(pSkillConfigInfo.id,pSkillConfigInfo);
         return true;
     }
+
+	public bool UpdateSkillConfigInfo(CorrectSkillConfig pSkillConfigInfo)
+	{
+		if (null == pSkillConfigInfo || pSkillConfigInfo.id <= 0)
+			return false;
+		CorrectSkillConfig tSkillConfigInfo = null;
+		if (_correctCfg.TryGetValue(pSkillConfigInfo.id, out tSkillConfigInfo))
+			_correctCfg[pSkillConfigInfo.id] = pSkillConfigInfo;
+		else
+			_correctCfg.Add(pSkillConfigInfo.id,pSkillConfigInfo);
+		return true;
+	}
 }

@@ -205,5 +205,48 @@ namespace Fish
             }
             return lst.ToSeq();
         }
+
+        public static List<CorrectSkillConfig> LoadConvertedBattleConfigList()
+        {
+            //TODO fish: to be deleted if new battle system is ready
+            if (!File.Exists(ConvertedBattleConfig_Path))
+            {
+                ReformatedOldConfig();
+                ConvertOldAndSave();
+            }
+            
+            var jsonTxt = File.ReadAllText(ConvertedBattleConfig_Path);
+            var newCfgList = JsonC.DeserializeObject<CorrectBattleConfigInfo>(jsonTxt);
+            var result = newCfgList.list;
+            var hasDefault = false;
+            foreach (var cfg in newCfgList.list)
+            {
+                if (cfg.id == 0)
+                    hasDefault = true;
+            }
+
+            if (!hasDefault)
+            {
+                result.Add(new CorrectSkillConfig());
+            }
+
+            result.Sort((x,y)=>x.id-y.id);
+            return result;
+        }
+
+        public static void SaveCorrectBattleConfigInfo(List<CorrectSkillConfig> skillInfos)
+        {
+            var cfg = new CorrectBattleConfigInfo();
+            cfg.time=(DateTime.UtcNow.Ticks / 10000).ToString();
+            cfg.list = skillInfos;
+            var serializeObject = cfg.ToBattleJsonStr();
+            File.WriteAllText(ConvertedBattleConfig_Path, serializeObject);
+        }
+
+        public static CorrectSkillConfig DeepCopySkillInfo(CorrectSkillConfig info)
+        {
+            var tmp=JsonC.SerializeObject(info);
+            return JsonC.DeserializeObject<CorrectSkillConfig>(tmp);
+        }
     }
 }

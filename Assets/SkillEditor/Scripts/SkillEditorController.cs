@@ -38,9 +38,9 @@ namespace SkillEditor
 
         private bool _isFirstEnter = true;
 
-        private List<SkillConfigInfo> _skillInfoList;
+        private List<CorrectSkillConfig> _skillInfoList;
 
-        public List<SkillConfigInfo> SkillInfoList
+        public List<CorrectSkillConfig> SkillInfoList
         {
             get { return _skillInfoList; }
         }
@@ -112,13 +112,13 @@ namespace SkillEditor
 
         #region 技能编辑
 
-        private void UpdateSkillInfoWithoutSave(SkillConfigInfo skillInfo)
+        private void UpdateSkillInfoWithoutSave(CorrectSkillConfig skillInfo)
         {
             skillInfo = SkillEditorInfoCollection.DeepCopySkillInfo(skillInfo);
             BattleConfigManager.Instance.UpdateSkillConfigInfo(skillInfo);
         }
 
-        public void AddOrUpdateSkillInfo(SkillConfigInfo skillInfo)
+        public void AddOrUpdateSkillInfo(CorrectSkillConfig skillInfo)
         {
             UpdateSkillInfoWithoutSave(skillInfo);
 
@@ -162,7 +162,7 @@ namespace SkillEditor
         #endregion
         
         private VideoRoundInterpreter _interpreter;
-        public void PlayBattle(int teamANum, int teamBNum, SkillConfigInfo info, long attackUid, long defendUid, int targetNum, bool atOnce,
+        public void PlayBattle(int teamANum, int teamBNum, CorrectSkillConfig info, long attackUid, long defendUid, int targetNum, bool atOnce,
             int multipart)
         {
             if (info == null)
@@ -278,7 +278,7 @@ namespace SkillEditor
 
         #region 模拟数据计算表现
 
-        private VideoRound CreateVideoRound(SkillConfigInfo info, long attackUid, long defendUid, int targetNum, bool atOnce,
+        private VideoRound CreateVideoRound(CorrectSkillConfig info, long attackUid, long defendUid, int targetNum, bool atOnce,
             int multipart)
         {
             var skill = FixSkill(info, targetNum, atOnce, multipart);
@@ -327,7 +327,7 @@ namespace SkillEditor
         }
 
 
-        private Skill FixSkill(SkillConfigInfo info, int targetNum, bool atOnce, int multipart)
+        private Skill FixSkill(CorrectSkillConfig info, int targetNum, bool atOnce, int multipart)
         {
             var skillId = info.id;
             var skill = DataCache.getDtoByCls<Skill>(skillId);

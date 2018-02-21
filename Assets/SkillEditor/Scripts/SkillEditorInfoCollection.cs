@@ -52,7 +52,7 @@ namespace SkillEditor
             return JsHelper.ToObject<JsonSkillConfigInfo>(json).ToSkillConfigInfo();
         }
 
-        public static string GetSkillInfoName(SkillConfigInfo info)
+        public static string GetSkillInfoName(CorrectSkillConfig info)
         {
             return string.Format("{0}, {1}", info.id, info.name);
         }
@@ -90,26 +90,19 @@ namespace SkillEditor
             return _cacheSB.ToString();
         }
 
-        public static List<SkillConfigInfo> LoadBattleConfig()
+        public static List<CorrectSkillConfig> LoadBattleConfig()
         {
-            var configInfo = FileHelper.ReadJsonFile<JsonBattleConfigInfo>(OldBattleConfigConverter.BattleConfig_Path);
-
-            if (configInfo != null)
-            {
-                var list = configInfo.list.OrderBy(info => info.id);
-                return list.Select(info => info.ToSkillConfigInfo()).ToList();
-            }
-
-            return null;
+            return OldBattleConfigConverter.LoadConvertedBattleConfigList();
         }
 
-        public static void SaveBattleConfig(List<SkillConfigInfo> skillInfos)
+        public static void SaveBattleConfig(List<CorrectSkillConfig> skillInfos)
         {
-            var skillConfig = new BattleConfigInfo();
+            OldBattleConfigConverter.SaveCorrectBattleConfigInfo(skillInfos);
+            /*var skillConfig = new BattleConfigInfo();
             skillConfig.time = (DateTime.UtcNow.Ticks / 10000).ToString();
             skillConfig.list = skillInfos;
             var jsonStr = skillConfig.ToBattleJsonStr();
-            FileHelper.SaveJsonObj(skillConfig, OldBattleConfigConverter.BattleConfig_Path);
+            FileHelper.SaveJsonObj(skillConfig, OldBattleConfigConverter.BattleConfig_Path);*/
             UnityEditor.AssetDatabase.Refresh();
         }
 
@@ -218,6 +211,11 @@ namespace SkillEditor
             state.crit = crit;
 
             return state;
+        }
+
+        public static CorrectSkillConfig DeepCopySkillInfo(CorrectSkillConfig info)
+        {
+            return OldBattleConfigConverter.DeepCopySkillInfo(info);
         }
     }
     #endregion

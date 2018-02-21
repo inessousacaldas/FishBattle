@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AppDto;
@@ -17,9 +18,11 @@ namespace SkillEditor
         }
         private ReturnInfoTypeMode _returnMode;
 
-        private SkillConfigInfo _curSkillInfo;
+        private CorrectSkillConfig _curSkillInfo;
+
         private TabContainerController<SkillEditorNodeItemController> _nodeContainerController = new TabContainerController<SkillEditorNodeItemController>();
-        private List<SkillEditorInfoNode> _infoNodeList = new List<SkillEditorInfoNode>();
+        
+        private List<SkillEditorInfoNode> _infoNodeList=new List<SkillEditorInfoNode>();
 
         protected override void AfterInitView()
         {
@@ -124,7 +127,7 @@ namespace SkillEditor
             UpdateInfoNodeList();
         }
 
-        private void UpdateCurSkillInfo(SkillConfigInfo info)
+        private void UpdateCurSkillInfo(CorrectSkillConfig info)
         {
             if (info == null)
             {
@@ -165,9 +168,7 @@ namespace SkillEditor
         {
             if (_curSkillInfo == null)
             {
-                _curSkillInfo = new SkillConfigInfo();
-                _curSkillInfo.attackerActions = new List<BaseActionInfo>();
-                _curSkillInfo.injurerActions = new List<BaseActionInfo>();
+                _curSkillInfo = new CorrectSkillConfig();
             }
             _curSkillInfo.id = id;
             _curSkillInfo.name = name;
@@ -178,7 +179,12 @@ namespace SkillEditor
 
         private void SelectBtnOnClick()
         {
-            ProxySkillEditorModule.OpenSelectView(SkillEditorController.Instance.SkillInfoList, UpdateCurSkillInfo, SkillEditorInfoCollection.GetSkillInfoName, _curSkillInfo != null ?SkillEditorController.Instance.SkillInfoList.Find(info => info.id == _curSkillInfo.id) : null);
+            ProxySkillEditorModule.OpenSelectView(
+                SkillEditorController.Instance.SkillInfoList, 
+                UpdateCurSkillInfo, 
+                SkillEditorInfoCollection.GetSkillInfoName, 
+                _curSkillInfo != null ?
+                    SkillEditorController.Instance.SkillInfoList.Find(info => info.id == _curSkillInfo.id) : null);
         }
 
         private void SaveSkillInfo()
