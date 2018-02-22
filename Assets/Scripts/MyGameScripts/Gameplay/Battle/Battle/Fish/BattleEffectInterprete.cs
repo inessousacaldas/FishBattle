@@ -85,6 +85,7 @@ public partial class NormalEffectInfo
     private void PlaySpecialEffect(string skillName, MonsterController initiator,
         MonsterController skillTarget, int clientSkillScale, List<string> tSkillNames, NormalActionInfo actInfo)
     {
+        if (initiator ==null || skillTarget == null) return;
         var root = new GameObject(skillName);
         tSkillNames.SpawnAllEffectsAsync(initiator,root,this,
             ()=>

@@ -24,6 +24,8 @@ namespace SkillEditor
             {
                 _cacheBattleSceneList = SkillEditorConst.BattleScenes;
             }
+
+            _cacheBattleSceneList = new List<int>() {11006};
             return _cacheBattleSceneList;
         }
 

@@ -1,8 +1,8 @@
 ﻿//动作模板实例化模式
 public enum ActionSchemeInstantiationMode
 {
-	Seq,//按服务器发送目标的顺序串联
 	Par,//多目标并联
+	Seq,//按服务器发送目标的顺序串联
 	//LastVictim,//上一个受击者
 }
 

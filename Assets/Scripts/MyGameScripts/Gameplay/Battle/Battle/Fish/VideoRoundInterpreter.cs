@@ -23,7 +23,7 @@ namespace Fish
                 allSubPlayCtl.Add(playCtl);
             }
             var combined = allSubPlayCtl.ToSequence();
-            var a = combined as SeqCompositePlayCtl;
+            //var a = combined as SeqCompositePlayCtl;
             //var overPlayCtl = InterpreteFightOver(vRound);
             return combined;
             //return combined.Chain(overPlayCtl);
@@ -38,6 +38,7 @@ namespace Fish
 
         private IBattlePlayCtl InterpreteFightOver(VideoRound vRound)
         {
+            return null;
             throw new NotImplementedException();
         }
 
@@ -54,7 +55,11 @@ namespace Fish
             var skillCfg = GetSkillConfig(vsAct);
             if (vsAct.actionSoldierId == 0)
             {
-                return InterpreteTargetStateGroupList(vsAct.targetStateGroups, skillCfg, skill);
+                return ImmediaBattleActionCtl.Create(() =>
+                {
+                    BattleStateHandler.HandleBattleStateGroup(0, vsAct.targetStateGroups);
+                });
+                //return InterpreteTargetStateGroupList(vsAct.targetStateGroups, skillCfg, skill);
             }
 
             if (skill == null)

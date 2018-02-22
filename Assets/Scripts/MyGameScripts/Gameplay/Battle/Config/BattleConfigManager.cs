@@ -69,12 +69,9 @@ public sealed class BattleConfigManager
 		    });
 	    });
 	    
-#if UNITY_EDITOR
 	    _correctCfg = OldBattleConfigConverter.LoadConvertedBattleConfig();
-#endif
     }
 	
-#if UNITY_EDITOR
 	private static Dictionary<int,CorrectSkillConfig> _correctCfg = new Dictionary<int, CorrectSkillConfig>();
 	public CorrectSkillConfig GetCorrectConfig(int skillId)
 	{
@@ -82,7 +79,6 @@ public sealed class BattleConfigManager
 		_correctCfg.TryGetValue(skillId, out result);
 		return result;
 	}
-#endif
 	
 
 	public SkillConfigInfo getSkillConfigInfo(int skillID)

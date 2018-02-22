@@ -4,10 +4,15 @@ namespace Fish
 {
     public class ImmediaBattleActionCtl:BattlePlayCtlBasic
     {
+        public static ImmediaBattleActionCtl Create(Action immediaAction)
+        {
+            return new ImmediaBattleActionCtl(immediaAction);
+        }
+
         private Action immediaAction;
         private Exception _excep;
 
-        public ImmediaBattleActionCtl(Action immediaAction)
+        private ImmediaBattleActionCtl(Action immediaAction)
         {
             this.immediaAction = immediaAction;
         }

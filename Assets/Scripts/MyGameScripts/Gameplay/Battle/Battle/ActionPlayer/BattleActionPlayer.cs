@@ -437,7 +437,7 @@ public class BattleActionPlayer : MonoBehaviour
         if (_mc != null)
         {
             //GameDebuger.LogWithColor("CompleteActions" + _monster.GetDebugInfo());
-            HandleMonsterAfterAction(_mc);
+            _mc.HandleMonsterAfterAction();
         }
 
         if (_isAttack && _mc != null && _gameAction.skillId == BattleDataManager.GetRetreatSkillId() &&
@@ -951,56 +951,19 @@ public class BattleActionPlayer : MonoBehaviour
 
         if (!_finishTime)
         {
-            HandleMonsterAfterAction(_mc);
+            _mc.HandleMonsterAfterAction();
         }
         else
         {
             if (IsLastActionInfo())
             {
-                HandleMonsterAfterAction(_mc);
+                _mc.HandleMonsterAfterAction();
             }
             else
             {
                 _mc.PlayIdleAnimation();
             }
             CheckPlayerFinish();
-        }
-    }
-
-    private void HandleMonsterAfterAction(MonsterController monster)
-    {
-        if (monster.leave)
-        {
-            monster.RetreatFromBattle(MonsterController.RetreatMode.Fly);
-        }
-        else
-        {
-            //如果怪物死亡后需要复活， 则处理
-            if (monster.lastHP > 0)
-            {
-                monster.currentHP = _mc.lastHP;
-                monster.lastHP = 0;
-                monster.dead = false;
-            }
-
-            //http://oa.cilugame.com/redmine/issues/12591
-            if (monster.lastCP >= 0 && monster.IsDead())
-            {
-                monster.currentCp = _mc.lastCP;
-            }
-
-            if (monster.IsDead())
-            {
-                monster.PlayDieAnimation();
-            }
-            else if (monster.driving)
-            {
-                monster.PlayDrivingAnimation();
-            }
-            else
-            {
-                monster.PlayStateAnimation();
-            }
         }
     }
 
@@ -1025,7 +988,7 @@ public class BattleActionPlayer : MonoBehaviour
         _protectMonster.actionEnd = null;
         if (_protectMonster.IsDead())
         {
-            HandleMonsterAfterAction(_protectMonster);
+            _protectMonster.HandleMonsterAfterAction();
         }
         else
         {

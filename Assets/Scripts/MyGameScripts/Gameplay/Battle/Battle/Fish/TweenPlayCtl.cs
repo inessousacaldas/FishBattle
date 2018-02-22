@@ -7,7 +7,10 @@ namespace Fish
         public static TweenMovePlayCtl Create(MoveActionInfo moveActionInfo, Skill skill, VideoSkillAction vsAct,
             long initiator, long targetId)
         {
-            return new TweenMovePlayCtl(moveActionInfo, skill, vsAct, initiator, targetId);
+            var ctl = new TweenMovePlayCtl(moveActionInfo, skill, vsAct, initiator, targetId);
+            if (ctl._initiator == null || ctl._target == null)
+                return null;
+            return ctl;
         }
 
         private readonly float _duration;
@@ -68,7 +71,10 @@ namespace Fish
         public static TweenMoveBackPlayCtl Create(MoveBackActionInfo moveActionInfo, Skill skill,
             VideoSkillAction vsAct, long initiator, long targetId)
         {
-            return new TweenMoveBackPlayCtl(moveActionInfo, skill, vsAct, initiator, targetId);
+            var ctl = new TweenMoveBackPlayCtl(moveActionInfo, skill, vsAct, initiator, targetId);
+            if (ctl._initiator == null || ctl._target == null)
+                return null;
+            return ctl;
         }
 
         private readonly float _duration;
@@ -121,6 +127,13 @@ namespace Fish
             //_initiator.DoMove(_target.transform.position, _duration);
             _initiator.SetSkillTarget(_target);
             _initiator.PlayMoveBackNode(_actInfo);
+            OnEnd += PlayIdel;
+        }
+
+        private void PlayIdel(IPlayFinishedState obj)
+        {
+            OnEnd -= PlayIdel;
+            _initiator.PlayIdleAnimation();
         }
     }
 }

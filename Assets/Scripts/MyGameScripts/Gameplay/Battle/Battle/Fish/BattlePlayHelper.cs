@@ -12,6 +12,13 @@ public static class BattlePlayHelper
         return EnumParserHelper.TryParse(name, defaultValue);
     }
 
+    public static T DisposeNotNull<T>(this T res) where T : class, IDisposable
+    {
+        if (res != null)
+            res.Dispose();
+        return null;
+    }
+
     public static void NotNullInvoke(this Action act)
     {
         if (act == null) return;
@@ -131,4 +138,43 @@ public static class BattlePlayHelper
 
         return startPos;
     }
+    
+    public static void HandleMonsterAfterAction(this MonsterController monster)
+    {
+        if (monster.leave)
+        {
+            monster.RetreatFromBattle(MonsterController.RetreatMode.Fly);
+        }
+        else
+        {
+            //如果怪物死亡后需要复活， 则处理
+            if (monster.lastHP > 0)
+            {
+                //monster.currentHP = _mc.lastHP;
+                monster.lastHP = 0;
+                monster.dead = false;
+            }
+
+            //http://oa.cilugame.com/redmine/issues/12591
+            if (monster.lastCP >= 0 && monster.IsDead())
+            {
+                //monster.currentCp = _mc.lastCP;
+            }
+
+            if (monster.IsDead())
+            {
+                monster.PlayDieAnimation();
+            }
+            else if (monster.driving)
+            {
+                monster.PlayDrivingAnimation();
+            }
+            else
+            {
+                monster.PlayStateAnimation();
+            }
+        }
+    }
+
+
 }

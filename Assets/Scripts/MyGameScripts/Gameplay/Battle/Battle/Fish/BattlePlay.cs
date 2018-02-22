@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Fish
 {
     //单个或组合的战斗动画
-    public interface IBattlePlayCtl
+    public interface IBattlePlayCtl:IDisposable
     {
         void Play();
         //Pause,Resume,Reset,Reverse 等方法方便调试，暂不实现
@@ -21,7 +21,9 @@ namespace Fish
         IPlayFinishedState Cancel();
 
         //释放内部所有引用，例如OnEnd事件关联的Delegates
-        void Dispose();
+        //void IDisposable.Dispose();
+        //OnEnd调用后自动调用Dispose，避免OnEnd注册的回调使用Dispose导致问题
+        void AutoDispose();
 
         //动画结束后的事件，每个实现必须保证时间到了一定触发，除非被暂停，重置，或者释放
         event Action<IPlayFinishedState> OnEnd;
@@ -105,6 +107,7 @@ namespace Fish
         private readonly int _instaceId = ++_customInstanceId;
         private static int _customInstanceId;
         private float _startTime;
+        private bool _autoDispose;
 
         //invoke by timer,Time.time - _startTime
         void Update()
@@ -123,6 +126,8 @@ namespace Fish
         {
             GameUtil.SafeRun(OnEnd, playFinishedState);
             _playState = BattlePlayingState.Pause;
+            if (_autoDispose)
+                Dispose();
         }
 
         private void StartTimer()
@@ -150,6 +155,11 @@ namespace Fish
         public BattlePlayingState CurrentState
         {
             get { return _playState; }
+        }
+
+        public void AutoDispose()
+        {
+            _autoDispose = true;
         }
 
         public float CurrentProgress()
@@ -397,14 +407,8 @@ namespace Fish
             for (var i = 0; i < _playCtlList.Length; i++)
             {
                 var p = _playCtlList[i];
-                if (p == null)
-                {
-                    GameDebuger.LogError("battlePlay == null");
-                    continue;
-                }
 
                 var totalTime = p.Duaration();
-                GameDebuger.LogError("totaltime  ---" + totalTime);
                 if (_totalTime < totalTime)
                 {
                     _totalTime = totalTime;

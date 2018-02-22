@@ -102,64 +102,8 @@ public partial class BattleDataManager
             CheckNextRound();
         }
 
-        /**
-         *是否自动播放模式 
-         * @return
-         * 
-         */
-
-        public bool IsAutoPlayMode()
-        {
-            return false;
-        }
-
-        // 魅怪在第一回合开始时，需要根据玩家队伍中有没有普陀、方寸、盘丝、化生、蓬莱、地府 门派进行喊话：
-        //   有的情况：有方寸、盘丝、金山、普陀、蓬莱和地府的弟子在，真是不爽，还是跑路算了！
-        //   无的情况：方寸、盘丝、金山、普陀、蓬莱和地府的弟子不在眼前，真是轻松愉快啊！
-        private void CheckMeiMonster()
-        {
-            var list = MonsterManager.Instance.GetMonsterList(BattlePosition.MonsterSide.Enemy,
-                                               false);
-
-            var hasAntiMei = HasAntiMeiFaction();
-
-            list.ForEach(mc =>
-            {
-                GameDebuger.TODO(@"if (mc.IsMonster() && mc.videoSoldier.monster.mei)
-            {
-                string shoutStr = '方寸、盘丝、金山、普陀、蓬莱和地府的弟子不在眼前，真是轻松愉快啊！';
-
-                if (hasAntiMei)
-                {
-                    shoutStr = '有方寸、盘丝、金山、普陀、蓬莱和地府的弟子在，真是不爽，还是跑路算了！';
-                }
-                mc.Shout(shoutStr);
-            }");
-            });
-        }
-
-        private bool HasAntiMeiFaction()
-        {
-            var list = MonsterManager.Instance.GetMonsterList();
-            var tFactionType = Faction.FactionType.Unknown;
-            list.ForEach(mc =>
-            {
-                tFactionType = (Faction.FactionType)mc.videoSoldier.factionId;
-                GameDebuger.TODO(@"if (tFactionType == Faction.FactionType.FangCun
-                || tFactionType == Faction.FactionType.PanSi
-                || tFactionType == Faction.FactionType.HuaSheng
-                || tFactionType == Faction.FactionType.PuTuo
-                || tFactionType == Faction.FactionType.PengLai
-                || tFactionType == Faction.FactionType.Difu)
-            {
-                return true;
-            }");
-            });
-            return false;
-        }
-
         private long _startCheckTime = 0;
-
+        private IBattlePlayCtl _playCtl;
         private void PlayGameRound(VideoRound gameRound)
         {
             if (_playing)
@@ -181,9 +125,18 @@ public partial class BattleDataManager
             _actionList.Add(gameRound.readyAction);
         }");
             //处理当前回合过程所有的动作
-            _interpreter.InterpreteVideoRound(gameRound);
+            _playCtl = _interpreter.InterpreteVideoRound(gameRound);
+            _playCtl.OnEnd += OnGameRoundEnd;
+            _playCtl.AutoDispose();
+            _playCtl.Play();
             LogBattleInfo(gameRound.debugInfo);
-            _playing = true;
+        }
+
+        private void OnGameRoundEnd(IPlayFinishedState state)
+        {
+            _playing = false;
+            _playCtl = null;
+            CheckNextRound();
         }
 
         private void LogBattleInfo(DebugVideoRound debugInfo)

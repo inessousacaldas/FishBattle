@@ -338,7 +338,8 @@ namespace SkillEditor
                 skill.id = skillId;
                 skill.name = info.name;
                 skill.type = (int)Skill.SkillEnum.Crafts;
-                if (info.attackerActions.First().type == MoveActionInfo.TYPE)
+                //TODO fish
+                /*if (info.attackerActions.First().type == MoveActionInfo.TYPE)
                 {
                     skill.singleActionPlayTime = SkillEditorConst.MoveActionPlayTime;
                     skill.skillAttackType = (int)Skill.SkillAttackType.PhyAttack;
@@ -349,7 +350,7 @@ namespace SkillEditor
                     skill.singleActionPlayTime = SkillEditorConst.WithoudMoveActionPlayTime;
                     skill.skillAttackType = (int)Skill.SkillAttackType.MagicAttack;
                     skill.clientSkillType = SkillEditorConst.FarClientAttackSkillType;
-                }
+                }*/
 
                 DataCache.getDicByCls<Skill>()[skillId] = skill;
             }

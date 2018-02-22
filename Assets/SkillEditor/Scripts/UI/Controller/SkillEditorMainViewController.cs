@@ -326,6 +326,8 @@ namespace SkillEditor
             {
                 var hasCountInjuire = false;
 
+                //TODO fish
+                /*
                 foreach (var attackerAction in _curSkillInfo.attackerActions)
                 {
                     if (InsertNode(_infoNodeList, attackerAction, true, hasCountInjuire))
@@ -337,7 +339,7 @@ namespace SkillEditor
                 if (!hasCountInjuire)
                 {
                     InsertInjurerActionList(_infoNodeList, _curSkillInfo.injurerActions);
-                }
+                }*/
             }
         }
 
@@ -523,7 +525,9 @@ namespace SkillEditor
 
         private List<BaseActionInfo> GetCurSkillInfoActionList(bool isAttack)
         {
-            return isAttack ? _curSkillInfo.attackerActions : _curSkillInfo.injurerActions;
+            //TODO fish
+            return null;
+            //return isAttack ? _curSkillInfo.attackerActions : _curSkillInfo.injurerActions;
         }
 
         private void SortEffectInfoList(List<BaseEffectInfo> effectInfoList)
