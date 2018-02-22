@@ -437,7 +437,7 @@ public class BattleActionPlayer : MonoBehaviour
         if (_mc != null)
         {
             //GameDebuger.LogWithColor("CompleteActions" + _monster.GetDebugInfo());
-            _mc.HandleMonsterAfterAction();
+            _mc.HandleMonsterAfterAction(_mc);
         }
 
         if (_isAttack && _mc != null && _gameAction.skillId == BattleDataManager.GetRetreatSkillId() &&
@@ -951,13 +951,13 @@ public class BattleActionPlayer : MonoBehaviour
 
         if (!_finishTime)
         {
-            _mc.HandleMonsterAfterAction();
+            _mc.HandleMonsterAfterAction(_mc);
         }
         else
         {
             if (IsLastActionInfo())
             {
-                _mc.HandleMonsterAfterAction();
+                _mc.HandleMonsterAfterAction(_mc);
             }
             else
             {
@@ -988,7 +988,7 @@ public class BattleActionPlayer : MonoBehaviour
         _protectMonster.actionEnd = null;
         if (_protectMonster.IsDead())
         {
-            _protectMonster.HandleMonsterAfterAction();
+            _protectMonster.HandleMonsterAfterAction(_mc);
         }
         else
         {

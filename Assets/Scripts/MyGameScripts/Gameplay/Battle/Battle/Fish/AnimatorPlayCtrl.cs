@@ -102,7 +102,7 @@ namespace Fish
             OnEnd -= CheckMonsterState;
             var mc = _mc;
             if (mc == null) mc = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(_monsterId);
-            mc.HandleMonsterAfterAction();
+            mc.HandleMonsterAfterAction(mc);
         }
     }
 }

@@ -139,7 +139,7 @@ public static class BattlePlayHelper
         return startPos;
     }
     
-    public static void HandleMonsterAfterAction(this MonsterController monster)
+    public static void HandleMonsterAfterAction(this MonsterController monster,MonsterController otherMc)
     {
         if (monster.leave)
         {
@@ -150,7 +150,7 @@ public static class BattlePlayHelper
             //如果怪物死亡后需要复活， 则处理
             if (monster.lastHP > 0)
             {
-                //monster.currentHP = _mc.lastHP;
+                monster.currentHP = otherMc.lastHP;
                 monster.lastHP = 0;
                 monster.dead = false;
             }
@@ -158,7 +158,7 @@ public static class BattlePlayHelper
             //http://oa.cilugame.com/redmine/issues/12591
             if (monster.lastCP >= 0 && monster.IsDead())
             {
-                //monster.currentCp = _mc.lastCP;
+                monster.currentCp = otherMc.lastCP;
             }
 
             if (monster.IsDead())
