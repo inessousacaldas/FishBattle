@@ -58,6 +58,11 @@ namespace Fish
             //var jsonTxt = File.ReadAllText("ReformattedBattleConfig.json");
             var jsonTxt = File.ReadAllText(BattleConfig_Path);
             var old = JsonC.DeserializeObject<BattleConfigInfo>(jsonTxt);
+            ConvertOldAndSave(old);
+        }
+
+        public static void ConvertOldAndSave(BattleConfigInfo old)
+        {
             var converted = new CorrectBattleConfigInfo {time = old.time};
             converted.list = FromOld(old.list);
             var serializeObject = converted.ToBattleJsonStr();
