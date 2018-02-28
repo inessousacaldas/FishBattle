@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using AppDto;
 using AssetPipeline;
+using Fish;
+using Newtonsoft.Json;
 using UnityEngine;
+using JsonC = Newtonsoft.Json.JsonConvert;
 
 public static class BattlePlayHelper
 {
@@ -10,6 +13,31 @@ public static class BattlePlayHelper
         ModelHelper.AnimType defaultValue = ModelHelper.AnimType.hit)
     {
         return EnumParserHelper.TryParse(name, defaultValue);
+    }
+
+    private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
+    {
+        DefaultValueHandling = DefaultValueHandling.Ignore,
+        Converters = new List<JsonConverter>(){new UnityVector3JsonConverter()},
+    };
+    
+    public static T DeepCopy<T>(this T data)
+    {
+        var jsonStr = JsonC.SerializeObject(data,_jsonSerializerSettings);
+        return JsonC.DeserializeObject<T>(jsonStr);
+    }
+
+    public static string ToBattleJsonStr(this object configInfo)
+    {
+        var jsonStr = JsonC.SerializeObject(configInfo,
+            Formatting.Indented,
+            _jsonSerializerSettings);
+        return jsonStr;
+    }
+
+    public static string ToJsonStr(this object data)
+    {
+        return JsonC.SerializeObject(data,_jsonSerializerSettings);
     }
 
     public static T DisposeNotNull<T>(this T res) where T : class, IDisposable

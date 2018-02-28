@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
 namespace Fish
@@ -39,20 +38,6 @@ namespace Fish
             return result;
         }
 
-        public static string ToBattleJsonStr(this object configInfo)
-        {
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-            };
-            jsonSerializerSettings.Converters.Add(new UnityVector3JsonConverter());
-                
-            var jsonStr = JsonC.SerializeObject(configInfo,
-                Formatting.Indented,
-                jsonSerializerSettings);
-            return jsonStr;
-        }
-
         public static void ConvertOldAndSave()
         {
             //var jsonTxt = File.ReadAllText("ReformattedBattleConfig.json");
@@ -85,7 +70,6 @@ namespace Fish
                     reformated.list.Add(jsonSkillConfigInfo.ToSkillConfigInfo());
                 }
                 reformated.list.Sort((x, y) => (x.id - y.id));
-
                 var reformatedJson = reformated.ToBattleJsonStr();
                 File.WriteAllText(BattleConfig_Path,reformatedJson);
             }
@@ -127,8 +111,11 @@ namespace Fish
             File.WriteAllText("ConvertedNormalAttackConfig.json", serializeObject);
         }*/
         
-        public static CorrectSkillConfig FromOld(SkillConfigInfo oldCfg)
+        public static CorrectSkillConfig FromOld(SkillConfigInfo copy)
         {
+            if (null == copy || copy.id <= 0)
+                return null;
+            var oldCfg = copy.DeepCopy();
             var injuredPhrase = Convert(oldCfg.injurerActions);
             var attackPhrase = Convert(oldCfg.attackerActions,injuredPhrase);
             if (attackPhrase == null) return null;
@@ -181,7 +168,7 @@ namespace Fish
         private static void FixTime(BaseActionInfo actInfo)
         {
             actInfo.type = null;
-            var move = actInfo as MoveActionInfo;
+            /*var move = actInfo as MoveActionInfo;
             if (move != null && Math.Abs(move.time) < float.Epsilon)
             {
                 move.time = 1f;
@@ -191,7 +178,7 @@ namespace Fish
             if (moveback != null && Math.Abs(moveback.time) < float.Epsilon)
             {
                 moveback.time = 1f;
-            }
+            }*/
         }
 
         private static BattlePhraseBase Convert(List<BaseActionInfo> injuredList)
