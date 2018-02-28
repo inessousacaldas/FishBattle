@@ -100,9 +100,6 @@ namespace Fish
         {
             //TODO fish: BattleActionPlayer.OnActionEnd Line:946
             OnEnd -= CheckMonsterState;
-            var mc = _mc;
-            if (mc == null) mc = BattleDataManager.MonsterManager.Instance.GetMonsterFromSoldierID(_monsterId);
-            mc.HandleMonsterAfterAction(mc);
         }
     }
 }

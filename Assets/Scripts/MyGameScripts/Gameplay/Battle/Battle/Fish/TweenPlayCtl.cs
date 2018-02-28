@@ -133,7 +133,7 @@ namespace Fish
         private void PlayIdel(IPlayFinishedState obj)
         {
             OnEnd -= PlayIdel;
-            _initiator.PlayIdleAnimation();
+            _initiator.HandleMonsterAfterAction(_initiator);
         }
     }
 }

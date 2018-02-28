@@ -127,7 +127,9 @@ namespace Fish
             GameUtil.SafeRun(OnEnd, playFinishedState);
             _playState = BattlePlayingState.Pause;
             if (_autoDispose)
-                Dispose();
+            {
+                JSTimer.Instance.SetupCoolDown(GetType().ToString() + _instaceId, 1, null, Dispose);
+            }
         }
 
         private void StartTimer()
