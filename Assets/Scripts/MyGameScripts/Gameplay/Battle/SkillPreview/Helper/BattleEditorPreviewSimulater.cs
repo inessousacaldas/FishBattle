@@ -99,11 +99,20 @@ namespace SkillEditor
             long tCurAttackId = 0;
             long tUselessDefenderId = 0;
             VideoSoldier tVideoSoldier = null;
-            SimulateActionPlayerInfo(out tCurAttackId, out tUselessDefenderId, out tVideoSoldier, pTeamSoldiersPlayer, pTeamSoldiersEnemy, pAttackId);
+            SimulateActionPlayerInfo(
+                out tCurAttackId
+                , out tUselessDefenderId
+                , out tVideoSoldier
+                , pTeamSoldiersPlayer
+                , pTeamSoldiersEnemy
+                , pAttackId);
 
-            VideoRound tVideoRound = new VideoRound();
-            tVideoRound.battleId = SIMULATE_BATTLE_ID;
-            tVideoRound.skillActions = SimulateVideoSkillActionList(pTeamSoldiersPlayer, pTeamSoldiersEnemy, tCurAttackId, pSkill);
+            var tVideoRound = new VideoRound
+            {
+                battleId = SIMULATE_BATTLE_ID,
+                skillActions =
+                    SimulateVideoSkillActionList(pTeamSoldiersPlayer, pTeamSoldiersEnemy, tCurAttackId, pSkill)
+            };
             return tVideoRound;
         }
 

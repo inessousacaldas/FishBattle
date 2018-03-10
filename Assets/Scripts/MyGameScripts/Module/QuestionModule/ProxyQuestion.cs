@@ -10,7 +10,12 @@ public class ProxyQuestion
     public static void OpenQuestionView()
     {
         var date = SystemTimeManager.Instance.GetCHDayOfWeek();
-        if (date == 7) return;  //7代表周日
+        //7代表周日
+        if (date == 7)
+        {
+            TipManager.AddTip("周一至周六10:00至24:00可进行答题活动");
+            return; 
+        }
 
         int type = date %2 == 1
             ? (int) QuestionType.QuestionTypeEnum.TYPE_1

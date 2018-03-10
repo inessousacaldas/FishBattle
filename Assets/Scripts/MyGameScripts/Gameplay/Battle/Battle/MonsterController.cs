@@ -4,36 +4,29 @@ using DG.Tweening;
 using AppDto;
 using AssetPipeline;
 using MyGameScripts.Gameplay.Battle.Demo.Helper;
+using UniRx;
 using UnityEngine;
 using MonsterManager = BattleDataManager.MonsterManager;
 using BattleInstController = BattleDataManager.BattleInstController;
 
-public class MonsterController : MonoBehaviour
+public partial class MonsterController : MonoBehaviour
 {
-    public void UpdateHpEpCp(VideoTargetState bas)
-    {
-        if (bas is VideoActionTargetState)
-        {
-            var action = (VideoActionTargetState)bas;
+    
+    private static Subject<VideoSoldier> _soliderStream;
 
-            modifyHP = action.hp;
-            modifyEP = action.ep;
-            modifyCP = action.cp;
-            lastHP = action.currentHp;
-            lastCP = action.currentCp;
-            lastEP = action.currentEp;
-        }
-        else
+    public static IObservable<VideoSoldier> SoliderStream
+    {
+        get
         {
-            modifyHP = 0;
-            modifyEP = 0;
-            modifyCP = 0;
-            lastHP = videoSoldier.hp;
-            lastCP = videoSoldier.cp;
-            lastEP = videoSoldier.ep;
+            if (_soliderStream == null)
+            {
+                _soliderStream  = new Subject<VideoSoldier>();
+                _soliderStream.Hold(null);        
+            }
+
+            return _soliderStream;
         }
     }
-
     #region Delegates
 
     public Action<long> afterLoadModel;
@@ -68,15 +61,6 @@ public class MonsterController : MonoBehaviour
     //初始化所有可用技能，防止在战斗中改变了
     private List<int> _allSkillIds;
     private bool _backToOriginPosition;
-
-    private int _currentHP;
-    //当前HP
-
-    private int _currentEP;
-    //当前MP
-
-    private int _currentCP;
-    //当前SP
 
     private string _delayShoutContent;
 
@@ -123,31 +107,7 @@ public class MonsterController : MonoBehaviour
 
     protected BattleMonsterHPSlider hpSlider;
 
-    //action执行后的HP
-    public int _lastHP;
-
-    public int lastHP
-    {
-        get { return _lastHP; }
-        set
-        {
-//            if (_videoSoldier.id == ModelManager.IPlayer.GetPlayerId() && value <= 0)
-//                GameLog.Log_Battle_PlayerAttr("Set last Hp == 0");
-            _lastHP = value;
-        }
-    }
-
-    //action执行后的CP
-    public int lastCP;
-
-    //action执行后的EP
-    public int lastEP;
-
     public bool leave = false;
-
-    public int modifyHP;
-    public int modifyEP;
-    public int modifyCP;
 
     protected BattleMonsterName monsterName;
 
@@ -184,9 +144,6 @@ public class MonsterController : MonoBehaviour
 
     public BattlePosition.MonsterSide side;
 
-    public MonsterController target;
-    public int targetReference = 0;
-
     //private GameObject targetSelectEffect;
 /**技能特效管理*/
     private BattleSkillEffectCMPT mBattleSkillEffectCMPT;
@@ -198,33 +155,24 @@ public class MonsterController : MonoBehaviour
         {
             return _videoSoldier;
         }
-
     }
 
     public int currentHP
     {
-        get { return _currentHP; }
-        set { _currentHP = Mathf.Clamp(value, 0, MaxHP); }
+        get { return _videoSoldier.hp; }
+        set { _videoSoldier.hp = Mathf.Clamp(value, 0, MaxHP); }
     }
 
     public int currentEp
     {
-        get { return _currentEP; }
-        set { _currentEP = Mathf.Clamp(value, 0, MaxEP); }
+        get { return _videoSoldier.ep; }
+        set { _videoSoldier.ep = Mathf.Clamp(value, 0, MaxEP); }
     }
 
     public int currentCp
     {
-        get { return _currentCP; }
-        set
-        {
-            var pTargetValue = Mathf.Clamp(value, 0, MaxCP);
-            if (_currentCP == pTargetValue) return;
-            _currentCP = pTargetValue;
-            var tUID = GetId();
-            if (tUID == ModelManager.Player.GetPlayerId())
-                GameEventCenter.SendEvent(GameEvent.BATTLE_UI_SP_UPDATED, tUID, _currentCP);
-        }
+        get { return _videoSoldier.cp; }
+        set { _videoSoldier.cp = Mathf.Clamp(value, 0, MaxCP); }
     }
 
     /**public int magicMana;*/
@@ -257,13 +205,6 @@ public class MonsterController : MonoBehaviour
 
     public void ClearMessageEffect(bool cleanAll)
     {
-        modifyHP = 0;
-        modifyEP = 0;
-        modifyCP = 0;
-
-        lastHP = 0;
-        lastCP = -1;
-        lastEP = -1;
         showMessageEffect = 0;
     }
 
@@ -289,12 +230,7 @@ public class MonsterController : MonoBehaviour
         _videoSoldier = data;
         IsInCD = false;
 
-        currentHP = data.hp;
-
-        currentEp = data.ep;
-
-        lastCP = data.cp;
-        currentCp = lastCP;
+        currentCp = data.cp;
 
         //初始化可用技能，防止在战斗中改变了
         if (videoSoldier.playerId == ModelManager.IPlayer.GetPlayerId())
@@ -867,11 +803,6 @@ public class MonsterController : MonoBehaviour
     {
         return _modelDisplayer.GetAnimationDuration(animate);
     }
-    
-    public void PlayAnimation(ModelHelper.AnimType name)
-    {
-        PlayAnimation(name, false, null);
-    }
 
     public void PlayAnimation(ModelHelper.AnimType name, Action<ModelHelper.AnimType, float> animClipCallBack = null)
     {
@@ -882,6 +813,9 @@ public class MonsterController : MonoBehaviour
     {
         //if (name == ModelHelper.AnimType.battle && ShowLogEnable)
         //   GameDebuger.LogError("PlayIdleAnimation");
+
+        if (name == ModelHelper.AnimType.invalid)
+            return;
 
         var checkSameAnim = false;
 
@@ -1081,34 +1015,48 @@ public class MonsterController : MonoBehaviour
         HasDestroyEffect = true;
     }
 
-    public bool CheckLogAttrPre()
+    public void ShowEffName(ShowMessageEffect eff)
     {
-        return videoSoldier.id == ModelManager.IPlayer.GetPlayerId();
+        if (!existMessageEffect(ShowMessageEffect.DODGE)
+            && !existMessageEffect(ShowMessageEffect.IMMUNE)) return;
+
+        var effName = GetEffName();
+        AddStatusEffect(effName);
     }
 
-    public void PlayInjure()
+    public void PlayInjure(VideoActionTargetState action)
     {
-        if (existMessageEffect(ShowMessageEffect.DODGE)
-            || existMessageEffect(ShowMessageEffect.IMMUNE))
-        {
-            var eff = GetEffName();
-            AddStatusEffect(eff);
-        }
-        else
-        {
-            var effName = existMessageEffect(ShowMessageEffect.CRITICAL) ? ShowMessageEffect.CRITICAL.ToString() : string.Empty;
-            AddHPMPValue(effName);
-        }
+        AddHPMPValue(action);
+        ShowFloatAttr(action.crit, action.hp, action.ep);
     }
+
+    private void ShowFloatAttr(bool isCrit, int offsetHp, int offsetEp)
+    {
+        if (offsetHp != 0)
+        {
+            if (isCrit)
+            {
+                AddFloatText("CHP" + "," + offsetHp + "," + ShowMessageEffect.CRITICAL);
+            }
+            else
+            {
+                AddFloatText("HP" + "," + offsetHp);
+            }
+        }
+        
+        if (offsetEp != 0)
+        {
+            AddFloatText("EP"+"," + offsetEp);
+        }
+        
+        PlayFloatText();
+    }
+
 
     private string GetEffName()
     {
         var effectName = string.Empty;
-        if (existMessageEffect(ShowMessageEffect.CRITICAL))
-        {
-            effectName = ShowMessageEffect.CRITICAL.ToString();
-        }
-        else if (existMessageEffect(ShowMessageEffect.DODGE))
+        if (existMessageEffect(ShowMessageEffect.DODGE))
             effectName = ShowMessageEffect.DODGE.ToString();
         else if (existMessageEffect(ShowMessageEffect.IMMUNE))//免疫等飘字
         {
@@ -1123,48 +1071,41 @@ public class MonsterController : MonoBehaviour
         BattleStatusEffectManager.Instance.AddEffect(hudTransform, effectName, this.GetId());
     }
 
-    private void AddHPMPValue(string effName = "")
+    public void AddHPMPValue(VideoSkillAction action)
     {
-        if (currentHP + modifyHP > MaxHP)
-        {
-            modifyHP = MaxHP - currentHP;
-        }
-        
-        videoSoldier.hp = lastHP;
-        videoSoldier.ep = lastEP;
-        videoSoldier.cp = lastCP;
-        
-        dead = videoSoldier.hp <= 0;
 
+        _videoSoldier.hp = Math.Max(0, _videoSoldier.hp + action.hpSpent);
+        _videoSoldier.ep = Math.Max(0, _videoSoldier.ep + action.epSpent);
+        _videoSoldier.cp = Math.Max(0, _videoSoldier.cp + action.cpSpent);
+
+        dead = _videoSoldier.hp <= 0;
+        LateAddHPMPValue();
+    }
+
+    private void AddHPMPValue(VideoActionTargetState action)
+    {
+        _videoSoldier.hp = action.currentHp;
+        _videoSoldier.ep = action.currentEp;
+        _videoSoldier.cp = action.currentCp;
+        dead = action.dead;
+        
+        LateAddHPMPValue();
+    }
+
+    private void LateAddHPMPValue()
+    {
+    
         if (IsDead())   //http://oa.cilugame.com/redmine/issues/12278
-                        //http://oa.cilugame.com/redmine/issues/12591
+            //http://oa.cilugame.com/redmine/issues/12591
         {
-            if (lastCP >= 0)
+            if (videoSoldier.cp >= 0)
             {
-                currentCp = lastCP;
+                currentCp = videoSoldier.cp;
             }
-        }
-
-        if (modifyHP != 0)
-        {
-            if (string.IsNullOrEmpty(effName))
-            {
-                AddFloatText("HP" + "," + modifyHP);
-            }
-            else
-            {
-                AddFloatText("CHP" + "," + modifyHP + "," + effName);
-            }
-        }
-
-        if (modifyEP != 0)
-        {
-            AddFloatText("EP"+","+modifyEP);
         }
 
         ShowSCraftEff();
-        
-        PlayFloatText();
+        _soliderStream.OnNext(_videoSoldier);
     }
 
     // 有S技需要显示特效
@@ -1257,7 +1198,7 @@ public class MonsterController : MonoBehaviour
         return "-" + Mathf.Abs(num);
     }
 
-    public void PlaySkillName(Skill skill, Action playSkillCallback)
+    public void PlaySkillName(Skill skill)
     {
         if (skill == null) return;
         BattleStatusEffectManager.Instance.PlaySkillName(this.GetMountBattleEffect(), skill.name);
@@ -1274,12 +1215,16 @@ public class MonsterController : MonoBehaviour
         {
             AudioManager.Instance.PlaySound(skillSound);
         }
+    }
 
+    public void PlaySkillName(Skill skill, Action playSkillCallback)
+    {
+        PlaySkillName(skill);
         _playSkillCallback = playSkillCallback;
         Invoke("DelayPlaySkillNameCallback", 0.5f);
     }
 
-    public void PlaySkillName(string name)
+    public void PlayStateName(string name)
     {
         BattleStatusEffectManager.Instance.PlaySkillName(GetMountBattleEffect(), name);
     }
@@ -2447,8 +2392,7 @@ public class MonsterController : MonoBehaviour
     {
         IsInCD = false;
         currentHP = _videoSoldier.hp;
-        lastCP = _videoSoldier.hp;
-        currentCp = lastCP;
+        currentCp = _videoSoldier.cp;
         dead = false;
 
     }
@@ -2479,13 +2423,9 @@ public class MonsterController : MonoBehaviour
 
     public void UpdateAttyByACReward(VideoActionTimeReward acReward)
     {
-        currentHP = acReward.currentHp;
-        currentCp = acReward.currentCp;
-        currentEp = acReward.currentEp;
-
-        videoSoldier.hp = currentHP;
-        videoSoldier.cp = currentCp;
-        videoSoldier.ep = currentEp;
+        videoSoldier.hp = acReward.currentHp;
+        videoSoldier.cp = acReward.currentCp;
+        videoSoldier.ep = acReward.currentEp;
     }
 
     public void PlayDrivingAnimation()

@@ -943,8 +943,7 @@ public sealed partial class BackpackDataMgr
                 items.ForEach(s =>
                 {
                     if (s.item != null
-                        && s.itemId == curDecMaterialItem.itemId
-                        && s.circulationType == curDecMaterialItem.circulationType)
+                        && s.itemId == curDecMaterialItem.itemId)
                         cnt += s.count;
                 });
                 return DeCompositeItem.Create(curDecMaterialItem.item, cnt, curDecMaterialItem.circulationType);

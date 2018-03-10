@@ -20,14 +20,17 @@ public partial interface IQuartzViewController
     UniRx.IObservable<int> IGreIconScrollEvt { get; }
     IQuartzStrengthController StrengthCrtl { get; }
     IQuartzInfoController InfoCtrl { get; }
+    IQuartzForgeController ForgeCtrl { get; }
     UniRx.IObservable<SelectOrbmentData> GetSelectOrbmentHandler { get; }
     void GetCrewInfoIdx(int idx);
+    UniRx.IObservable<Unit> InitForgeHandler { get; }
 }
 
 public partial class QuartzViewController
 {
     public IQuartzStrengthController StrengthCrtl { get { return _strengthController; } }
     public IQuartzInfoController InfoCtrl { get { return _infoController; } }
+    public IQuartzForgeController ForgeCtrl { get { return _forgeController; } }
 
     private QuartzInfoController _infoController;
 	private QuartzStrengthController _strengthController;
@@ -62,6 +65,9 @@ public partial class QuartzViewController
 
     private Subject<int>  _iconScrollEvt=new Subject<int>();
     public UniRx.IObservable<int> IGreIconScrollEvt { get { return _iconScrollEvt; } }
+
+    private Subject<Unit> _initForgeEvt = new Subject<Unit>();
+    public UniRx.IObservable<Unit> InitForgeHandler { get { return _initForgeEvt; } }
     #endregion
 
     // 界面初始化完成之后的一些后续初始化工作
@@ -232,7 +238,7 @@ public partial class QuartzViewController
 		if (_forgeController == null)
 			_forgeController = AddChild<QuartzForgeController, QuartzForge>(
 				_view.ForgeGroup, QuartzForge.NAME);
-
+        _initForgeEvt.OnNext(new Unit());
         _forgeController.UpdateDataAndView(_data.QuartzForgeData);
     }
 	

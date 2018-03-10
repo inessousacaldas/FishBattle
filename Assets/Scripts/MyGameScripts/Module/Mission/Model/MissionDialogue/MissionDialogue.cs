@@ -11,7 +11,7 @@ public class MissionDialogue {
     //	巡查队长总环数
     static public int maxBuffyRingNum = 120;
     //巡查队员限制
-    static public int minTeamNum = 3;
+    static public int minTeamNum = 1;
     //巡查人员不够的时候快速组队
     static public string quickTime = "魔兽凶狠残暴，安全起见，至少需要{0}人组队才能领取任务。";
     //巡查队员里面等级不够30队员显示
@@ -35,5 +35,14 @@ public class MissionDialogue {
     static public string GhostNoMaxRing = "你已经没有安全巡查奖励次数，继续巡查将不会获得奖励，是否继续？";
     //标题
     static public string GhostTitle = "安全巡查";
+    #endregion
+
+
+    #region 公会任务提示
+    //超过今天可做公会任务环数提示
+    static public string GuildRingNum = "今天不能再接受公会任务";
+    //身上已经公会任务了
+    static public string GuildAccepEd = "交给你的任务还没有完成吗？";
+
     #endregion
 }

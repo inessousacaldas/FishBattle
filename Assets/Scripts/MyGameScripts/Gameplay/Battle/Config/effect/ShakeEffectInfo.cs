@@ -2,11 +2,11 @@
 
 using UnityEngine;
 
-public class ShakeEffectInfo : BaseEffectInfo
+public partial class ShakeEffectInfo : BaseEffectInfo
 {
     public const string TYPE = "Shake";
 
-    public float delayTime;
+    public float duaration;
     // 强度
     public Vector3 intensity;
     // 是否击中
@@ -18,7 +18,7 @@ public class ShakeEffectInfo : BaseEffectInfo
     {
         ShakeEffectInfo info = new ShakeEffectInfo();
         info.FillInfo(json);
-        info.delayTime = json.delayTime;
+        info.duaration = json.delayTime;
         info.intensity = json.intensity;
         info.isHit = json.isHit;
         info.PlayIndex = json.PlayIndex;

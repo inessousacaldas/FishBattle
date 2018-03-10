@@ -21,10 +21,16 @@ public partial class BattleDataManager
         public const int SYMBOL_INVALID_VIDEO_ROUND = 0;
 
         private VideoRoundInterpreter _interpreter;
-        private VideoAction _curVideoAction;
+        private IBattlePlayCtl _playCtl;
 
         // 一个videoround的播放状态
-        private bool _playing;
+        private bool _playing
+        {
+            get
+            {
+                return _playCtl != null; 
+            }
+        }
 
         // 当前全部videoround是否播放完毕
         private bool _videoPlaying;
@@ -41,24 +47,18 @@ public partial class BattleDataManager
         // 战斗中只通过notify更新数据，与video中的数据无关，重登录后直接播放下发的最新videoround 
         // 将来要移到battlemodelData中，收回写权限, 明确只由notify写入   －－fish
         public List<VideoRound> _videoRounds = new List<VideoRound>();
-        public IEnumerable<VideoRound> VideoRounds
-        {
-            get { return _videoRounds; }
-        }
-
+        
         public int VideoRoundsCnt
         {
             get { return _videoRounds == null ? 0 : _videoRounds.Count; }
         }
         public VideoRound _playRound { get; private set; }
 
-        private SkillPlayTimeHelper _skillPlayTimeHelper;
         //  private MonsterShoutHelper _monsterShoutHelper;
 
         // Use this for initialization
         public void Setup(Video gv)
         {
-
             if (gv is VideoRecord)
             {
                 var record = (VideoRecord)gv;
@@ -69,10 +69,7 @@ public partial class BattleDataManager
                 _videoRounds = new List<VideoRound>(10);
             }
 
-            _skillPlayTimeHelper = new SkillPlayTimeHelper();
             GameDebuger.TODO(@"_monsterShoutHelper = new MonsterShoutHelper();");
-
-            _playing = false;
             _videoPlaying = false;
             _startCheckTime = 0;
             _playRound = null;
@@ -103,12 +100,9 @@ public partial class BattleDataManager
         }
 
         private long _startCheckTime = 0;
-        private IBattlePlayCtl _playCtl;
+        
         private void PlayGameRound(VideoRound gameRound)
         {
-            if (_playing)
-                return;
-            _playing = true; 
             _startCheckTime = DateTime.Now.Ticks;
 
             DataMgr.UpdateMonsterAttr(gameRound);
@@ -134,7 +128,7 @@ public partial class BattleDataManager
 
         private void OnGameRoundEnd(IPlayFinishedState state)
         {
-            _playing = false;
+            //_playCtl.OnEnd -= OnGameRoundEnd;
             _playCtl = null;
             CheckNextRound();
         }
@@ -143,6 +137,7 @@ public partial class BattleDataManager
         {
             if (debugInfo == null || !GameDebuger.debugIsOn) return;
             GameDebuger.LogBattleInfo("回合:" + debugInfo.round);
+            GameDebuger.LogBattleInfo("时间:" + _playCtl.Duaration());
             GameDebuger.LogBattleInfo("准备信息:");
             for (int i = 0, len = debugInfo.readyInfo.Count; i < len; i++)
             {
@@ -173,51 +168,26 @@ public partial class BattleDataManager
         //check can start next round when gamestate is ready
         public void CheckNextRound()
         {
-            if (_playing)
-            {
-                return;
-            }
-
-            if (DEBUG)
-            {
-                if (_startCheckTime > 0)
-                {
-                    var passTime = DateTime.Now.Ticks - _startCheckTime;
-                    var elapsedSpan = new TimeSpan(passTime);
-
-                    var playTime = _skillPlayTimeHelper.GetVideoRoundPlayTime(_playRound);
-
-                    GameLog.Log_Battle(string.Format("回合{0} 预估播放时长={1}S 真实播放时长={2}S", _playRound.round, playTime, elapsedSpan.TotalSeconds));
-                    _startCheckTime = 0;
-                }
-            }
-
-            if (_playRound != null && _playRound.winId == ModelManager.IPlayer.GetPlayerId())
-                GameLog.Log_Battle_RESP("round" + _playRound.round + "    _playRound.winId  " + _playRound.winId);
+            if (_playing) return;
 
             PlayNextRound(ref _videoPlaying);
-
             FireData();
         }
 
         private void PlayNextRound(ref bool videoPlaying)
         {
-            GameLog.Log_Battle(string.Format("PlayNextRound ;_videoRounds.Count {0} CurRoundIdx {1}", _videoRounds.Count, CurRoundIdx), "orange");
-
             var _videoRound = _videoRounds.Find(v => v.round > CurRoundIdx);
 
-            videoPlaying = _videoRound == null;
+            videoPlaying = _videoRound != null;
 
             if (_videoRound == null)
             {
-
                 GameLog.Log_Battle("PlayNextRound :_videoRound = null", "orange");
-                videoPlaying = false;
                 return;
             }
 
             _playRound = _videoRound;
-            videoPlaying = true;
+            DataMgr._data.IsGameOver = _playRound.over;
             PlayGameRound(_videoRound);
         }
 
@@ -237,12 +207,7 @@ public partial class BattleDataManager
                 }
             }
         }
-
-        public VideoAction GetCurVideoAction()
-        {
-            return _curVideoAction;
-        }
-
+        
         public void FinishInst()
         {
         }

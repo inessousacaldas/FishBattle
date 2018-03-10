@@ -131,8 +131,7 @@ namespace GamePlot
 			characterController.height = 2f;
 
 			//初始化位置和朝向
-			Vector3 position = SceneHelper.GetSceneStandPosition (character.originPos, Vector3.zero);
-			entityGo.transform.position = position;
+			entityGo.transform.position = SceneHelper.GetPositionInScene(character.originPos);
 			entityGo.transform.rotation = Quaternion.Euler(0f,character.rotateY,0f);
 
 			PlotCharacterController com = entityGo.GetMissingComponent<PlotCharacterController>();

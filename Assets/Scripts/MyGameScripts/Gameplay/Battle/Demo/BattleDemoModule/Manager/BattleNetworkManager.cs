@@ -2,6 +2,7 @@
 using AppDto;
 using AppServices;
 using MyGameScripts.Gameplay.Battle.Demo.Helper;
+using UniRx;
 
 public sealed partial class BattleDataManager
 {
@@ -9,15 +10,16 @@ public sealed partial class BattleDataManager
     {
         #region 正式协议
 
-        public static void EnterBattle(int pSceneId, FightersConfigDto pFightersConfigDto, Action pFinishCallBack = null,Video pVideo = null)
+        public static void EnterBattle(
+            int pSceneId
+            , FightersConfigDto pFightersConfigDto
+            , Action pFinishCallBack = null)
         {
             GameLog.Log_Battle("BattleNetworkManager EnterBattle---");
-            var tVideo = pVideo;
             
-            if (null == tVideo)
-                tVideo = DemoSimulateHelper.SimulateVideo(pFightersConfigDto);
             if (ServiceRequestAction.SimulateNet)
             {
+                var tVideo = DemoSimulateHelper.SimulateVideo(pFightersConfigDto);;
                 OnEnterBattleSuccess(tVideo);
                 if (null != pFinishCallBack)
                     pFinishCallBack();
@@ -37,6 +39,11 @@ public sealed partial class BattleDataManager
             }
         }
 
+        public static void OnEnterBattleSuccess(BattleWatchDto dto)
+        {
+            DataMgr._data._watchTeamIdDic.AddOrReplace(dto.video.id, dto.watchTeamId);
+            OnEnterBattleSuccess(dto.video);
+        }
         public static void OnEnterBattleSuccess(Video pVideo)
         {
             OnEnterBattleSuccess(pVideo, null);
@@ -72,9 +79,7 @@ public sealed partial class BattleDataManager
                     pVideo.cameraId = ModelManager.BattleDemoConfig.BattleCameraId;
                 }
             }
-            var watchTeamId = ModelManager.BattleDemoConfig.DemoBattleMode != BATTLE_DEMO_MODEL_S1.Battle 
-                ? pVideo.bteam.id
-                : 0;
+            
             var id = ModelManager.IPlayer.GetPlayerId();
             var soldier = pVideo.ateam.teamSoldiers.Find(s => s.id == id) ?? pVideo.bteam.teamSoldiers.Find(s => s.id == id);
             if (soldier != null)
@@ -85,8 +90,7 @@ public sealed partial class BattleDataManager
                 GameLog.Log_Battle_PlayerAttr(str);
             }
 
-            BattleManager.Instance.PlayBattle(pVideo, watchTeamId);   
-
+            BattleManager.Instance.PlayBattle(pVideo);   
         }
 
         public static void HandlerSoldierReadyNotify(FighterReadyNotifyDto notify)
@@ -265,7 +269,7 @@ public sealed partial class BattleDataManager
                 mc.ClearSkill();
             MonsterManager.Instance.UpdateOptionState(pVideoRound.id, MonsterOptionStateManager.MonsterOptionState.Disable);
             BattleInstController.Instance.AddVideoRound(pVideoRound);
-            DataMgr.IsGameOver = pVideoRound.over;
+
             if (DataMgr.IsInBattle && DataMgr.BattleDemo.battleState != BattleSceneStat.BATTLE_PRESTART)
             {
                 //EnterBattleMode();
@@ -313,7 +317,7 @@ public sealed partial class BattleDataManager
 
         /**public void showOrder(CommandNotify order)
         {
-            if (!mIsWatchMode)
+            if (!IsWatchMode)
             {
                 MonsterManager.DataMgr.showOrder(order);
             }
@@ -454,6 +458,15 @@ public sealed partial class BattleDataManager
             {
                 if (e != null)
                     OnEnterBattleSuccess(e as Video);
+            });
+        }
+
+        public static void ReqExitWatchBattle(long battleId)
+        {
+            GameUtil.GeneralReq(Services.Battle_ExitWatch(battleId), e =>
+            {
+                DataMgr._data.IsGameOver = true;
+                FireData();
             });
         }
     }

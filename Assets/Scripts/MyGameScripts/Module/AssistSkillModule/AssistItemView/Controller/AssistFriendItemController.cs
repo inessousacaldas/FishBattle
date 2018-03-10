@@ -22,12 +22,7 @@ public partial class AssistFriendItemController
     protected override void RegistCustomEvent ()
     {
         InviteBtn_UIButtonEvt.Subscribe(_ =>
-        {
-            if(_isHelped)
-            {
-                TipManager.AddTip("该玩家今天已协助过你了");
-                return;
-            }
+        {            
             clickInviteStream.OnNext(_id);
         });
     }

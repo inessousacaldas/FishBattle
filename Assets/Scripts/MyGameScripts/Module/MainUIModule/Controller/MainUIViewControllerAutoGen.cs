@@ -33,14 +33,14 @@ public partial interface IMainUIViewController : ICloseView
      UniRx.IObservable<Unit> OnButton_lifeskill_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnButton_quartz_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnButton_Friend_UIButtonClick{get;}
-     UniRx.IObservable<Unit> OnButton_Question_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnQuizariumBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnGuideBtn_UIButtonClick{get;}
-     UniRx.IObservable<Unit> OnScheduleBtn_UIButtonClick {get;}
+     UniRx.IObservable<Unit> OnScheduleBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnActivityPoll_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnButton_Crew_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnButton_Recruit_UIButtonClick{get;}
-     UniRx.IObservable<Unit> OnButton_Guild_UIButtonClick { get; }
+     UniRx.IObservable<Unit> OnButton_guild_UIButtonClick{get;}
+     UniRx.IObservable<Unit> OnButton_ChargeTest_UIButtonClick{get;}
 
 }
 
@@ -79,14 +79,14 @@ public partial class MainUIViewController:FRPBaseController<
     Button_lifeskill_UIButtonEvt = View.Button_lifeskill_UIButton.AsObservable();
     Button_quartz_UIButtonEvt = View.Button_quartz_UIButton.AsObservable();
     Button_Friend_UIButtonEvt = View.Button_Friend_UIButton.AsObservable();
-    Button_Question_UIButtonEvt = View.Button_Question_UIButton.AsObservable();
     QuizariumBtn_UIButtonEvt = View.QuizariumBtn_UIButton.AsObservable();
     GuideBtn_UIButtonEvt = View.GuideBtn_UIButton.AsObservable();
     ScheduleBtn_UIButtonEvt = View.ScheduleBtn_UIButton.AsObservable();
     ActivityPoll_UIButtonEvt = View.ActivityPoll_UIButton.AsObservable();
     Button_Crew_UIButtonEvt = View.Button_Crew_UIButton.AsObservable();
     Button_Recruit_UIButtonEvt = View.Button_Recruit_UIButton.AsObservable();
-    Button_Guild_UIButtonEvt = View.Button_guild_UIButton.AsObservable();
+    Button_guild_UIButtonEvt = View.Button_guild_UIButton.AsObservable();
+    Button_ChargeTest_UIButtonEvt = View.Button_ChargeTest_UIButton.AsObservable();
 
         }
         
@@ -117,14 +117,14 @@ public partial class MainUIViewController:FRPBaseController<
         Button_lifeskill_UIButtonEvt = Button_lifeskill_UIButtonEvt.CloseOnceNull();
         Button_quartz_UIButtonEvt = Button_quartz_UIButtonEvt.CloseOnceNull();
         Button_Friend_UIButtonEvt = Button_Friend_UIButtonEvt.CloseOnceNull();
-        Button_Question_UIButtonEvt = Button_Question_UIButtonEvt.CloseOnceNull();
         QuizariumBtn_UIButtonEvt = QuizariumBtn_UIButtonEvt.CloseOnceNull();
         GuideBtn_UIButtonEvt = GuideBtn_UIButtonEvt.CloseOnceNull();
         ScheduleBtn_UIButtonEvt = ScheduleBtn_UIButtonEvt.CloseOnceNull();
         ActivityPoll_UIButtonEvt = ActivityPoll_UIButtonEvt.CloseOnceNull();
         Button_Crew_UIButtonEvt = Button_Crew_UIButtonEvt.CloseOnceNull();
         Button_Recruit_UIButtonEvt = Button_Recruit_UIButtonEvt.CloseOnceNull();
-        Button_Guild_UIButtonEvt = Button_Guild_UIButtonEvt.CloseOnceNull();
+        Button_guild_UIButtonEvt = Button_guild_UIButtonEvt.CloseOnceNull();
+        Button_ChargeTest_UIButtonEvt = Button_ChargeTest_UIButtonEvt.CloseOnceNull();
 
         }
         
@@ -253,11 +253,6 @@ public partial class MainUIViewController:FRPBaseController<
         get {return Button_Friend_UIButtonEvt;}
     }
 
-    private Subject<Unit> Button_Question_UIButtonEvt;
-    public UniRx.IObservable<Unit> OnButton_Question_UIButtonClick{
-        get {return Button_Question_UIButtonEvt;}
-    }
-
     private Subject<Unit> QuizariumBtn_UIButtonEvt;
     public UniRx.IObservable<Unit> OnQuizariumBtn_UIButtonClick{
         get {return QuizariumBtn_UIButtonEvt;}
@@ -267,12 +262,12 @@ public partial class MainUIViewController:FRPBaseController<
     public UniRx.IObservable<Unit> OnGuideBtn_UIButtonClick{
         get {return GuideBtn_UIButtonEvt;}
     }
-    
+
     private Subject<Unit> ScheduleBtn_UIButtonEvt;
-    public UniRx.IObservable<Unit> OnScheduleBtn_UIButtonClick
-    {
-        get { return ScheduleBtn_UIButtonEvt; }
+    public UniRx.IObservable<Unit> OnScheduleBtn_UIButtonClick{
+        get {return ScheduleBtn_UIButtonEvt;}
     }
+
     private Subject<Unit> ActivityPoll_UIButtonEvt;
     public UniRx.IObservable<Unit> OnActivityPoll_UIButtonClick{
         get {return ActivityPoll_UIButtonEvt;}
@@ -288,9 +283,15 @@ public partial class MainUIViewController:FRPBaseController<
         get {return Button_Recruit_UIButtonEvt;}
     }
 
-    private Subject<Unit> Button_Guild_UIButtonEvt;
-    public UniRx.IObservable<Unit> OnButton_Guild_UIButtonClick {
-        get { return Button_Guild_UIButtonEvt; }
+    private Subject<Unit> Button_guild_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnButton_guild_UIButtonClick{
+        get {return Button_guild_UIButtonEvt;}
     }
 
-}
+    private Subject<Unit> Button_ChargeTest_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnButton_ChargeTest_UIButtonClick{
+        get {return Button_ChargeTest_UIButtonEvt;}
+    }
+
+
+    }

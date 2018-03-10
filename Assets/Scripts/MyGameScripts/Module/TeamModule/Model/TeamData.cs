@@ -117,6 +117,7 @@ public interface ITeamData
     IRecommendViewData RecommendData { get; }
     bool AutoBtnState { get; }
     IEnumerable<TeamMemberDto> GetTeamMember { get; }
+    GuildMembersDto GetGuildMembersDto { get; }
 }
 
 public sealed partial class TeamDataMgr{
@@ -142,6 +143,13 @@ public sealed partial class TeamDataMgr{
         public List<TeamPlayerDto> RecommendFriendList = new List<TeamPlayerDto>();        //好友
         public TeamNearbyDto RecommendTeamList;                //附近玩家以及队伍
         public TeamsDto CreateTeamsData;                           //组队平台
+        private GuildMembersDto _guildMembersDto;       //公会在线成员
+
+        public GuildMembersDto GetGuildMembersDto
+        {
+            get {return _guildMembersDto;}
+            set { _guildMembersDto = value; }
+        }
 
         private ActiveCaseInfoDto _formationInfoDto;             //队伍阵法信息
         #endregion

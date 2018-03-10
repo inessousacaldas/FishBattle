@@ -249,6 +249,11 @@ public class PayManager
 
     public void Charge(int itemId)
     {
+        if (GameSetting.Channel == AgencyPlatform.Channel_cyou)
+        {
+            CyCharge(itemId);
+            return;
+        }
         GameDebuger.TODO(@"
         if (!ModelManager.RechargeReward.ChannelOpen)
         {

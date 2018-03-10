@@ -31,6 +31,10 @@ public sealed class CrewInfoView : BaseView
     public UIButton BaseInfoBtn_UIButton;
     public UIButton SecondInfoBtn_UIButton;
     public UISprite AstralSprite_UISprite;
+    public UISlider ExpSlider_UISlider;
+    public UILabel LvlLbl_UILabel;
+    public UILabel PercentLb_UILabel;
+    public UIButton AddExpBtn_UIButton;
 
 
     protected override void InitElementBinding ()
@@ -56,6 +60,10 @@ public sealed class CrewInfoView : BaseView
         BaseInfoBtn_UIButton = root.FindScript<UIButton>("SelfPartnerInfoGroup/BaseInfoBtn");
         SecondInfoBtn_UIButton = root.FindScript<UIButton>("SelfPartnerInfoGroup/SecondInfoBtn");
         AstralSprite_UISprite = root.FindScript<UISprite>("ShowPartnerInfoGroup/ScrollView/PageGrid/PropPoint/AstralSprite");
+        ExpSlider_UISlider = root.FindScript<UISlider>("SelfPartnerInfoGroup/HadPartner/Slider/ExpSlider");
+        LvlLbl_UILabel = root.FindScript<UILabel>("SelfPartnerInfoGroup/HadPartner/Slider/LvlLbl");
+        PercentLb_UILabel = root.FindScript<UILabel>("SelfPartnerInfoGroup/HadPartner/Slider/PercentLb");
+        AddExpBtn_UIButton = root.FindScript<UIButton>("SelfPartnerInfoGroup/HadPartner/Slider/AddExpBtn");
 
     }
     #endregion

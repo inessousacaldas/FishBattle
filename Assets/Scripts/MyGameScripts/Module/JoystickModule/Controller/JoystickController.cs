@@ -21,7 +21,7 @@ public sealed partial class JoystickModule
         private NGUIJoystick _joystick;
 
         private UIEventListener _listener;
-
+        private float _autoFramTimer = 0.5f;
         private void Awake()
         {
             var trigger = transform.Find("Trigger");
@@ -111,13 +111,23 @@ public sealed partial class JoystickModule
         {
             if (JoystickModule.DisableMove) return;
             if (LayerManager.Instance.CurUIMode != UIMode.GAME) return;
+
             if (GamePlayer.CameraManager.Instance.SceneCamera.IsChangeCameraScaler()) return;
 
-            IsDragging = true;
+            _autoFramTimer += Time.deltaTime;
+
+
+            _autoFramTimer = 0f;
+
+            //2D 摇杆控制移动， 2017年06月27日18:24:51
             var heroView = WorldManager.Instance.GetHeroView();
             if (heroView != null)
             {
-                heroView.WalkWithJoystick(_joystick.Forward);
+
+                //修正3D场景中镜头转动后摇杆移动方向不对，2018年02月06日20:48:26
+                Vector3 tHeroCurrentScenePosition = heroView.GetFeetPosition();
+//                Vector3 tJoystickMoveOffset = _joystick.GetMoveOffsetInViewport();
+//                heroView.WalkWithJoystick(tHeroCurrentScenePosition.AddWorldOffsetByAddViewportOffset(tJoystickMoveOffset, LayerManager.Root.SceneCamera_Camera));
             }
         }
 

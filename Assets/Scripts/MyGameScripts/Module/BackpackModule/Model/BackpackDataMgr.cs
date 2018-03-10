@@ -216,6 +216,9 @@ public sealed partial class BackpackDataMgr
     {
         return _data.backPackDto.items.Filter(s => s.item.itemType == (int)type);
     }
+
+    public IEnumerable<EquipmentDto> equipmentCellsData { get { return  _data.equipmentCellsData; } }
+
     public IEnumerable<BagItemDto> GetQuartzItems()
     {
         return _data.GetQuartzItems();
@@ -285,6 +288,10 @@ public sealed partial class BackpackDataMgr
         return list;
     }
 
+    public int ItemBagCapability
+    {
+        get { return _data.ItemBagCapability; }
+    }
 
     #region 获得战斗中可以使用的物品数据
     public IEnumerable<BagItemDto> GetBattleItems(

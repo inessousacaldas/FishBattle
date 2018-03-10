@@ -72,6 +72,7 @@ public class BattleDemoConfigController : MonoViewController<BattleDemoConfigVie
         EventDelegate.Set(View.BtnAddFriend_UIButton.onClick, OnBtnAddFriendClick);
         EventDelegate.Set(View.BtnDeleteFriend_UIButton.onClick, OnBtnDeleteFriendClick);
         EventDelegate.Set(View.BtnCopyFriend_UIButton.onClick, OnBtnCopyFriendClick);
+        EventDelegate.Set(View.WatchButton_UIButton.onClick, OnBtnWatchBattleClick);   
     }
 
     //收到界面销毁后的回收处理，比如引用置空等
@@ -95,6 +96,18 @@ public class BattleDemoConfigController : MonoViewController<BattleDemoConfigVie
         TipManager.AddTip("敌我配置重置成功，重启界面即可生效。");
     }
 
+    private void OnBtnWatchBattleClick()
+    {
+        if (ModelManager.BattleDemoConfig.IsPlayerCountMaxForRequest(View.GridEnemy_UIGrid, View.GridFriend_UIGrid))
+            return;
+
+        UpdateSceneIdUI();
+        UpdateBattleDemoS1ConfigDtoListByItemList();
+        LogBattleDemoS1ConfigDtoFromList();
+        UIModuleManager.Instance.CloseModule(BattleDemoConfigView.NAME, false);
+        EnterBattle(true);
+    }
+
     private void OnBtnBattleClick()
     {
         if (ModelManager.BattleDemoConfig.IsPlayerCountMaxForRequest(View.GridEnemy_UIGrid, View.GridFriend_UIGrid))
@@ -107,7 +120,7 @@ public class BattleDemoConfigController : MonoViewController<BattleDemoConfigVie
         EnterBattle();
     }
 
-    private void EnterBattle()
+    private void EnterBattle(bool isWatchMode = false)
     {
         if (null == mBattleDemoS1ConfigDtoListEnemy || mBattleDemoS1ConfigDtoListEnemy.Count <= 0 || null == mBattleDemoS1ConfigDtoListFriend || mBattleDemoS1ConfigDtoListFriend.Count <= 0)
         {
@@ -119,11 +132,28 @@ public class BattleDemoConfigController : MonoViewController<BattleDemoConfigVie
         var tFightersConfigDto = new FightersConfigDto();
         tFightersConfigDto.ateam = new List<FighterConfigDto>(mBattleDemoS1ConfigDtoListFriend);
         tFightersConfigDto.bteam = new List<FighterConfigDto>(mBattleDemoS1ConfigDtoListEnemy);
-        BattleNetworkManager.EnterBattle(ModelManager.BattleDemoConfig.BattleSceneId, tFightersConfigDto, () =>
-            {
-                SaveFightersConfigDtoJSON(tFightersConfigDto);
-                ProxyBattleDemoConfigModule.Close();
-            });
+        if (isWatchMode && ServiceRequestAction.SimulateNet)
+        {
+            var tVideo = DemoSimulateHelper.SimulateVideo(tFightersConfigDto);
+            var video = new BattleWatchDto();
+            video.video = tVideo;
+            video.watchTeamId = tVideo.ateam.id;
+            BattleNetworkManager.OnEnterBattleSuccess(video);
+            
+            SaveFightersConfigDtoJSON(tFightersConfigDto);
+            ProxyBattleDemoConfigModule.Close();
+        }
+        else
+        {
+            BattleNetworkManager.EnterBattle(
+                ModelManager.BattleDemoConfig.BattleSceneId
+                , tFightersConfigDto
+                , () =>
+                {
+                    SaveFightersConfigDtoJSON(tFightersConfigDto);
+                    ProxyBattleDemoConfigModule.Close();
+                });
+        }
     }
 
     private void SaveFightersConfigDtoJSON(FightersConfigDto pFightersConfigDto)

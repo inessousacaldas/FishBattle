@@ -51,7 +51,8 @@ public sealed partial class PlayerPropertyDataMgr
             _disposable.Add(ctrl.OnAdvancedPropertyBtn_UIButtonClick.Subscribe(_ => AdvancedProperty_UIbuttonClickHandler()));
             _disposable.Add(ctrl.OnNoteBtn_UIButtonClick.Subscribe(_ =>
             {
-                ProxyTips.OpenTextTips(3, new Vector3(-132, -242), true, ModelManager.Player.ServerGrade.ToString(), ModelManager.Player.GetServerGradeUpLimit().ToString());
+                //226 -103
+                ProxyTips.OpenTextTips(3, new Vector3(274, -176), true, ModelManager.Player.ServerGrade.ToString(), ModelManager.Player.GetServerGradeUpLimit().ToString());
             }));
             _disposable.Add(ctrl.OnChangeNameBtn_UIButtonClick.Subscribe(_ =>
             {
@@ -169,7 +170,7 @@ public sealed partial class PlayerPropertyDataMgr
             DictSort(list);
 
             controller.SetCrewDetailInfo(list);
-            controller.SetPosition(new Vector3(-239, -43, 0));
+            controller.SetPosition(new Vector3(-238, -13, 0));
         }
 
         private static void Dispose()

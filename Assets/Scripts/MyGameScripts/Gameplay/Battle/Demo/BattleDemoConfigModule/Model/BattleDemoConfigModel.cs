@@ -22,8 +22,7 @@ public class BattleDemoConfigModel : IModuleModel
 
     //DEMO的战斗请求协议最多支持这么多人对战，超过会导致协议包体太大，网络断开
     public const int MAX_PLAYER = 40;
-    //0 battle ; 1 watch ; 2 position
-    public BATTLE_DEMO_MODEL_S1 DemoBattleMode = BATTLE_DEMO_MODEL_S1.Battle;
+    
     public const int DEFAULT_SCENE_ID = 11001;
     //TODO@MarsZ 重构时临时用默认场景ID，其他场景的话，配置跟资源并不一定对的上。2017-01-13 10:44:36
     public int BattleSceneId = DEFAULT_SCENE_ID;
@@ -340,7 +339,7 @@ public class BattleDemoConfigModel : IModuleModel
 }
 
 #region Enum and struct
-public enum BATTLE_DEMO_MODEL_S1
+public enum BATTLE_DEMO_MODEL
 {
     Battle = 0,
     Watch = 1

@@ -193,9 +193,9 @@ public partial class BaseTipsController    {
         var ctrl = AddChild<TipsBtnPanelViewController, TipsBtnPanelView>(View.Bg_UISprite.gameObject, TipsBtnPanelView.NAME);
         if (_btnPressClose)
         {
-            leftClick += Close;
-            if(rightClick != null)
-                rightClick += Close;
+            rightClick += Close;
+            if(leftClick != null)
+                leftClick += Close;
         }
         ctrl.UpdateView(left, right, leftClick, rightClick);
         _btnPanelCtrl = ctrl;
@@ -208,8 +208,11 @@ public partial class BaseTipsController    {
         if (leftDic == null && rightClick == null)
             return null;
 
+        if (leftDic == null)
+            return SetBtnView("", right, rightClick: rightClick);
+
         var ctrl = AddChild<TipsBtnPanelViewController, TipsBtnPanelView>(View.Bg_UISprite.gameObject, TipsBtnPanelView.NAME);
-        if(_btnPressClose)
+        if (_btnPressClose)
         {
             rightClick += Close;
             var dicList = new List<string>(leftDic.Keys);

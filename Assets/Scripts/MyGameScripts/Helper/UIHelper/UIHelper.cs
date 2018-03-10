@@ -301,7 +301,7 @@ public static class UIHelper
     
     public static void SetCommonIcon(UISprite uiSprite, string icon, bool makePixelPerfect = false)
     {
-        SetIcon(uiSprite, icon, "CommonUIAltas", makePixelPerfect);
+        SetIcon(uiSprite, icon, "CommonUIatlas", makePixelPerfect);
     }
     public static void SetItemIcon(UISprite uiSprite, string icon, bool makePixelPerfect = false)
     {
@@ -543,10 +543,16 @@ public static class UIHelper
 
     public static void RepositionDelay(this UITable pUITable, Action pFinishHandler = null)
     {
+        //封停会关闭主界面，导致组件报空
         JSTimer.Instance.SetNextFrame(() => {
-            pUITable.Reposition();
+            if(pUITable!= null)
+                pUITable.Reposition();
             if (null != pFinishHandler)
-                pFinishHandler();
+                try
+                {
+                    pFinishHandler();
+                }
+                catch { }
         });
     }
 

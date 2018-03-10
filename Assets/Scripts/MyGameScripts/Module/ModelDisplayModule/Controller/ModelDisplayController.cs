@@ -50,7 +50,7 @@ public class ModelDisplayController : MonolessViewController<ModelDisplayUICompo
         ModelHelper.AnimType.run
     };
 
-    private static Vector3 CAMERA_POS = new Vector3(0f, 2.6f, 5f);
+    private static Vector3 CAMERA_POS = new Vector3(0f, 1.35f, 5f);
     private int _customAnimateIndex;
     private ModelHelper.AnimType[] _customAnimateList;
     private ModelHelper.AnimType _defaultAnimate = ModelHelper.AnimType.invalid;
@@ -211,6 +211,7 @@ public class ModelDisplayController : MonolessViewController<ModelDisplayUICompo
 
         int newW = _width;
         int newH = _height;
+        float pixelSizeAdjustment = UIRoot.GetPixelSizeAdjustment(gameObject);
         //透视模式下,根据fovFactor参数放大UITexture大小
         if (!_useOrthographic)
         {
@@ -218,7 +219,10 @@ public class ModelDisplayController : MonolessViewController<ModelDisplayUICompo
             newW = Mathf.RoundToInt(_width * _fovFactor);
             newH = Mathf.RoundToInt(_height * _fovFactor);
         }
-        var renderTexture = new RenderTexture(newW, newH, 16);
+        var renderTexture = new RenderTexture(
+            Mathf.RoundToInt(newW / pixelSizeAdjustment),
+            Mathf.RoundToInt(newH / pixelSizeAdjustment), 
+            16);
         renderTexture.name = _modelRenderer.name;
         renderTexture.autoGenerateMips = false;
         _mCam.targetTexture = renderTexture;

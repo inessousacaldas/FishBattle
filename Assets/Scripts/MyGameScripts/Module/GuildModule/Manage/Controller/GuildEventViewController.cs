@@ -6,6 +6,7 @@
 // Porpuse  : 
 // **********************************************************************
 
+using AppDto;
 using System;
 using System.Collections.Generic;
 using UniRx;
@@ -21,12 +22,12 @@ public partial class GuildEventViewController
 
     private List<GuildEventItemCellController> _messageItemList = new List<GuildEventItemCellController>();
 
-    private List<messageInfoDto> _messageDtoList = new List<messageInfoDto>();
+    private IEnumerable<GuildEventDto> _messageDtoList = null;
 
     private Dictionary<GameObject, GuildEventItemCellController> _messageItemDic = new Dictionary<GameObject, GuildEventItemCellController>();
 
 
-    private int _messageItemMax = 9;
+    private int _messageItemMax = 11;
 
     public static IGuildEventViewController Show<T>(
           string moduleName
@@ -47,7 +48,19 @@ public partial class GuildEventViewController
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView()
     {
-
+        if (_disposable == null)
+            _disposable = new CompositeDisposable();
+        else
+        {
+            _disposable.Clear();
+        }
+        for (int i = 0; i < _messageItemMax; i++)
+        {
+            var ctrl = AddChild<GuildEventItemCellController, GuildEventItemCell>(
+                _view.MessageContent_UIRecycledList.gameObject
+                , GuildEventItemCell.NAME);
+            _messageItemDic.Add(ctrl.gameObject, ctrl);
+        }
     }
 
     // 客户端自定义代码
@@ -64,6 +77,14 @@ public partial class GuildEventViewController
 
     protected override void OnDispose()
     {
+        _messageItemList.Clear();
+        _messageDtoList = null;
+        _messageItemDic.ForEach(e =>
+        {
+            Destroy(e.Key);
+        });
+        _messageItemDic.Clear();
+        _disposable = _disposable.CloseOnceNull();
         base.OnDispose();
     }
 
@@ -73,31 +94,16 @@ public partial class GuildEventViewController
 
     }
 
-    public void UpdateMessageItem(List<messageInfoDto> messageInfoDto)
+    public void UpdateMessageItem(IEnumerable<GuildEventDto> messageInfoDto)
     {
         _messageDtoList = messageInfoDto;
-
-        InitMessageItem();
+        View.MessageContent_UIRecycledList.UpdateDataCount(messageInfoDto.ToArray().Length, true);
     }
-
-    private void InitMessageItem()
-    {
-        if (_messageItemDic.Count == 0)
-        {
-            for (int i = 0; i < _messageItemMax; i++)
-            {
-                var ctrl = AddChild<GuildEventItemCellController, GuildEventItemCell>(
-                    _view.MessageContent_UIRecycledList.gameObject
-                    , GuildEventItemCell.NAME);
-                _messageItemDic.Add(ctrl.gameObject, ctrl);
-            }
-        }
-        UpdateScrollViewPos(_messageDtoList);
-    }
+    
 
     private void UpdateEventItem(GameObject go, int itemIndex, int dataIndex)
     {
-        if (_messageItemDic == null) return;
+        if (_messageItemDic == null || _messageDtoList == null) return;
         GuildEventItemCellController item = null;
         if (_messageItemDic.TryGetValue(go, out item))
         {
@@ -105,11 +111,5 @@ public partial class GuildEventViewController
             if (info == null) return;
             item.SetData(info);
         }
-    }
-    public void UpdateScrollViewPos(IEnumerable<messageInfoDto> ShopItems)
-    {
-        View.MessageContent_UIRecycledList.UpdateDataCount(ShopItems.ToList().Count, true);
-        View.ScrollView_UIScrollView.ResetPosition();
-        //View.ScrollView_UIScrollView.transform.localPosition = new Vector3(80, -18);
     }
 }

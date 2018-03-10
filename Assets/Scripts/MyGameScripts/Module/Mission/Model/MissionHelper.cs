@@ -134,7 +134,11 @@ public static class MissionHelper
         //多人交谈任务
         Findtem = 11,
         //采集任务
-        PickItem = 12
+        PickItem = 12,
+        //指定怪掉落道具
+        ShowMonsterItem = 13,
+        //公会到坐标宣言
+        GuildSpeak = 14
     }
     #endregion
 
@@ -156,13 +160,21 @@ public static class MissionHelper
     /// <returns></returns>
     public static string GetMissionTitleName(Mission mission,bool isCell = false)
     {
+        MissionType.MissionTypeEnum missionType = (MissionType.MissionTypeEnum)mission.type;
         string name = "";
-        if (mission.type >= (int)MissionType.MissionTypeEnum.Faction)
+        if (missionType >= MissionType.MissionTypeEnum.Faction && missionType < MissionType.MissionTypeEnum.Copy)
         {
             if (!isCell)
                 name = mission.missionType.name;
             else
                 name = "日常-" + mission.missionType.name;
+        }
+        else if(missionType >= MissionType.MissionTypeEnum.Copy && missionType <= MissionType.MissionTypeEnum.CopyExtra)
+        {
+            if (!isCell)
+                name = mission.name;
+            else
+                name = "副本-" + mission.name;
         }
         else
         {
@@ -256,12 +268,19 @@ public static class MissionHelper
             {
                 if (msgType == MsgType.TargetDesc)
                 {
-                    if (mission.type >= (int)MissionType.MissionTypeEnum.Faction)
+                    if (mission.type >= (int)MissionType.MissionTypeEnum.Faction && mission.type != (int)MissionType.MissionTypeEnum.Copy)
                     {
                         if(mission.missionType.acceptNpc == null)
                             GameDebuger.Log("日常任务类型—missionType.acceptNpc为空，请策划配置");
                         else
                             tStr = "前往" + mission.missionType.acceptNpc.name + "处领取任务";
+                    }
+                    else if(mission.type == (int)MissionType.MissionTypeEnum.Copy)
+                    {
+                        if(mission.acceptNpc == null)
+                            GameDebuger.Log("副本任务类型—mission.acceptNpc为空，请策划配置");
+                        else
+                            tStr = "前往" + mission.acceptNpc.name + "处领取任务";
                     }
                     else
                         tStr = tCurMissionDialog.goalDesc;
@@ -349,6 +368,16 @@ public static class MissionHelper
                 UpgradeSubmitDto tUpgradeSubmitDto = tSubmitDto as UpgradeSubmitDto;
                 grade = tUpgradeSubmitDto.grade.ToString();
                 tStr = RegexString(tStr, "", "", "", "", "", "", "", grade);
+                break;
+            case SubmitDtoType.ShowMonsterItem:
+                ShowMonsterItemSubmitDto tShowMonsterItem = tSubmitDto as ShowMonsterItemSubmitDto;
+                var showMonsterItem = ItemHelper.GetGeneralItemByItemId(tShowMonsterItem.itemId);
+                if(showMonsterItem != null)
+                {
+                    item = showMonsterItem.name;
+                    count = tShowMonsterItem.itemCount + "/" + tShowMonsterItem.needCount;
+                }
+                tStr = RegexString(tStr, "", "", "", item, count);
                 break;
         }
         return tStr;
@@ -603,17 +632,20 @@ public static class MissionHelper
         {
             tSubmitDtoType = SubmitDtoType.PickItem;
         }
-        //else if(submitDto is CollectionItemCategorySubmitDto)
-        //{
-        //    tSubmitDtoType = SubmitDtoType.CollectionItemCategory;
-        //}
-        //else if(submitDto is CollectionPetSubmitDto)
-        //{
-        //    tSubmitDtoType = SubmitDtoType.CollectionPet;
-        //}
-        else if (submitDto is UpgradeSubmitDto)
+        else if(submitDto is ShowMonsterItemSubmitDto)
+        {
+            tSubmitDtoType = SubmitDtoType.ShowMonsterItem;
+        }
+        else if(submitDto is CollectionItemCategorySubmitDto)
+        {
+            tSubmitDtoType = SubmitDtoType.CollectionItemCategory;
+        }
+        else if(submitDto is UpgradeSubmitDto)
         {
             tSubmitDtoType = SubmitDtoType.Upgrade;
+        }
+        else if(submitDto is SpeakSubmitDto) {
+            tSubmitDtoType = SubmitDtoType.GuildSpeak;
         }
         //else if (submitDto is )
         //{
@@ -789,6 +821,7 @@ public static class MissionHelper
             tNpc.name = npcInfoDto.name;
             tNpc.sceneId = npcInfoDto.sceneId;
             tNpc.x = npcInfoDto.x;
+            tNpc.y = npcInfoDto.y;
             tNpc.z = npcInfoDto.z;
 
             if(npcInfoDto.npc != null)
@@ -810,6 +843,7 @@ public static class MissionHelper
         tNpcInfoDto.name = npc.name;
         tNpcInfoDto.sceneId = npc.sceneId;
         tNpcInfoDto.x = npc.x;
+        tNpcInfoDto.y = npc.y;
         tNpcInfoDto.z = npc.z;
         tNpcInfoDto.npcAppearanceId = 0;
         tNpcInfoDto.npc = npc;

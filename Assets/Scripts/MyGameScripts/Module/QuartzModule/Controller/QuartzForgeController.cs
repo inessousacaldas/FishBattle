@@ -12,6 +12,12 @@ using AppDto;
 using UniRx;
 using UnityEngine;
 
+public partial interface IQuartzForgeController
+{
+    UniRx.IObservable<int> CommonBtnHandler { get; }
+    UniRx.IObservable<int> StrengthHandler { get; }
+    
+}
 public partial class QuartzForgeController
 {
     private CompositeDisposable _disposable;
@@ -26,14 +32,23 @@ public partial class QuartzForgeController
 
     private Vector3 _tipPos = new Vector3(-335, 148, 0);
     private Vector3 _gainPos = new Vector3(90, 30, 0);
+    private DailyLimit _forgeLimit;
+    private Subject<int> _commonBtnClickEvt = new Subject<int>(); 
+    public UniRx.IObservable<int> CommonBtnHandler { get { return _commonBtnClickEvt; } } 
 
+    private Subject<int> _strengthClickEvt = new Subject<int>();
+    public UniRx.IObservable<int> StrengthHandler { get { return _strengthClickEvt; } }
+      
     private string[] ItemName = {"1级打造", "2级打造", "3级打造", "4级打造", "5级打造"};
 
     public void UpdateDataAndView(IQuartzForgeData data)
     {
         UpdatePropsList(_curGrade);
+        if (_forgeLimit == null)
+            _forgeLimit = DataCache.getDtoByCls<DailyLimit>(21);
+        View.TimesLb_UILabel.text = string.Format("今日剩余打造次数:{0}", _forgeLimit.limit - data.GetOrbmentDto.curSmithCount);
     }
-    
+
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
@@ -93,6 +108,7 @@ public partial class QuartzForgeController
     {
         EventDelegate.Add(_view.CommonBtn_UIButton.onClick, OnCommnBtnClick);
         EventDelegate.Add(_view.StrengthBtn_UIButton.onClick, OnStrengthBtnClick);
+        EventDelegate.Add(_view.TipsBtn_UIButton.onClick, OnTipsBtnClick);
         _disposable.Add(BackpackDataMgr.Stream.SubscribeAndFire(_ => { UpdatePropsList(_curGrade); }));
         _disposable.Add(PlayerModel.Stream.SubscribeAndFire(_ => { SetCashLb(); }));
         EventDelegate.Add(_view.StrengthToggle_UIButton.onClick, () =>
@@ -141,6 +157,11 @@ public partial class QuartzForgeController
         
     }
 
+    private void OnTipsBtnClick()
+    {
+        ProxyTips.OpenTextTips(42, new Vector3(139, -204, 0));
+    }
+
     private void OnStrengthBtnClick()
     {
         var data = _quartzSmithList[_curGrade].strengSmith;
@@ -156,7 +177,7 @@ public partial class QuartzForgeController
             }
         }
         ExChangeHelper.CheckIsNeedExchange(AppVirtualItem.VirtualItemEnum.SILVER, _quartzSmithList[_curGrade].silver, 
-            () => { QuartzDataMgr.QuartzNetMsg.Quartz_Smith(_curGrade + 1, true); });
+            () => { _strengthClickEvt.OnNext(_curGrade + 1); });
     }
 
     private void OnCommnBtnClick()
@@ -180,7 +201,7 @@ public partial class QuartzForgeController
         }
 
         ExChangeHelper.CheckIsNeedExchange(AppVirtualItem.VirtualItemEnum.SILVER, _quartzSmithList[_curGrade].silver, 
-            ()=> { QuartzDataMgr.QuartzNetMsg.Quartz_Smith(_curGrade + 1, false); });
+            ()=> { _commonBtnClickEvt.OnNext(_curGrade + 1); });
     }
 
     private void UpdatePropsList(int idx)

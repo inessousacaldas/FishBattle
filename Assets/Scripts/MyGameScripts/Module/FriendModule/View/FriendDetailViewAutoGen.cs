@@ -13,6 +13,7 @@ public sealed class FriendDetailView : BaseView
     /// bind gameobject
     public UISprite Bg_UISprite;
     public UISprite BtnBg_UISprite;
+    public UITable Table_UITable;
     public UIButton InviteTeamBtn_UIButton;
     public UIButton FightBtn_UIButton;
     public UIButton ReportBtn_UIButton;
@@ -22,29 +23,19 @@ public sealed class FriendDetailView : BaseView
     public UIButton WatchBtn_UIButton;
     public UIButton FlowerBtn_UIButton;
     public UIButton ZoneBtn_UIButton;
-    public UILabel Tag_8_UILabel;
-    public UILabel Tag_7_UILabel;
-    public UILabel Tag_6_UILabel;
-    public UILabel Tag_5_UILabel;
-    public UILabel Tag_4_UILabel;
-    public UILabel Tag_3_UILabel;
-    public UILabel Tag_2_UILabel;
-    public UILabel Tag_1_UILabel;
+    public UIGrid Grid_UIGrid;
     public UILabel CountryName_UILabel;
     public UILabel TeamLabel_UILabel;
     public UILabel NumLabel_UILabel;
     public UILabel LvLabel_UILabel;
     public UISprite Icon_UISprite;
     public UILabel Name_UILabel;
-    public UISprite Sprite_UISprite;
-    public UISprite Faction_UISprite;
     public UISprite Magic_UISprite;
+    public UISprite Faction_UISprite;
     public UIButton BlackBtn_UIButton;
     public UIButton ChatBtn_UIButton;
     public UILabel DeleteLabel_UILabel;
     public UILabel BlackLabel_UIlabel;
-    public UITable Table_UITable;
-
 
 
     protected override void InitElementBinding ()
@@ -62,21 +53,13 @@ public sealed class FriendDetailView : BaseView
         WatchBtn_UIButton = root.FindScript<UIButton>("Bg/Table/WatchBtn");
         FlowerBtn_UIButton = root.FindScript<UIButton>("Bg/Table/FlowerBtn");
         ZoneBtn_UIButton = root.FindScript<UIButton>("Bg/Table/ZoneBtn");
-        Tag_8_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_8/Tag_8");
-        Tag_7_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_7/Tag_7");
-        Tag_6_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_6/Tag_6");
-        Tag_5_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_5/Tag_5");
-        Tag_4_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_4/Tag_4");
-        Tag_3_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_3/Tag_3");
-        Tag_2_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_2/Tag_2");
-        Tag_1_UILabel = root.FindScript<UILabel>("Bg/Grid/TagBg_1/Tag_1");
+        Grid_UIGrid = root.FindScript<UIGrid>("Bg/Grid");
         CountryName_UILabel = root.FindScript<UILabel>("Bg/Info/CountryName");
         TeamLabel_UILabel = root.FindScript<UILabel>("Bg/Info/TeamLabel");
         NumLabel_UILabel = root.FindScript<UILabel>("Bg/Info/NumLabel");
         LvLabel_UILabel = root.FindScript<UILabel>("Bg/Info/LvLabel");
         Icon_UISprite = root.FindScript<UISprite>("Bg/Info/Icon");
         Name_UILabel = root.FindScript<UILabel>("Bg/Name");
-        Sprite_UISprite = root.FindScript<UISprite>("Bg/CountryIcon/Sprite");
         Magic_UISprite = root.FindScript<UISprite>("Bg/Magic");
         Faction_UISprite = root.FindScript<UISprite>("Bg/Magic/Faction");
         BlackBtn_UIButton = root.FindScript<UIButton>("Bg/Table/BlackBtn");

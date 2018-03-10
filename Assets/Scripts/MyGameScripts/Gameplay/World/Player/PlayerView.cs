@@ -90,7 +90,7 @@ public class PlayerView : MonoBehaviour
         }
 
         //设置PlayerView坐标
-        var pos = SceneHelper.GetSceneStandPosition(new Vector3(_playerDto.x, 0f, _playerDto.z), Vector3.zero);
+        var pos = SceneHelper.GetPositionInScene(_playerDto.x, _playerDto.y, _playerDto.z);
         
         ResetPos(pos);
 
@@ -220,7 +220,7 @@ public class PlayerView : MonoBehaviour
         {
             var pos = leaderView.cachedTransform.position;
             target = pos - _playerDto.teamIndex * leaderView.cachedTransform.forward * (_mAgent.radius + 1f);     //间距
-            //target = SceneHelper.GetSceneStandPosition(target, pos);
+            //target = SceneHelper.GetPositionInScene(target, pos);
             return Vector3.Distance(target, _mAgent.GetGridPos()) < fade;
         }
         target = Vector3.zero;
@@ -386,7 +386,7 @@ public class PlayerView : MonoBehaviour
         {
             if (_isRunning)
             {
-                WorldManager.Instance.PlanWalk(_mTrans.position.x, _mTrans.position.z);
+                WorldManager.Instance.PlanWalk(_mTrans.position.x, _mTrans.position.y, _mTrans.position.z);
                 WorldManager.Instance.GetNpcViewManager().ResetWaitingTrigger();
             }
         }
@@ -438,12 +438,14 @@ public class PlayerView : MonoBehaviour
         {
             if (randomRange)
             {
-                WorldManager.Instance.PlanWalk(Random.Range(targetPoint.x - 1f, targetPoint.x + 1f),
-                    Random.Range(targetPoint.z - 1f, targetPoint.z + 1f));
+                WorldManager.Instance.PlanWalk(
+                    Random.Range(targetPoint.x - 1f, targetPoint.x + 1f)
+                    , targetPoint.y
+                    , Random.Range(targetPoint.z - 1f, targetPoint.z + 1f));
             }
             else
             {
-                WorldManager.Instance.PlanWalk(targetPoint.x, targetPoint.z);
+                WorldManager.Instance.PlanWalk(targetPoint.x, targetPoint.y, targetPoint.z);
             }
             // 停止挂机状态
             ModelManager.Player.StopAutoFram();
@@ -651,6 +653,16 @@ public class PlayerView : MonoBehaviour
         return _playerDto;
     }
 
+    public Vector3 GetFeetPosition()
+    {
+        if (_mTrans != null)
+        {
+//            return _mTrans.position.z == 0 ? _mTrans.position : new Vector3(_mTrans.position.x, _mTrans.position.y, 0);
+            return _mTrans.position;
+        }
+        return Vector3.zero;
+    }
+    
     public bool IsHero { get; private set; }
 
     public bool IsVisual()

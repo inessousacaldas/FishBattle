@@ -19,6 +19,7 @@ public class MySceneReleaser : BaseCommand {
 			this.OnFinish ();
 			return;
 		}
+        //ProfileHelper.SystimeBegin("sceneName Releaser");
         lastTriggerMgr.Dispose();
 
         lastSceneGoMgr.Clear (this.OnClearFinish);
@@ -30,6 +31,7 @@ public class MySceneReleaser : BaseCommand {
         RenderSettings.skybox = null;
         //调用UnloadUnuse释放
         GameEventCenter.SendEvent(GameEvent.OnSceneChangeEnd);
+        //ProfileHelper.SystimeEnd("sceneName Releaser");
         this.OnFinish ();
 	}
 }

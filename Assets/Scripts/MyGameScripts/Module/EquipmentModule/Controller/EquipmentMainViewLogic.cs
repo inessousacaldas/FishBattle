@@ -16,7 +16,7 @@ public sealed partial class EquipmentMainDataMgr
     {
         private static CompositeDisposable _disposable;
 
-        public static void Open()
+        public static void Open(EquipmentViewTab tab = EquipmentViewTab.Smith)
         {
         // open的参数根据需求自己调整
             var ctrl = EquipmentMainViewController.Show<EquipmentMainViewController>(
@@ -26,10 +26,10 @@ public sealed partial class EquipmentMainDataMgr
                 , true
                 , Stream);
             DataMgr._data.SmithData.UpdateCurSmithItems();
-            InitReactiveEvents(ctrl);
+            InitReactiveEvents(ctrl, tab);
         }
         
-        private static void InitReactiveEvents(IEquipmentMainViewController ctrl)
+        private static void InitReactiveEvents(IEquipmentMainViewController ctrl, EquipmentViewTab tab)
         {
             if (ctrl == null) return;
             if (_disposable == null)
@@ -54,7 +54,7 @@ public sealed partial class EquipmentMainDataMgr
             }));
             
             ctrl.OnChildCtrlAdd += Ctrl_OnChildCtrlAdd;
-            SetCurTab(EquipmentViewTab.Smith);
+            SetCurTab(tab);
         }
 
         /// <summary>
@@ -131,20 +131,30 @@ public sealed partial class EquipmentMainDataMgr
             _disposable.Add(ctrl.OntipsBtn_UIButtonClick.Subscribe(x => {
                 ProxyTips.OpenTextTips(11, new UnityEngine.Vector3(18, 37));
             }));
-            //打造按钮
-            _disposable.Add(ctrl.SmithHandler.Subscribe(x => {
-            int id = SmithData.curSelectEquipement.id;
-            int quality = SmithData.CurSelectQuality;
-            bool fastSmith = SmithData.FastSmith;
-            //如果为橙装 或者 红装，则不支持快捷打造
-            fastSmith = fastSmith && (SmithData.CurSelectQuality == (int)AppItem.QualityEnum.ORANGE || SmithData.CurSelectQuality == (int)AppItem.QualityEnum.RED);
-            if (ItemHelper.GetGeneralItemByItemId(id) != null && ItemHelper.GetGeneralItemByItemId(id) as Equipment != null)
+            _disposable.Add(ctrl.OnTipsBtn_UIButtonClick.Subscribe(_ =>
             {
-                ExChangeHelper.CheckIsNeedExchange(AppVirtualItem.VirtualItemEnum.SILVER, (ItemHelper.GetGeneralItemByItemId(id) as Equipment).smithSilver,
-                    () => EquipmentMainNetMsg.ReqEquipmentSmith(id, quality, fastSmith));
-            }
-            else
-                GameDebuger.Log("equipment未找到该装备");
+                ProxyTips.OpenTextTips(41, new UnityEngine.Vector3(139, -204), true);
+            }));
+            //打造按钮
+            _disposable.Add(ctrl.SmithHandler.Subscribe(x =>
+            {
+                if (DataMgr._data.CurrentEquipmentInfo.curSmithCount <= 0)
+                {
+                    TipManager.AddTip("今天打造已经达到50次，请明天再来打造");
+                    return;
+                }
+                int id = SmithData.curSelectEquipement.id;
+                int quality = SmithData.CurSelectQuality;
+                bool fastSmith = SmithData.FastSmith;
+                //如果为橙装 或者 红装，则不支持快捷打造
+                fastSmith = fastSmith && (SmithData.CurSelectQuality == (int)AppItem.QualityEnum.ORANGE || SmithData.CurSelectQuality == (int)AppItem.QualityEnum.RED);
+                if (ItemHelper.GetGeneralItemByItemId(id) != null && ItemHelper.GetGeneralItemByItemId(id) as Equipment != null)
+                {
+                    ExChangeHelper.CheckIsNeedExchange(AppVirtualItem.VirtualItemEnum.SILVER, (ItemHelper.GetGeneralItemByItemId(id) as Equipment).smithSilver,
+                        () => EquipmentMainNetMsg.ReqEquipmentSmith(id, quality, fastSmith));
+                }
+                else
+                    GameDebuger.Log("equipment未找到该装备");
 
             }));        
             FireData();
@@ -178,7 +188,14 @@ public sealed partial class EquipmentMainDataMgr
             //洗练按钮
             _disposable.Add(ctrl.OnResetBtn_UIButtonClick.Subscribe(_ => {
                 if (ResetData.CurChoiceEquipment == null)
-                    return; 
+                    return;
+
+                if (ResetData.CurrentEquipmentInfo.curResetCount <= 0)
+                {
+                    TipManager.AddTip("今天洗炼已经达到50次，请明天再来打造");
+                    return;
+                }
+
                 if(ResetData.CurChoiceEquipment.circulationType == (int)BagItemDto.CirculationType.Bind)
                 {
                     var uid = ResetData.CurChoiceEquipment.equipUid;

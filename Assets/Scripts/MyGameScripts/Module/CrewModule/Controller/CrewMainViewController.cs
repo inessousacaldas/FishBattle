@@ -37,8 +37,11 @@ public partial interface ICrewMainViewController
     TabbtnManager GetTabMgr { get; }
     void HideTabBtn(bool b);
     void ShowBackground(bool b);
+    void OnMoreOperationBtnClick();
     CrewIconController GetCurrCrewData(int index);
     UniRx.IObservable<IStrengthContainerViewController> TrainSaveBtnUp { get; }
+    UniRx.IObservable<ICrewFetterItemVo> OnCrewFetterItemClick { get; }
+    UniRx.IObservable<Unit> OnCrewFetterItemActiveClick { get; }
     UniRx.IObservable<Unit> TrainBtnUp { get; }
     UniRx.IObservable<int> GetPageChange { get; }
     UniRx.IObservable<PropertyType> GetChangeCrewType { get; }
@@ -46,55 +49,57 @@ public partial interface ICrewMainViewController
 
 public partial class CrewMainViewController
 {
-	private ICrewViewData _data;
+    private ICrewViewData _data;
 
     private int _curCrewId = 0;
     private int _crewMaxLv = 79;        //暂时写死79级
     private bool _isPull = true;
 
-    private List<CrewIconController> _itemList = new List<CrewIconController>();    //主界面滑动列表
+    private List<CrewItemCellController> _itemList = new List<CrewItemCellController>();    //主界面滑动列表
     private List<CrewIconController> _itemPageList = new List<CrewIconController>();//平铺界面列表
 
-	private TabbtnManager tabMgr;
-	public static readonly ITabInfo[] TeamTabInfos =
-	{
-		TabInfoData.Create((int) PartnerTab.Info, "属性"),
+    private TabbtnManager tabMgr;
+    public static readonly ITabInfo[] TeamTabInfos =
+    {
+        TabInfoData.Create((int) PartnerTab.Info, "属性"),
         TabInfoData.Create((int) PartnerTab.Skill, "技能"),
-        TabInfoData.Create((int) PartnerTab.Cultivate, "培养")
+        TabInfoData.Create((int) PartnerTab.Cultivate, "培养"),
         //TabInfoData.Create((int) PartnerTab.Favorable, "好感度")
+        TabInfoData.Create((int) PartnerTab.Favorable, "羁绊")
     };
 
     private Subject<ICrewItemData> _iconClickEvt = new Subject<ICrewItemData>();
-	public UniRx.IObservable<ICrewItemData> GetIconClickEvt {get { return _iconClickEvt; }}
+    public UniRx.IObservable<ICrewItemData> GetIconClickEvt { get { return _iconClickEvt; } }
 
-    private Subject<int>  _iconScrollEvt=new Subject<int>();
+    private Subject<int> _iconScrollEvt = new Subject<int>();
 
     private Subject<PropertyType> _changeCrewTypeEvt = new Subject<PropertyType>();
-    public UniRx.IObservable<PropertyType> GetChangeCrewType { get { return _changeCrewTypeEvt; } } 
+    public UniRx.IObservable<PropertyType> GetChangeCrewType { get { return _changeCrewTypeEvt; } }
 
     public UniRx.IObservable<int> IGreIconScrollEvt { get { return _iconScrollEvt; } }
 
     private ICrewInfoController _infoController;
     private Subject<int> _pageChangeEvt = new Subject<int>();
-    public UniRx.IObservable<int> GetPageChange { get { return _pageChangeEvt; } }  
+    public UniRx.IObservable<int> GetPageChange { get { return _pageChangeEvt; } }
 
-	private StrengthContainerViewController _StrengthenController;
+    private StrengthContainerViewController _StrengthenController;
     public IStrengthContainerViewController IStrengthenCtrl { get { return _StrengthenController; } }
-	
-	private CrewFetterViewController _fetterController;
-	public ICrewFetterViewController ICrewFetterCtrl { get { return _fetterController; } }
+
+    private CrewFetterViewController _fetterController;
+    public ICrewFetterViewController ICrewFetterCtrl { get { return _fetterController; } }
 
     private CrewSkillTrainingViewController _trainingCtrl;           //研修
 
     private ModelDisplayController _modelDisplayer;
-	private PropertyType _curType = PropertyType.All;
-	private CrewSkillViewController crewSkillCtrl;
+    private PropertyType _curType = PropertyType.All;
+    private CrewSkillViewController crewSkillCtrl;
 
-	public ICrewSkillViewController ICrewSkillViewCrrl {
-		get { return crewSkillCtrl; }
-	}
+    public ICrewSkillViewController ICrewSkillViewCrrl
+    {
+        get { return crewSkillCtrl; }
+    }
 
-	private bool _isShowListBtn;
+    private bool _isShowListBtn;
     private bool _isShowTiledBtn = true;
     private List<Crew> _allCrewList = new List<Crew>();
     private List<CrewFavor> _crewFavors = new List<CrewFavor>();
@@ -108,33 +113,34 @@ public partial class CrewMainViewController
 
     private delegate void _func(UIButton btn, int idx);
     // 界面初始化完成之后的一些后续初始化工作
-    protected override void AfterInitView ()
-	{
+    protected override void AfterInitView()
+    {
         InitTabInfo();
-	    InitPartnerList();
-		InitModel();
-		InitInfoView();
+        InitPartnerList();
+        InitModel();
+        InitInfoView();
         InitStrengthView();
         InitSkillTrainView();
     }
-	
-	// 客户端自定义代码
-	protected override void RegistCustomEvent ()
-	{
-	    UICamera.onClick += OnCameraClick;
 
-	    _func listf = (btn, idx) =>
-	    {
-	        _disposable.Add(btn.AsObservable().Subscribe(_ =>
-	        {
-	            UpdateCrewList((PropertyType) idx);
-                _view.ListBtnGroup_UIPanel.gameObject.SetActive(false);
+    // 客户端自定义代码
+    protected override void RegistCustomEvent()
+    {
+        UICamera.onClick += OnCameraClick;
+
+        _func listf = (btn, idx) =>
+        {
+            _disposable.Add(btn.AsObservable().Subscribe(_ =>
+            {
+                UpdateCrewList((PropertyType)idx);
+                //_view.ListBtnGroup_UIPanel.gameObject.SetActive(false);
 
                 //点击刷选伙伴类型开始刷选,
-	            UpdateReposition();
-                _view.PartnerList_UITable.transform.parent.GetComponent<UI_Contorl_ScrollFlow>().BrushItem(1);
+                UpdateReposition();
+                //_view.PartnerList_UITable.transform.parent.GetComponent<UI_Contorl_ScrollFlow>().BrushItem(1);
+
             }));
-	    };
+        };
 
         _func pagef = (btn, idx) =>
         {
@@ -145,15 +151,14 @@ public partial class CrewMainViewController
                 //点击刷选伙伴类型开始刷选,
                 UpdateReposition();
                 _changeCrewTypeEvt.OnNext((PropertyType)idx);
-                _view.PartnerList_UITable.transform.parent.GetComponent<UI_Contorl_ScrollFlow>().BrushItem(1);
+                //_view.PartnerList_UITable.transform.parent.GetComponent<UI_Contorl_ScrollFlow>().BrushItem(1);
             }));
         };
 
-        for (int i = 0; i < _view.ListBtnGroup_Transform.childCount; i++)
+        for (int i = 0; i < _view.FilterBtnGroup_Transform.childCount - 1; i++)
         {
-            var listGo = _view.ListBtnGroup_Transform.GetChild(i);
+            var listGo = _view.FilterBtnGroup_Transform.GetChild(i);
             var listBtn = listGo.GetComponent<UIButton>();
-            var listSprite = listGo.Find("Sprite").GetComponent<UISprite>();
 
             var tiledGo = _view.BtnGroup_Transform.GetChild(i);
             var tiledBtn = tiledGo.GetComponent<UIButton>();
@@ -161,34 +166,34 @@ public partial class CrewMainViewController
 
             _mainBtnList.Add(listBtn);
             _tiledBtnList.Add(tiledBtn);
-            _mainBtnSprites.Add(listSprite);
             _tiledBtnSprites.Add(tiledSprite);
 
             listf(listBtn, i);
             pagef(tiledBtn, i);
-	    }
+        }
 
-	    _view.CrewInfoContent_PageScrollView.onChangePage += onChangePage;
+        _view.CrewInfoContent_PageScrollView.onChangePage += onChangePage;
 
-	}
-	
-	protected override void RemoveCustomEvent ()
-	{
-        
     }
-	
-	protected override void OnDispose()
-	{
+
+    protected override void RemoveCustomEvent()
+    {
+
+    }
+
+    protected override void OnDispose()
+    {
         _view.CrewInfoContent_PageScrollView.onChangePage -= onChangePage;
         UICamera.onClick -= OnCameraClick;
         _modelDisplayer.CleanUpModel();
-		_disposable = _disposable.CloseOnceNull();
-	}
+        _disposable = _disposable.CloseOnceNull();
+        _fetterItemList.Clear();
+    }
 
-	//在打开界面之前，初始化数据
-	protected override void InitData()
-	{
-		_disposable = new CompositeDisposable();
+    //在打开界面之前，初始化数据
+    protected override void InitData()
+    {
+        _disposable = new CompositeDisposable();
 
         var list = DataCache.getArrayByCls<GeneralCharactor>();
         list.ForEach(d =>
@@ -202,56 +207,60 @@ public partial class CrewMainViewController
 
     // 业务逻辑数据刷新
     protected override void UpdateDataAndView(ICrewViewData data)
-	{
-		_data = data;
+    {
+        _data = data;
 
-		UpdateTabData(data);
+        UpdateTabData(data);
         if (_curCrewId != data.GetCurCrewId)
             UpdateModel(data.GetCurCrewId);
 
         _curCrewId = data.GetCurCrewId;
         UpdateCrewList(_curType);
+        _view.FavorableBtn_UIButton.gameObject.SetActive(data.IsHadCurPantner(_curCrewId) != null);
         HideTabBtn(data.IsHadCurPantner(_curCrewId) == null);
         UpdatePageBtnState(data.IsHadCurPantner(_curCrewId) == null);
-        ChangeInfoTab(data.IsHadCurPantner(_curCrewId) == null ? CrewInfoTab.InfoTab:_data.PartnerInfoData.GetCurInfoTab);
-        UpdateBuyCrewSroll();
+        ChangeInfoTab(data.IsHadCurPantner(_curCrewId) == null ? CrewInfoTab.InfoTab : _data.PartnerInfoData.GetCurInfoTab);
+        //UpdateBuyCrewSroll();
         UpdateReposition();
     }
 
     private void UpdatePageBtnState(bool b)
     {
-        //_view.PageInfoBtn_UIButton.gameObject.SetActive(b);
         _view.pageSprite_UIButton.gameObject.SetActive(!b);
         _view.pageSprite_1_UIButton.gameObject.SetActive(!b);
     }
 
-	private void UpdateTabData(ICrewViewData data)
-	{
-	    UpdateMainInfo(data.GetCurCrewId);
+    private void UpdateTabData(ICrewViewData data)
+    {
+        UpdateMainInfo(data.GetCurCrewId);
         switch (data.GetCurCrewTab)
-		{
-			case PartnerTab.Skill:
+        {
+            case PartnerTab.Skill:
                 UpdateSkillDataAndView(data.GetCurCrewId);
-				break;
-			case PartnerTab.Info:
-				UpdateInfo(_data.GetCurCrewId);
-				break;
+                break;
+            case PartnerTab.Info:
+                UpdateInfo(_data.GetCurCrewId);
+                break;
             case PartnerTab.Cultivate:
                 UpdateTrainView();
                 UpdatePhaseAndRaise(_data.GetCurCrewId);
                 break;
-		}
-	}
+            case PartnerTab.Fetter:
+                UpdateFetterView();
+                View.FetterScrollView.ResetPosition();
+                break;
+        }
+    }
 
-	private void InitTabInfo()
-	{
-		tabMgr = TabbtnManager.Create(TeamTabInfos, GetFunc());
-	}
+    private void InitTabInfo()
+    {
+        tabMgr = TabbtnManager.Create(TeamTabInfos, GetFunc());
+    }
 
     public Func<int, ITabBtnController> GetFunc()
     {
         Func<int, ITabBtnController> func = i => AddChild<TabBtnWidgetController, TabBtnWidget>(
-            _view.TabGroup.gameObject
+            _view.TabGroup_UITable.gameObject
             , TabbtnPrefabPath.TabBtnWidget.ToString()
             , "Tabbtn_" + i);
 
@@ -260,42 +269,48 @@ public partial class CrewMainViewController
 
     private bool _isShowExpaned = true;
     public void InitPartnerList()
-	{
-        for (int i = 0; i < _allCrewList.Count;i++)
-		{
-			var com = AddChild<CrewIconController, CrewIcon>(
-				_view.PartnerList_UITable.gameObject
-				,CrewIcon.NAME);
+    {
+        for (int i = 0; i < _allCrewList.Count; i++)
+        {
+            var com = AddChild<CrewItemCellController, CrewItemCell>(
+                _view.PartnerGrid_UIGrid.gameObject
+                , CrewItemCell.NAME);
 
-            var con = AddChild<CrewIconController, CrewIcon>(
+            var iconCon = AddChild<CrewIconController, CrewIcon>(
                 _view.TiledIconGrid_UIPageGrid.gameObject
                 , CrewIcon.NAME);
 
             _itemList.Add(com);
-            _itemPageList.Add(con);
+            _itemPageList.Add(iconCon);
 
-            com.gameObject.AddComponent<UI_Contorl_ScrollFlowItem>().Index = i;
         }
-        _disposable.Add(_view.UIScroll.GetClickEvt.Subscribe(d => { _iconScrollEvt.OnNext(d);
-                                                                   
-        }));
-        _view.UIScroll.Init(new Vector3(-23,178),0.2f);
-	}
 
-	private void InitModel()
-	{
-		_modelDisplayer = AddChild<ModelDisplayController, ModelDisplayUIComponent>(
-			View.ModelAnchor
-			, ModelDisplayUIComponent.NAME);
+        _itemList.ForEach(item =>
+        {
+            _disposable.Add(item.GetClickEvt.Subscribe(e =>
+            {
+                _iconScrollEvt.OnNext(e.GetIdx);
+            }));
 
-		_modelDisplayer.Init (300, 300);
-		_modelDisplayer.SetBoxColliderEnabled(true);
-        
-	}
+        });
+        //_view.UIScroll.Init(new Vector3(-23, 178), 0.2f);
+    }
+
+    private void InitModel()
+    {
+        _modelDisplayer = AddChild<ModelDisplayController, ModelDisplayUIComponent>(
+            View.ModelAnchor
+            , ModelDisplayUIComponent.NAME);
+
+        _modelDisplayer.Init(310, 310);
+        _modelDisplayer.transform.localPosition = Vector3.zero;
+        _modelDisplayer.SetBoxColliderEnabled(true);
+
+    }
 
     private ModelStyleInfo InitModelStyleInfo(int id)
     {
-//        GameDebuger.Log("伙伴id=========" + id);
+        //        GameDebuger.Log("伙伴id=========" + id);
         ModelStyleInfo model = new ModelStyleInfo();
         model.defaultModelId = id;
         return model;
@@ -303,7 +318,7 @@ public partial class CrewMainViewController
 
     public void UpdateModel(int CrewId)
     {
-        var crew = _data.GetCrewBookList.Find(d => d.GetCrewId== CrewId);
+        var crew = _data.GetCrewBookList.Find(d => d.GetCrewId == CrewId);
         _modelDisplayer.SetupModel(InitModelStyleInfo(crew.GetCrew.modelId));
         _modelDisplayer.SetModelScale(1f);
         _modelDisplayer.SetModelOffset(-0.15f);
@@ -315,8 +330,9 @@ public partial class CrewMainViewController
         _fetterController.gameObject.SetActive(data != null);
         _view.PageGrid.enabled = true;
         UpdateReposition();
-        _view.HadPartner.gameObject.SetActive(data != null);
-        _view.NoHadPartner.gameObject.SetActive(data == null);
+        _view.HadPartner.gameObject.SetActive(false/*data != null*/);
+        _view.NoHadPartner.gameObject.SetActive(false);
+        _view.Score.gameObject.SetActive(data != null);
 
         var crew = _data.GetCrewBookList.Find(d => d.GetCrewId == id);
         if (crew == null)
@@ -325,6 +341,7 @@ public partial class CrewMainViewController
         if (data == null)
         {
             _view.NameLb_UILabel.text = crew.GetCrew.name;
+            _view.StrengthLevelLbl.text = (crew.GetInfoDto == null || crew.GetInfoDto.raise == 0) ? string.Empty : string.Format("+{0}", crew.GetInfoDto.raise);
             _infoController.UpdateView(null, id);
             SetOtherPartnerInfo(crew.GetCrew);
             _view.AttLb_UILabel.gameObject.SetActive(false);
@@ -337,9 +354,10 @@ public partial class CrewMainViewController
 
         SetCrewFaction(crew.GetInfoDto.slotsElementLimit, crew.GetCrew.typeIcon);
         _view.NameLb_UILabel.text = crew.GetCrew.name;
+        _view.StrengthLevelLbl.text = (crew.GetInfoDto == null || crew.GetInfoDto.raise == 0) ? string.Empty : string.Format("+{0}", crew.GetInfoDto.raise);
         _view.AttLb_UILabel.gameObject.SetActive(true);
         _view.AttLb_UILabel.text = Mathf.Ceil(data.power).ToString();
-        _view.FavorableLb_UILabel.gameObject.SetActive(true);
+        _view.FavorableLb_UILabel.gameObject.SetActive(false);
         SetFavorLv(data.favor);
         SetSelfPartnerInfo(data);
     }
@@ -356,12 +374,12 @@ public partial class CrewMainViewController
     }
 
     public void UpdateInfo(int id)
-	{
+    {
         var data = _data.IsHadCurPantner(id);
 
         _infoController.UpdateView(data);
-		_fetterController.UpdateView(_data.CrewFetterData);
-	}
+        _fetterController.UpdateView(_data.CrewFetterData);
+    }
 
     private void UpdateTrainView()
     {
@@ -394,83 +412,83 @@ public partial class CrewMainViewController
         _itemList.ForEach(item => { item.gameObject.SetActive(false); });
         _itemPageList.ForEach(item => { item.gameObject.SetActive(false); });
 
-        dataList.ForEachI((data,idx) =>
+        dataList.ForEachI((data, idx) =>
         {
             _itemList[idx].gameObject.SetActive(true);
             _itemPageList[idx].gameObject.SetActive(true);
-            
+
             _itemList[idx].UpdateDataAndView(data, idx, false);
             _itemPageList[idx].UpdateDataAndView(data, idx, true);
         });
         _view.TypeBtnLabel_UILabel.text = _btnName[(int)type];
-        _view.TypeLabel_UILabel.text = _btnName[(int) type];
+        //_view.TypeLabel_UILabel.text = _btnName[(int)type];
 
         //if(!_isShowExpaned)
-        if(!_view.UIScroll.isRun)
-        {
-            _view.PartnerList_UITable.gameObject.SetActive(true);
-        }
+        //if (!_view.UIScroll.isRun)
+        //{
+        //    _view.PartnerList_UITable.gameObject.SetActive(true);
+        //}
         SelectPageIcon();
         UpdateReposition();
     }
 
-	private void SetSelfPartnerInfo(CrewInfoDto dto)
-	{
-		if (dto == null) return;
+    private void SetSelfPartnerInfo(CrewInfoDto dto)
+    {
+        if (dto == null) return;
 
-	    var lv = dto.grade + 1;
-	    if (lv > _crewMaxLv)
-	        lv = _crewMaxLv;
+        var lv = dto.grade + 1;
+        if (lv > _crewMaxLv)
+            lv = _crewMaxLv;
 
         ExpGrade grade = DataCache.getDtoByCls<ExpGrade>(lv);
-		_view.ExpSlider_UISlider.value = (float)dto.exp / (float)grade.petExp;
-		_view.ExpLb_UILabel.text = string.Format("{0}/{1}", dto.exp, grade.petExp);
-	    _view.LvLb_UILabel.text = dto.grade.ToString();
-	}
+        _view.ExpSlider_UISlider.value = (float)dto.exp / (float)grade.petExp;
+        _view.ExpLb_UILabel.text = string.Format("{0}/{1}", dto.exp, grade.petExp);
+        _view.LvLb_UILabel.text = dto.grade.ToString();
+    }
 
-	private void SetOtherPartnerInfo(Crew data)
-	{
-	    var dto = _data.GetChipList.Find(d => d.chipId == data.chipId);
-	    if (dto == null)
-	    {
+    private void SetOtherPartnerInfo(Crew data)
+    {
+        var dto = _data.GetChipList.Find(d => d.chipId == data.chipId);
+        if (dto == null)
+        {
             _view.OtherExpSlider_UISlider.value = 0 / data.chipAmount;
             _view.OtherExpLb_UILabel.text = string.Format("{0}/{1}", 0, data.chipAmount);
         }
-	    else
-	    {
+        else
+        {
             _view.OtherExpSlider_UISlider.value = (float)dto.chipAmount / (float)data.chipAmount;
             _view.OtherExpLb_UILabel.text = string.Format("{0}/{1}", dto.chipAmount, data.chipAmount);
         }
 
-		_view.Slider.SetActive(_view.OtherExpSlider_UISlider.value < 1);
-		_view.CrewAddBtn_UIButton.gameObject.SetActive(_view.OtherExpSlider_UISlider.value >= 1);
-	}
+        _view.Slider.SetActive(_view.OtherExpSlider_UISlider.value < 1);
+        _view.CrewAddBtn_UIButton.gameObject.SetActive(_view.OtherExpSlider_UISlider.value >= 1);
+    }
 
-	public void PullExtendPanel(bool b)
-	{
-	    if (b)
+    public void PullExtendPanel(bool b)
+    {
+        if (b)
             SetTiledCurTypeBtn((int)_curType);
 
-	    if (!b)
-	    {
+        if (!b)
+        {
             _view.PartnerListGroup.transform.localScale = Vector3.one;
             _isShowExpaned = true;
         }
         else
-	    {
+        {
             _view.PartnerListGroup.transform.localScale = Vector3.zero;
-	        _isShowExpaned = false;
-	    }
+            _isShowExpaned = false;
+        }
         _view.PullBtn_UIButton.gameObject.SetActive(!b);
         _view.PullbackBtn_UIButton.gameObject.SetActive(b);
         _view.ExtendPanel.gameObject.SetActive(b);
 
-	    SelectPageIcon();
+        SelectPageIcon();
         _view.PartnerModelGroup.SetActive(!b);
         _view.PartnerInfoGroup.SetActive(!b && _data.GetCurCrewTab == PartnerTab.Info);
-	    _view.PartnerSkillGroup.SetActive(!b && _data.GetCurCrewTab == PartnerTab.Skill);
+        _view.PartnerSkillGroup.SetActive(!b && _data.GetCurCrewTab == PartnerTab.Skill);
         _view.PartnerCultivateGroup.SetActive(!b && _data.GetCurCrewTab == PartnerTab.Cultivate);
-	}
+    }
 
     private void UpdateReposition()
     {
@@ -479,6 +497,9 @@ public partial class CrewMainViewController
         _view.TiledIconGrid_UIGrid.Reposition();
         _view.TiledIconGrid_UIPageGrid.Reposition();
         _view.TiledIconGrid_UIPageGrid.enabled = true;
+
+        //_view.PartnerScrollView_UIScrollView.ResetPosition();
+        _view.PartnerGrid_UIGrid.Reposition();
     }
 
     public bool UpdateView(PartnerTab pageIdx)
@@ -488,15 +509,17 @@ public partial class CrewMainViewController
         HideAllGroup();
         UpdateInfo(_data.GetCurCrewId);
         _view.PartnerModelGroup.gameObject.SetActive(true);
-		var isNeedInit = false;
+        var isNeedInit = false;
         switch (pageIdx)
-		{
-			case PartnerTab.Info:
-				_view.PartnerInfoGroup.gameObject.SetActive(true);
-		        UpdateReposition();
+        {
+            case PartnerTab.Info:
+                _view.PartnerModelGroup.gameObject.SetActive(true);
+                _view.PartnerInfoGroup.gameObject.SetActive(true);
+                UpdateReposition();
                 ChangeInfoTab(_data.PartnerInfoData.GetCurInfoTab);
-				break;
-			case PartnerTab.Skill:
+                break;
+            case PartnerTab.Skill:
+                _view.PartnerModelGroup.gameObject.SetActive(false);
                 _view.PartnerSkillGroup.gameObject.SetActive(true);
                 if (crewSkillCtrl == null)
                 {
@@ -509,30 +532,36 @@ public partial class CrewMainViewController
                 }
                 crewSkillCtrl.UpdateDataAndView(_data.GetCurCrewId);
                 break;
-			case PartnerTab.Cultivate:
+            case PartnerTab.Cultivate:
+                _view.PartnerModelGroup.gameObject.SetActive(true);
                 _view.PartnerCultivateGroup.gameObject.SetActive(true);
                 UpdateTrainView();
                 UpdatePhaseAndRaise(_data.GetCurCrewId);
                 break;
-			case PartnerTab.Favorable:
+            case PartnerTab.Favorable:
                 _view.PartnerFavorableGroup.gameObject.SetActive(true);
                 break;
-		}
-		return isNeedInit;
-	}
+            case PartnerTab.Fetter:
+                _view.PartnerFetterGroup.gameObject.SetActive(true);
+                UpdateFetterView();
+                break;
+        }
+        return isNeedInit;
+    }
 
-	private void HideAllGroup()
-	{
-		_view.PartnerInfoGroup.gameObject.SetActive(false);
-		_view.PartnerSkillGroup.gameObject.SetActive(false);
-		_view.PartnerCultivateGroup.gameObject.SetActive(false);
-		_view.PartnerFavorableGroup.gameObject.SetActive(false);
-		_view.PartnerModelGroup.gameObject.SetActive(false);
-	}
+    private void HideAllGroup()
+    {
+        _view.PartnerInfoGroup.gameObject.SetActive(false);
+        _view.PartnerSkillGroup.gameObject.SetActive(false);
+        _view.PartnerCultivateGroup.gameObject.SetActive(false);
+        _view.PartnerFavorableGroup.gameObject.SetActive(false);
+        _view.PartnerModelGroup.gameObject.SetActive(false);
+        _view.PartnerFetterGroup.gameObject.SetActive(false);
+    }
 
     private void SelectPageIcon()
     {
-        _itemPageList.ForEach(item =>
+        _itemList.ForEach(item =>
         {
             item.IsSelect(item.GetCrewId == _data.GetCurCrewId);
         });
@@ -545,7 +574,7 @@ public partial class CrewMainViewController
     public UniRx.IObservable<Unit> TrainBtnUp { get { return trainBtnUp; } }
     #endregion
     private void InitInfoView()
-	{
+    {
         _infoController = AddChild<CrewInfoController, CrewInfoView>(
                 _view.CrewInfoContent_Transform.gameObject
                  , CrewInfoView.NAME);
@@ -569,7 +598,7 @@ public partial class CrewMainViewController
         {
             _disposable.Add(_trainingCtrl.OnbtnSave_UIButtonClick.Subscribe(e => saveBtnUp.OnNext(_StrengthenController)));
             _disposable.Add(_trainingCtrl.OnbtnTraining_UIButtonClick.Subscribe(e => trainBtnUp.OnNext(e)));
-            _disposable.Add(_trainingCtrl.OnbtnTips_UIButtonClick.Subscribe(_ =>
+            _disposable.Add(_trainingCtrl.OnTipButton_UIButtonClick.Subscribe(_ =>
             {
                 ProxyTips.OpenTextTips(7, new Vector3(174, 125, 0));
             }));
@@ -579,20 +608,14 @@ public partial class CrewMainViewController
     //列表上的选项按钮列表
     public void OpenShowTypeList()
     {
-        //if(_view.UIScroll.isRun)
-        //{
-        //    return;
-        //}
-        if (_view.ListBtnGroup_UIPanel.gameObject.active)
+        if (_view.FilterBtnGroup_UIPanel.gameObject.activeSelf)
         {
-            _view.ListBtnGroup_UIPanel.gameObject.SetActive(false);
-            _view.PartnerList_UITable.gameObject.SetActive(true);
+            _view.FilterBtnGroup_UIPanel.gameObject.SetActive(false);
             _isShowListBtn = false;
         }
         else
         {
-            _view.ListBtnGroup_UIPanel.gameObject.SetActive(true);
-            _view.PartnerList_UITable.gameObject.SetActive(false);
+            _view.FilterBtnGroup_UIPanel.gameObject.SetActive(true);
             _isShowListBtn = true;
 
             SetListCurTypeBtn((int)_curType);
@@ -609,7 +632,7 @@ public partial class CrewMainViewController
 
     public void UpdateInfoTabState(CrewInfoTab tab)
     {
-        if(tab == 0)
+        if (tab == 0)
             tab = CrewInfoTab.InfoTab;
 
         View.InfoTabLb_UILabel.fontSize = tab == CrewInfoTab.InfoTab ? 22 : 20;
@@ -628,11 +651,11 @@ public partial class CrewMainViewController
         View.pageSprite_1_UIButton.normalSprite = tab == CrewInfoTab.FetterTab ? "Tab_2_On" : "Tab_2_Off";
     }
 
-	public void UpdateSkillDataAndView(int id)
-	{
-		if (crewSkillCtrl != null)
-			crewSkillCtrl.UpdateDataAndView(id);
-	}
+    public void UpdateSkillDataAndView(int id)
+    {
+        if (crewSkillCtrl != null)
+            crewSkillCtrl.UpdateDataAndView(id);
+    }
 
 
     #region 弧形滑动条需要方法
@@ -643,8 +666,8 @@ public partial class CrewMainViewController
     public void GetCrewInfoIdx(int id)
     {
         _isShowListBtn = true;
-        UI_Contorl_ScrollFlowItem item=_itemList[id].gameObject.GetComponent<UI_Contorl_ScrollFlowItem>();
-        _view.UIScroll.OnPointerClick(item);
+        //UI_Contorl_ScrollFlowItem item = _itemList[id].gameObject.GetComponent<UI_Contorl_ScrollFlowItem>();
+        //_view.UIScroll.OnPointerClick(item);
     }
 
     public void GetCrewInfoId(int id)
@@ -663,22 +686,22 @@ public partial class CrewMainViewController
         return _itemPageList[index];
     }
 
-    private void UpdateBuyCrewSroll()
-    {
-        if(_data.GetBuyCrew == BuyCrew.None)
-            return;
-        _data.GetBuyCrew = BuyCrew.None;
-                _isShowListBtn = true;
-        for(int i = 0;i < _itemList.Count;i++)
-        {
-            if(_itemList[i].GetCrewId == _data.GetCurCrewId)
-            {
-                UI_Contorl_ScrollFlowItem item=_itemList[i].gameObject.GetComponent<UI_Contorl_ScrollFlowItem>();
-                _view.UIScroll.OnPointerClick(item);
-                break;
-            }
-        }
-    }
+    //private void UpdateBuyCrewSroll()
+    //{
+    //    if (_data.GetBuyCrew == BuyCrew.None)
+    //        return;
+    //    _data.GetBuyCrew = BuyCrew.None;
+    //    _isShowListBtn = true;
+    //    for (int i = 0; i < _itemList.Count; i++)
+    //    {
+    //        if (_itemList[i].GetCrewId == _data.GetCurCrewId)
+    //        {
+    //            UI_Contorl_ScrollFlowItem item = _itemList[i].gameObject.GetComponent<UI_Contorl_ScrollFlowItem>();
+    //           // _view.UIScroll.OnPointerClick(item);
+    //            break;
+    //        }
+    //    }
+    //}
 
 
 
@@ -705,11 +728,10 @@ public partial class CrewMainViewController
     private void OnCameraClick(GameObject go)
     {
         UIPanel panel = UIPanel.Find(go.transform);
-        if (_view.ListBtnGroup_UIPanel.gameObject.active == true && go.name != _view.ShowTypeBtn_UIButton.name
-            && panel != _view.ListBtnGroup_UIPanel)
+        if (_view.FilterBtnGroup_UIPanel.gameObject.activeSelf == true /*&& go.name != _view.ShowTypeBtn_UIButton.name*/
+            && panel != _view.FilterBtnGroup_UIPanel)
         {
-            _view.ListBtnGroup_UIPanel.gameObject.SetActive(false);
-            _view.PartnerList_UITable.gameObject.SetActive(true);
+            _view.FilterBtnGroup_UIPanel.gameObject.SetActive(false);
             _isShowListBtn = false;
         }
     }
@@ -718,10 +740,10 @@ public partial class CrewMainViewController
     {
         _mainBtnList.ForEachI((go, i) =>
         {
-            go.Label.effectStyle = i == idx ? UILabel.Effect.None : UILabel.Effect.Outline;
-            go.Label.color = i == idx ?
-            ColorExt.HexStrToColor("000000") : ColorExt.HexStrToColor("ffffff");
-            _mainBtnSprites[i].gameObject.SetActive(i == idx);
+            //go.Label.effectStyle = i == idx ? UILabel.Effect.None : UILabel.Effect.Outline;
+            //go.Label.color = i == idx ?
+            //ColorExt.HexStrToColor("000000") : ColorExt.HexStrToColor("ffffff");
+            //_mainBtnSprites[i].gameObject.SetActive(i == idx);
         });
     }
 
@@ -740,4 +762,56 @@ public partial class CrewMainViewController
     {
         _pageChangeEvt.OnNext(page);
     }
+
+    #region 小按钮显示
+    private bool isShowBtns = false;
+    public void OnMoreOperationBtnClick()
+    {
+        View.HideBtnList.SetActive(!isShowBtns);
+        isShowBtns = !isShowBtns;
+
+    }
+
+    #endregion
+
+    #region  羁绊
+    public UniRx.IObservable<ICrewFetterItemVo> OnCrewFetterItemClick { get { return _onClickCrewFetterItem; } }
+    private Subject<ICrewFetterItemVo> _onClickCrewFetterItem = new Subject<ICrewFetterItemVo>();
+    public UniRx.IObservable<Unit> OnCrewFetterItemActiveClick { get { return _onCrewFetterItemActiveClick; } }
+    private Subject<Unit> _onCrewFetterItemActiveClick = new Subject<Unit>();
+
+    private List<CrewFetterItemCellController> _fetterItemList = new List<CrewFetterItemCellController>();
+    private void UpdateFetterView()
+    {
+        var crewFetterData = _data.CrewFetterData;
+        if (crewFetterData == null) return;
+        List<ICrewFetterItemVo> fetterVoList = crewFetterData.CrewFetterVoList;
+
+        for (int i = _fetterItemList.Count, max = crewFetterData.CrewFetterVoList.Count; i < max; i++)
+        {
+            var ctrl = AddCachedChild<CrewFetterItemCellController, CrewFetterItemCell>(
+                _view.FetterGrid.gameObject
+                , CrewFetterItemCell.NAME);
+            _fetterItemList.Add(ctrl);
+            _disposable.Add(ctrl.OnCrewFetterItemCell_UIButtonClick.Subscribe(_ => { _onClickCrewFetterItem.OnNext(ctrl.CrewFetterItemVo); }));
+            _disposable.Add(ctrl.OnActiveBtn_UIButtonClick.Subscribe(_ => { _onCrewFetterItemActiveClick.OnNext(_); }));
+
+        }
+        _fetterItemList.ForEachI((item, idx) =>
+        {
+            if (idx > fetterVoList.Count)
+            {
+                item.gameObject.SetActive(false);
+            }
+            else
+            {
+                item.gameObject.SetActive(true);
+                item.UpdateView(fetterVoList[idx], fetterVoList[idx].CrewFetterId == crewFetterData.GetCurCrewFetterId);
+            }
+        });
+        View.FetterGrid.Reposition();
+    }
+    #endregion
+
+
 }

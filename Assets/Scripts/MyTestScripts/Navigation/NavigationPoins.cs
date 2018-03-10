@@ -43,6 +43,7 @@ public class NavigationPoin
 				break;
 			}
 
+			_position.y = hit.point.y;
 			if (needCheckBattlePoint)
 			{
 				_canBattle = SceneHelper.CheckAtBattleScope(_position);
@@ -67,6 +68,6 @@ public class NavigationPoin
 
 	public string ToString()
 	{
-		return _position.x + ":" + _position.z + ":" + (_canMove?(_canBattle?"2":"1"):"0");
+		return _position.x + ":" + _position.z + ":" + (_canMove?(_canBattle?"2":"1"):"0") + ":" + _position.y;
 	}
 }

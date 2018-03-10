@@ -28,7 +28,7 @@ public partial class GuildManageViewController
 
     private Dictionary<GameObject, GuildMessageItemCellController> _messageItemDic = new Dictionary<GameObject, GuildMessageItemCellController>();
 
-    List<messageInfoDto> _messageInfoList = GuildManageDto.messageInfo;
+    private List<GuildEventDto> _messageInfoList = null;
 
     //private GuildEventViewController _guildMessageCtr;
 
@@ -41,6 +41,13 @@ public partial class GuildManageViewController
         {
             _disposable.Clear();
         }
+        for (int i = 0; i < _messageItemMax; i++)
+        {
+            var ctrl = AddChild<GuildMessageItemCellController, GuildMessageItemCell>(
+                _view.GuildMessageContent_UIRecycledList.gameObject
+                , GuildMessageItemCell.NAME);
+            _messageItemDic.Add(ctrl.gameObject, ctrl);
+        }
     }
 
     // 客户端自定义事件
@@ -51,7 +58,9 @@ public partial class GuildManageViewController
 
     protected override void OnDispose()
     {
+        _messageItemDic.Clear();
         _disposable = _disposable.CloseOnceNull();
+        _messageInfoList = null;
         base.OnDispose();
     }
 
@@ -63,7 +72,7 @@ public partial class GuildManageViewController
 
     public void UpdateView(IGuildMainData data)
     {
-        InitGuildMessage();
+        UpdateGuildMessage(data);
         InitNotice(data);
         InitGuildInfo(data);
     }
@@ -78,33 +87,20 @@ public partial class GuildManageViewController
         View.ManifestoContentLabel_UILabel.text = data.GuildBaseInfo.memo;
     }
 
-    #region 帮派信息
-    private void InitGuildMessage()
+    #region 帮派事件
+    private void UpdateGuildMessage(IGuildMainData data)
     {
-        for (int i = 0; i < _messageItemMax; i++)
-        {
-            var ctrl = AddChild<GuildMessageItemCellController, GuildMessageItemCell>(
-                _view.GuildMessageContent_UIRecycledList.gameObject
-                , GuildMessageItemCell.NAME);
-            _messageItemDic.Add(ctrl.gameObject, ctrl);
-        }
-        UpdateScrollViewPos(_messageInfoList);
+        _messageInfoList = data.GuildDetailInfo.magEvents.events;
+        View.GuildMessageContent_UIRecycledList.UpdateDataCount(_messageInfoList.Count, true);
     }
     private void UpdateMesageItem(GameObject go, int itemIndex, int dataIndex)
     {
-        if (_messageItemDic == null) return;
+        if (_messageItemDic == null || _messageInfoList == null) return;
         GuildMessageItemCellController item = null;
-        if (_messageItemDic.TryGetValue(go, out item))
-        {
-            var info = _messageInfoList.TryGetValue(dataIndex);
-            if (info == null) return;
-            item.SetData(info);
-        }
-    }
-    public void UpdateScrollViewPos(IEnumerable<messageInfoDto> ShopItems)
-    {
-        View.GuildMessageContent_UIRecycledList.UpdateDataCount(ShopItems.ToList().Count, true);
-        View.ScrollView_UIScrollView.ResetPosition();
+        if (!_messageItemDic.TryGetValue(go, out item)) return;
+        var info = _messageInfoList.TryGetValue(dataIndex);
+        if (info == null) return;
+        item.SetData(info);
     }
     #endregion
 
@@ -125,68 +121,3 @@ public partial class GuildManageViewController
 
 }
 
-public class GuildManageDto
-{
-    public static List<messageInfoDto> messageInfo = new List<messageInfoDto> {
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了1级！"),
-        new messageInfoDto("2017-03-09 05:30","建筑升级消耗了33万势力资金，2700000粮草"),
-        new messageInfoDto("2017-03-09 05:30","城主aaaaa和bbbbb喜结连理！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了2级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了3级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了4级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了5级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了6级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了7级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了8级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了9级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了10级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了11级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了12级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了13级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了14级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了15级！"),
-        new messageInfoDto("2017-03-09 05:30","恭喜！势力建筑升级到了级16！")
-    };
-    public static GuildInfoDto guildInfoDto = new GuildInfoDto("baafaf", "baoufba", 55,20, 4, 10841, 131, 20, 15, 51);
-    public static string guildIcon = "Big_Icon_2";
-
-}
-public class messageInfoDto
-{
-    public string time;
-    public string msg;
-
-    public messageInfoDto(string time,string msg)
-    {
-        this.time = time;
-        this.msg = msg;
-
-    }
-}
-
-public class GuildInfoDto
-{
-    public string guildName;
-    public string boss;
-    public int totelMember;
-    public int onlineMember;
-    public int grade;
-    public int id;
-    public int assets;
-    public int maintainCost;
-    public int prosperity;
-    public int popularity;
-
-    public GuildInfoDto(string guildName, string boss, int totelMember,int onlineMember, int grade, int id, int assets, int maintainCost, int prosperity, int popularity)
-    {
-        this.guildName = guildName;
-        this.boss = boss;
-        this.totelMember = totelMember;
-        this.onlineMember = onlineMember;
-        this.grade = grade;
-        this.assets = assets;
-        this.maintainCost = maintainCost;
-        this.prosperity = prosperity;
-        this.popularity = popularity;
-    }
-}

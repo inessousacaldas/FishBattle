@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using AppDto;
+using Assets.Scripts.MyGameScripts.Module.SkillModule;
 
 public class SmartGuideHelper
 {
@@ -24,6 +25,9 @@ public class SmartGuideHelper
         OpenEquipGenView = 27,   //技能原石
         OpenMedallionView = 28,     //装备纹章
         OpenItemQuickBuyView = 29,  //快捷购买
+        OpenCmomerceView = 30,      //商会
+        OpenPitchView = 31,         //摆摊
+        OpenQuestionView = 32,      //答题
     }
 
     public static void GuideTo(int id, 
@@ -67,9 +71,62 @@ public class SmartGuideHelper
                     case OpenWinType.OpenItemQuickBuyView:
                         ProxyItemQuickBuy.OpenQuickBuyView(propsId);
                         break;
+                    case OpenWinType.OpenCmomerceView:
+                       ProxyTrade.OpenTradeView(goodsId:propsId);
+                        break;
+                    case OpenWinType.OpenPitchView:
+                        ProxyTrade.OpenTradeView(TradeTab.Pitch, propsId);
+                        break;
+                    case OpenWinType.OpenQuestionView:
+                        ProxyQuestion.OpenQuestionView();
+                        break;
+                    case OpenWinType.OpenCrewFavorView:
+                        CrewProxy.OpenCrewFavorableView();
+                        break;
+                    case OpenWinType.OpenQuartzForceView:
+                        ProxyQuartz.OpenQuartzMainView(QuartzDataMgr.TabEnum.Forge);
+                        break;
+                    case OpenWinType.OpenQuartzStrenghtView:
+                        ProxyQuartz.OpenQuartzMainView(QuartzDataMgr.TabEnum.Strength);
+                        break;
+                    case OpenWinType.OpenEquipGenView:
+                        ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentEmbed);
+                        break;
+                    case OpenWinType.OpenMedallionView:
+                        ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentMedallion);
+                        break;
+                    case OpenWinType.OpenFormationView:
+                        ProxyFormation.OpenFormationView(FormationPosController.FormationType.Team);
+                        break;
+                    case OpenWinType.OpenAssistSkillView:
+                        ProxyAssistSkillMain.OpenAssistSkillModule();
+                        break;
+                    case OpenWinType.OpenSkillSpecialityView:
+                        ProxyRoleSkill.OpenPanel(RoleSkillTab.Sepciality);
+                        break;
                 }
                 break;
             case SmartGuide.SmartGuideType.SmartGuideType_3:
+                if(BattleDataManager.DataMgr.IsInBattle)
+                {
+                    TipManager.AddTip("战斗中，不能进行传送");
+                    return;
+                }
+                if(!TeamDataMgr.DataMgr.IsLeader())
+                {
+                    if(TeamDataMgr.DataMgr.HasTeam())
+                    {
+                        var val = WorldManager.Instance.GetModel().GetPlayerDto(ModelManager.Player.GetPlayerId());
+                        if(val != null)
+                        {
+                            if(val.teamStatus != (int)TeamMemberDto.TeamMemberStatus.Away)
+                            {
+                                TipManager.AddTip("正在组队跟随状态中，不能进行此操作！");
+                                return;
+                            }
+                        }
+                    }
+                }
                 var npc = DataCache.getDtoByCls<Npc>(StringHelper.ToInt(smartGuide.param));
                 //当前是否在四轮之塔，里面做了确定/取消判断，
                 if (TowerDataMgr.DataMgr.IsInTowerAndCheckLeave(delegate

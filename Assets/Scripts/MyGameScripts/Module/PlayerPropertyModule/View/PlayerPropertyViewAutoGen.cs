@@ -4,10 +4,10 @@
 
 using UnityEngine;
 
-public sealed partial class PlayerPropertyView : BaseView
+    public sealed partial class PlayerPropertyView : BaseView
 {
     public const string NAME ="PlayerPropertyView";
-
+    
     #region Element Bindings
 
     /// bind gameobject
@@ -35,7 +35,9 @@ public sealed partial class PlayerPropertyView : BaseView
     public UILabel SpiritNum_UILabel;
     public UILabel MagicNum_UILabel;
     public GameObject HeroModelParent;
-
+    public UIGrid LeftEquipGrid;
+    public UIGrid RightEquipGrid;
+    //public UISprite IconSprite_UISprite;
 
     protected override void InitElementBinding ()
     {
@@ -58,12 +60,18 @@ public sealed partial class PlayerPropertyView : BaseView
         BasePropertyContainer = root.FindGameObject("ContentWindow/PropertyPanel/BasePropertyContainer");
         FightPropertyContainer = root.FindGameObject("ContentWindow/PropertyPanel/FightPropertyContainer");
         AdvancedPropertyBtn_UIButton = root.FindScript<UIButton>("ContentWindow/PropertyPanel/AdvancedPropertyBtn");
-        CloseButton_UIButton = root.FindScript<UIButton>("BaseWindow/CloseButton");
-        TabBtnTable_UIGrid = root.FindScript<UIGrid>("BaseWindow/TabBtnTable");
+        CloseButton_UIButton = root.FindScript<UIButton>("BaseWindow/CloseBtn");
+        TabBtnTable_UIGrid = root.FindScript<UIGrid>("BaseWindow/TabGroup");
         CorporeityNum_UILabel = root.FindScript<UILabel>("ContentWindow/PropertyPanel/BasePropertyContainer/BasePropertyTable/Corporeity/CorporeityNum");
         PowerNum_UILabel = root.FindScript<UILabel>("ContentWindow/PropertyPanel/BasePropertyContainer/BasePropertyTable/Power/PowerNum");
         SpiritNum_UILabel = root.FindScript<UILabel>("ContentWindow/PropertyPanel/BasePropertyContainer/BasePropertyTable/Spirit/SpiritNum");
         MagicNum_UILabel = root.FindScript<UILabel>("ContentWindow/PropertyPanel/BasePropertyContainer/BasePropertyTable/Magic/MagicNum");
+        LeftEquipGrid = root.FindScript<UIGrid>("ContentWindow/PropertyPanel/EquipGroup/LEquip");
+        RightEquipGrid = root.FindScript<UIGrid>("ContentWindow/PropertyPanel/EquipGroup/REquip");
+        //IconSprite_UISprite = root.FindScript<UISprite>("IconSprite");
+        
     }
     #endregion
+
+
 }

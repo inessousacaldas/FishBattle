@@ -40,7 +40,7 @@ public partial interface IChatViewController
     /// 刷新聊天界面
     /// </summary>
     /// <param name="chatList"></param>
-    void UpdateChatList(IEnumerable<ChatNotify> chatList,bool needDelay = true);
+    void UpdateChatList(IChatData chatList,bool needDelay = true);
 
     void SetRightPanelHeight(bool isCanChat);
     UniRx.IObservable<string> InputMsgHandle { get; }
@@ -319,31 +319,34 @@ public partial class ChatViewController
     /// 更新聊天信息
     /// </summary>
     /// <param name="chatList"></param>
-    public void UpdateChatList(IEnumerable<ChatNotify> chatList,bool needDelay = true)
+    public void UpdateChatList(IChatData data,bool needDelay = true)
     {
+        IEnumerable<ChatNotify> chatList = data.GetChannelNotifyQueue(data.CurChannelId);
         var playerMsgCnt = 0;
         var sysMsgCnt = 0;
-
+        
         _playerChatItemList.GetElememtsByRange(playerMsgCnt, -1).ForEach(s => s.Hide());
         _systemChatItemList.GetElememtsByRange(sysMsgCnt, -1).ForEach(s => s.Hide());
         
         chatList.ForEachI((s, i) =>
         {
-            if (s.fromPlayer != null)
-            {
-                var name = GetItemNameByIdx(i);
-                var ctrl = AddPlayerCellIfNotExist(playerMsgCnt, name);
-                _disposable.Add(ctrl.LongPress.Subscribe(e => longPress.OnNext(e)));
-                ctrl.UpdateView(s);
-                playerMsgCnt++;
-                ctrl.Show();
-            }
-            else
+            //系统、公会系统推送
+            if(s.channelId == (int)ChatChannelEnum.System || (s.channelId == (int)ChatChannelEnum.Guild) && s.fromPlayer == null)
             {
                 var name = GetItemNameByIdx(i);
                 var ctrl = AddSystemCellIfNotExist(sysMsgCnt, name);
                 ctrl.UpdateView(s);
                 sysMsgCnt++;
+                ctrl.Show();
+            }
+            else
+            {
+                if (data.CurChannelId == ChatChannelEnum.Guild && !data.ChatInfoViewData.HasGuild) return;
+                var name = GetItemNameByIdx(i);
+                var ctrl = AddPlayerCellIfNotExist(playerMsgCnt, name);
+                _disposable.Add(ctrl.LongPress.Subscribe(e => longPress.OnNext(e)));
+                ctrl.UpdateView(s);
+                playerMsgCnt++;
                 ctrl.Show();
             }
 

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AppDto;
+using MyGameScripts.Gameplay.Battle.Demo.Helper;
 using UniRx;
 using UnityEngine;
 
@@ -134,7 +135,7 @@ public sealed partial class BattleDataManager
             UpdateAutoSkillGrid(data);
             
             if (data.isAIManagement
-                ||data.battleState != BattleSceneStat.BATTLE_PlayerOpt_Time
+                || data.battleState != BattleSceneStat.BATTLE_PlayerOpt_Time
                 || data.CurActMonsterController.GetCurSelectSkill() != null)
             {
                 RemoveRollSkillView();
@@ -271,6 +272,13 @@ public sealed partial class BattleDataManager
                     ctrl.OnBtnCurrentHead_UIButtonClick.Subscribe(_ =>
                         sCraftBtnClick.OnNext(ctrl.SoliderID)
                     );
+                    _disposable.Add(MonsterController.SoliderStream.Subscribe(solider =>
+                    {
+                        if (solider.id != ctrl.SoliderID)
+                            return;
+                     
+                        ctrl.UpdateView(mc);
+                    }));
                 }
                 
                 if (ctrl.SoliderID <= 0 || ctrl.SoliderID != mc.GetId())
@@ -279,15 +287,10 @@ public sealed partial class BattleDataManager
                     var skill = DataCache.getDtoByCls<Skill>(mc.videoSoldier.defaultSCraftsId);
                     ctrl.SCraftNeedCP = skill != null ? skill.consume : 0;
                 }
-
-                var _data = new BattleSkillPointViewData
-                {
-                    _texture = data.PlayerHeadTex(mc.videoSoldier)
-                    , isAuto = data.isAIManagement
-                    , _mc = mc 
-                };
-                ctrl.UpdateView(_data);
+                
+                ctrl.UpdateView(mc);
                 ctrl.Show();
+                
                 i = idx;
             });
 
@@ -472,7 +475,7 @@ public sealed partial class BattleDataManager
 
             InitBattleLaunchTimer();
 
-            GameDebuger.TODO(@"_watchTeamId = watchTeamId;");
+            GameDebuger.TODO(@"CurWatchTeamId = watchTeamId;");
 
             GameDebuger.TODO(@"if (DataMgr._data.GameVideo is GuideVideo)
         {
@@ -484,8 +487,6 @@ public sealed partial class BattleDataManager
         {
             _guideBattle = false;
         }");
-
-            GameDebuger.TODO(@"mIsWatchMode = _watchTeamId > 0;");
 
             BattleLaunchTimer.MAX_INSTRUCTION_TIME = DataMgr._data.GameVideo.readyTime;
 
@@ -505,7 +506,7 @@ public sealed partial class BattleDataManager
 
         private void UpdateByState(IMainBattleView data)
         {
-            GameDebuger.TODO(@"if (mIsWatchMode)
+            GameDebuger.TODO(@"if (IsWatchMode)
                 {
                     return;
                 }");
@@ -657,7 +658,7 @@ public sealed partial class BattleDataManager
         {
             _battleLaunchTimer = _view.RoundTimeLabel_UILabel.gameObject.GetMissingComponent<BattleLaunchTimer>();
             _battleLaunchTimer.autoRoundTimeLabel = _mBattleOptionViewController.autoRoundTimeLabel;
-            GameDebuger.TODO(@"if (!mIsWatchMode && !_guideBattle)");
+            GameDebuger.TODO(@"if (!IsWatchMode && !_guideBattle)");
             {
                 _battleLaunchTimer.OnFinishedDelegate += HandleLaunchTimeFinish;
             }
@@ -758,7 +759,7 @@ public sealed partial class BattleDataManager
             ShowRoundWating(false);
             UpdateBattleRound(null);
 
-            GameDebuger.TODO(@"if (mIsWatchMode)
+            GameDebuger.TODO(@"if (IsWatchMode)
         {
             BattleOptionController.UpdateExitBtnStatus(true);
             View.BottomRightAnchor_Transform.gameObject.SetActive(false);
@@ -844,7 +845,7 @@ public sealed partial class BattleDataManager
 
         private void UpdateBattleButtonView()
         {   
-            GameDebuger.TODO(@"if (!mIsWatchMode)");
+            GameDebuger.TODO(@"if (!IsWatchMode)");
             {
                 _mBattleOptionViewController.SetAutoMode(
                     DataMgr._data.isAIManagement

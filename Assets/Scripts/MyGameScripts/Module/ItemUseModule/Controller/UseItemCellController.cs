@@ -50,8 +50,9 @@ public class UseItemCellController : MonolessViewController<UseItemCell>
         _cell.isSelect = false;
 		
         _itemDto = itemDto;
-		
-        _cell.UpdateView(_itemDto, OnItemClick);
+        if(itemDto != null) {
+            _cell.UpdateView(_itemDto,OnItemClick);    //itemcell接口改了,先屏蔽处理,防止报错
+        }
         if (_itemDto == null)
         {
             _view.RomeveBtn.gameObject.SetActive(false);
@@ -145,7 +146,7 @@ public class UseItemCellController : MonolessViewController<UseItemCell>
         }
     }
 
-    private void OnItemClick(ItemCellController cell)
+    private void OnItemClick(ItemCellController itemCellController)
     {
         if (_onClickCallBack != null)
             _onClickCallBack(this);

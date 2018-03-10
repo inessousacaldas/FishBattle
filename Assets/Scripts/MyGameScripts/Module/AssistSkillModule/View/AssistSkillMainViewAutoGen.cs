@@ -14,7 +14,7 @@ public sealed partial class AssistSkillMainView : BaseView
     public Transform MainContent_Transform;
     public UILabel Title_UILabel;
     public UIButton CloseBtn_UIButton;
-    public UIGrid Grid_UITable;
+    public UITable Grid_UITable;
     public GameObject DelegateRedPos;
 
 
@@ -22,10 +22,10 @@ public sealed partial class AssistSkillMainView : BaseView
     {
 	    var root = this.gameObject;
         MainContent_Transform = root.FindTrans("MainContent");
-        Title_UILabel = root.FindScript<UILabel>("BaseWindow/Title/Label");
-        CloseBtn_UIButton = root.FindScript<UIButton>("BaseWindow/CloseBtn");
-        Grid_UITable = root.FindScript<UIGrid>("BaseWindow/TabBtnTable");
-        DelegateRedPos = root.FindGameObject("BaseWindow/DelegateRedPos");
+        Title_UILabel = root.FindScript<UILabel>("BaseMainWindow/Title/Label");
+        CloseBtn_UIButton = root.FindScript<UIButton>("BaseMainWindow/CloseBtn");
+        Grid_UITable = root.FindScript<UITable>("BaseMainWindow/TabGroup");
+        DelegateRedPos = root.FindGameObject("BaseMainWindow/DelegateRedPos");
     }
     #endregion
 }

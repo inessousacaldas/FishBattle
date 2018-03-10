@@ -16,6 +16,7 @@ public interface IWorldModel
 {
     string SceneName { get; }
     PlayerGuildInfoDto PlayerGuildInfoDto { get; }
+    int SceneId { get; }
 }
 
 
@@ -26,6 +27,11 @@ public partial class WorldModel : IModuleModel
 
     public Dictionary<long, SceneNpcDto> NpcsDic{ get; private set;}
     private WorldModelData _data = null;
+
+
+    //玩家公会信息的改变（仅从SceneObjectNotify通知改变）
+    private static Subject<Unit> playerGuildInfoStream = null;
+    public static UniRx.IObservable<Unit> PlayerGuildInfoStream { get { return playerGuildInfoStream; } }
 
     public static UniRx.IObservableExpand<IWorldModelData> Stream
     {
@@ -55,7 +61,8 @@ public partial class WorldModel : IModuleModel
         _disposable = new CompositeDisposable();
         _data = new WorldModelData();
         NpcsDic = new Dictionary<long, SceneNpcDto>();
-
+        if (playerGuildInfoStream == null)
+            playerGuildInfoStream = new Subject<Unit>();
         if (stream == null)
             stream = new Subject<IWorldModelData>();
         _disposable.Add(NotifyListenerRegister.RegistListener<TeamSceneNotify>(noti =>
@@ -93,7 +100,18 @@ public partial class WorldModel : IModuleModel
         }
     }
 
-//公会信息
+    public int SceneId
+    {
+        get
+        {
+            var dto = GetSceneDto();
+            if (dto == null)
+                return -1;
+            return dto.id;
+        }
+    }
+
+    //公会信息
     public PlayerGuildInfoDto PlayerGuildInfoDto
     {
         get
@@ -298,17 +316,27 @@ public partial class WorldModel : IModuleModel
             _data._playersDic.Add(playerDto.id, playerDto);
             GameEventCenter.SendEvent(GameEvent.World_OnAddPlayer, playerDto);  // todo fish  同上
         }
+        SendGuildInfo(playerDto); //当前玩家公会信息仅从SceneObjectNotify通知改变,stream是由多个Notify触发，满足不了。
         stream.OnNext(_data);
     }
 
-    public void UpdatePlayerPos(long playerId, float x, float z)
+    //公会信息的改变，只能够从SceneObjectNotify获取
+    public void SendGuildInfo(ScenePlayerDto dto)
+    {
+        if (dto != null && dto.id == ModelManager.Player.GetPlayerId())
+        {
+            playerGuildInfoStream.OnNext(new Unit());
+        }
+    }
+    public void UpdatePlayerPos(long playerId, float x, float y, float z)
     {
         if (_data._playersDic.ContainsKey(playerId))
         {
             ScenePlayerDto playerDto = _data._playersDic[playerId];
             playerDto.x = x;
+            playerDto.y = y;
             playerDto.z = z;
-            GameEventCenter.SendEvent(GameEvent.World_OnUpdatePlayerPos, playerId, x, z);
+            GameEventCenter.SendEvent(GameEvent.World_OnUpdatePlayerPos, playerId, x, y, z);
         }
     }
 
@@ -369,11 +397,11 @@ public partial class WorldModel : IModuleModel
             return;
         if ((SceneObjectDto.SceneObjectType) notify.objType == SceneObjectDto.SceneObjectType.Player)
         {
-            UpdatePlayerPos(notify.id, notify.x, notify.z);
+            UpdatePlayerPos(notify.id, notify.x, notify.y, notify.z);
         }
         else
         {
-            UpdateNpcPos(notify.id, notify.x, notify.z);
+            UpdateNpcPos(notify.id, notify.x, notify.y, notify.z);
         }
         stream.OnNext(_data);
     }
@@ -404,12 +432,12 @@ public partial class WorldModel : IModuleModel
                         player.x = notify.x;
                         player.z = notify.z;
 
-                        GameEventCenter.SendEvent(GameEvent.World_OnChangePlayerPos, player.id, player.x, player.z);
+                        GameEventCenter.SendEvent(GameEvent.World_OnChangePlayerPos, player.id, player.x, player.y, player.z);
                     }
                 }
             }
             stream.OnNext(_data);
-            GameEventCenter.SendEvent(GameEvent.World_OnChangePlayerPos, notify.id, notify.x, notify.z);
+            GameEventCenter.SendEvent(GameEvent.World_OnChangePlayerPos, notify.id, notify.x, notify.y, notify.z);
         }
     }
 
@@ -794,7 +822,7 @@ public partial class WorldModel : IModuleModel
 
     #region npc行走
 
-    public void UpdateNpcPos(long npcUuid, float x, float z)
+    public void UpdateNpcPos(long npcUuid, float x, float y, float z)
     {
         if (NpcsDic != null && NpcsDic.Count > 0)
         {
@@ -803,9 +831,9 @@ public partial class WorldModel : IModuleModel
                 if (NpcsDic[index].id == npcUuid)
                 {
                     NpcsDic[index].x = x;
+                    NpcsDic[index].y = y;
                     NpcsDic[index].z = z;
-
-                    GameEventCenter.SendEvent(GameEvent.World_OnUpdateNpcPos, npcUuid, x, z);
+                    GameEventCenter.SendEvent(GameEvent.World_OnUpdateNpcPos, npcUuid, x, y, z);
                 }
             }
         }

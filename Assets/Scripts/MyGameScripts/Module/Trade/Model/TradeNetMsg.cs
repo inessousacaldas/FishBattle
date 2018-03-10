@@ -60,6 +60,7 @@ public sealed partial class TradeDataMgr
                         break;
                 }
                 DataMgr._data.UpdateStallGoodsDto(dto.stallGoodsDto);
+                DataMgr._data.CurPitchId = 0;
                 FireData();
             });
         }
@@ -198,6 +199,7 @@ public sealed partial class TradeDataMgr
                 {
                     DataMgr._data.UpdateStallCenterDto(parentMenuId, centerDto);
                     DataMgr._data.PitchCDTime = 300;
+                    
                     FireData();
                 }
                 else
@@ -209,7 +211,7 @@ public sealed partial class TradeDataMgr
         //StallCenterDto
         public static void StallMenu(int parentMenuId)
         {
-            if (DataMgr._data.HasDataMenuData(parentMenuId))    //使用缓存中的数据
+            if (DataMgr._data.HasDataMenuData(parentMenuId)) //使用缓存中的数据
                 return;
 
             GameUtil.GeneralReq(Services.Stall_Menu(parentMenuId), response =>
@@ -220,6 +222,8 @@ public sealed partial class TradeDataMgr
                     DataMgr._data.UpdateStallCenterDto(parentMenuId, centerDto);
                 else
                     GameDebuger.LogError("StallMenu协议返回数据有误=======");
+                FireData();
+                DataMgr._data.CurPitchId = 0;
             });
         }
         #endregion
@@ -255,10 +259,26 @@ public sealed partial class TradeDataMgr
                     dto.total.WrapColor(ColorConstantV3.Color_Green_Str),
                     dto.count.WrapColor(ColorConstantV3.Color_Green_Str), 
                     goods.name.WrapColor(ColorConstantV3.Color_Green_Str)));
+                DataMgr._data.CmomerceGoodsId = 0;
                 FireData();
             });
         }
 
+        public static void TradeQuickSell(int itemId, Action<TradeGoodsDto> callback)
+        {
+            GameUtil.GeneralReq(Services.Trade_QuickSell(itemId), res =>
+            {
+                TradeGoodsDto dto = res as TradeGoodsDto;
+                if(dto == null)
+                {
+                    GameDebuger.LogError("======TradeQuickSell数据有问题=======");
+                    return;
+                }
+                if(callback != null)
+                    callback(dto);
+                //快速出售
+            });
+        }
         //出售商品
         public static void TradeSell(int itemIdx, int count)
         {

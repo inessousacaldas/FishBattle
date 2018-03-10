@@ -30,14 +30,7 @@ public sealed partial class TreasureMissionDataMgr
         /// 关闭宝图的时候需要发协议给服务器
         /// </summary>
         public static void CloseTreasury() {
-            GameUtil.GeneralReq(Services.Items_CloseHighTreasury(),delegate (HighTreasuryInfoDto e)
-            {
-                
-            },
-            (e) =>
-            {
-              
-            });
+            GameUtil.GeneralReq(Services.Items_CloseHighTreasury());
         }
 
     }

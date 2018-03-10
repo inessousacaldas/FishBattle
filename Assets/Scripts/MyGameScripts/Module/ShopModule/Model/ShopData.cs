@@ -261,10 +261,12 @@ public enum ShopTypeTab :int
     BinnianmondShop,//绑钻
     ScoreShop,//积分
     ArenaShop = 8,//竞技
+    GuildShop = 9,//公会商店
     LimitShopId = 101,  //限购商城id
     BinnianmondShopId = 102,//绑钻商城id
     ScroeShopId = 103,//积分商城id
     ArenaScroeShopId = 107,//竞技商城id
+    GuildShopId = 108,  //公会商店
 }
 
 //物品的出售状态

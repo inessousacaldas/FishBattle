@@ -104,6 +104,9 @@ public partial class GuildMainViewController    {
         View.grid_UIGrid.onUpdateItem -= UpdateGuildItem;
         View.scrollPanle.onDragFinished -= OnStopMoving;
         EventDelegate.Remove(View.search_UIInput.onChange, SearchOnChange);
+        EventDelegate.Remove(View.manifestoBg_UIInput.onSubmit, OnSubmit);
+        EventDelegate.Remove(View.nameBg_UIInput.onSubmit, OnSubmit);
+        EventDelegate.Remove(View.search_UIInput.onSubmit, OnSubmit);
     }
         
     protected override void OnDispose()
@@ -172,7 +175,7 @@ public partial class GuildMainViewController    {
         list.ForEach(e => { count++; });
         _guildItemData = list;
 
-        View.grid_UIGrid.UpdateDataCount(count, false);
+        View.grid_UIGrid.UpdateDataCount(count, data.NeedReposition);
         if (firstOpen)
         {
             GuildItemController item = null;
@@ -241,14 +244,12 @@ public partial class GuildMainViewController    {
     {
         if (_guildItemData == null) return;
         GuildItemController item = null;
-        if(_guildItemDic.TryGetValue(go,out item))
-        {
-            var info = _guildItemData.TryGetValue(dataIndex);
-            if (info == null) return;
-            item.UpdateView(info, curSelectGuild);
-            if (curSelectGuild == info.showId && lastSelItemCtrl != item)
-                lastSelItemCtrl = item;
-        }
+        if (_guildItemDic == null || !_guildItemDic.TryGetValue(go, out item)) return;
+        var info = _guildItemData.TryGetValue(dataIndex);
+        if (info == null) return;
+        item.UpdateView(info, curSelectGuild);
+        if (curSelectGuild == info.showId && lastSelItemCtrl != item)
+            lastSelItemCtrl = item;
     }
 
     //公会点击

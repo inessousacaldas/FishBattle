@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SceneTrigger
@@ -69,6 +71,7 @@ namespace SceneTrigger
     {
         CameraHight,
         LockCamera,
+        SceneLayer,
     }
 
     public static class SceneTriggerHelper
@@ -99,7 +102,8 @@ namespace SceneTrigger
         private static Dictionary<TriggerType, TriggerDlg> triggerDlgs = new Dictionary<TriggerType, TriggerDlg>
         {
             {TriggerType.CameraHight, paramJson => new CameraHeightTrigger(paramJson) },
-            { TriggerType.LockCamera, paramJson => new CameraLockTrigger(paramJson) }
+            {TriggerType.LockCamera, paramJson => new CameraLockTrigger(paramJson) },
+            {TriggerType.SceneLayer, paramJson => new SceneLayerTrigger(paramJson) }
         };
 
     }
@@ -134,6 +138,20 @@ namespace SceneTrigger
         public HideInEditor()
         {
             
+        }
+    }
+
+    public class EnumMask : System.Attribute
+    {
+        public readonly Type type;
+        public EnumMask(Type enumType)
+        {
+            if(enumType.IsEnum)
+                type = enumType;
+            else
+            {
+                throw new SystemException();
+            }
         }
     }
 }

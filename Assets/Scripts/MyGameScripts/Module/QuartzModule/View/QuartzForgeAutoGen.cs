@@ -19,6 +19,8 @@ public sealed class QuartzForge : BaseView
     public UISprite CashSprite_UISprite;
     public UIButton StrengthToggle_UIButton;
     public UISprite hook_UISprite;
+    public UILabel TimesLb_UILabel;
+    public UIButton TipsBtn_UIButton;
 
 
     protected override void InitElementBinding ()
@@ -32,6 +34,8 @@ public sealed class QuartzForge : BaseView
         CashSprite_UISprite = root.FindScript<UISprite>("NeedCashLb/CashSprite");
         StrengthToggle_UIButton = root.FindScript<UIButton>("StrengthToggle");
         hook_UISprite = root.FindScript<UISprite>("StrengthToggle/hookBg/hook");
+        TimesLb_UILabel = root.FindScript<UILabel>("TimesLb");
+        TipsBtn_UIButton = root.FindScript<UIButton>("TipsBtn");
 
     }
     #endregion

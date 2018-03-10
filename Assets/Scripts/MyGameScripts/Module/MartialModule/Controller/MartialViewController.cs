@@ -9,18 +9,29 @@
 using System;
 using System.Collections.Generic;
 using AppDto;
-using UniRx;
 using UnityEngine;
 
 public partial interface IMartialViewController
 {
+    TabbtnManager GetTabManager { get; }
+    void SetRankList(RankInfoDto dto);
 }
 
 public partial class MartialViewController
 {
     private const int PlayerMax = 20;   //界面上只显示前20名
-    private List<RankingItemCellController> _playerList = new List<RankingItemCellController>(); 
-	// 界面初始化完成之后的一些后续初始化工作
+    private List<RankingItemCellController> _playerList = new List<RankingItemCellController>();
+
+    public TabbtnManager GetTabManager { get { return _tabMgr; } }
+    private TabbtnManager _tabMgr = null;
+
+    private readonly ITabInfo[] TradeTabInfos =
+    {
+        TabInfoData.Create((int)MartialDataMgr.MartialData.MartialTab.Win, "胜者组"),
+        TabInfoData.Create((int)MartialDataMgr.MartialData.MartialTab.loser, "败者组")
+    };
+
+    // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
         for (int i = 0; i < PlayerMax; i++)
@@ -31,6 +42,7 @@ public partial class MartialViewController
         }
         _view.PlayerGrid_UIGrid.Reposition();
         _view.PlayerScrollView_UIScrollView.ResetPosition();
+        CreateTabInfo();
     }
 
 	// 客户端自定义代码
@@ -44,11 +56,12 @@ public partial class MartialViewController
 
     protected override void RemoveCustomEvent ()
     {
-        JSTimer.Instance.CancelCd("KungfuTime");
+        
     }
         
     protected override void OnDispose()
     {
+        JSTimer.Instance.CancelCd("KungfuTime");
         base.OnDispose();
     }
 
@@ -61,19 +74,38 @@ public partial class MartialViewController
     // 业务逻辑数据刷新
     protected override void UpdateDataAndView(IMartialData data)
     {
-        SetRankList(data.PlayerList);
-        UpdateMyRank(data.RankInfo.myData, data.RankInfo.myRank);
+        if(data.CurTab == MartialDataMgr.MartialData.MartialTab.Win)
+            SetRankList(data.WinRankInfo);
+        else
+            SetRankList(data.LoserRankInfo);
         UpdateRewardBox(data.KungFuInfo.joinBattleGiftState, data.KungFuInfo.battleWinGiftState);
         UpdateMatchState(data.KungFuInfo.matchState);
         _view.TimeLb_UILabel.text = string.Format("剩余时间: {0}", DateUtil.FormatSeconds(data.EndAtTime)); //先显示一次,避免时间会等1s才显示的问题
         UpdateTime(data.EndAtTime);
     }
 
-    private void SetRankList(IEnumerable<RankItemDto> list)
+    private void CreateTabInfo()
+    {
+        _tabMgr = TabbtnManager.Create(TradeTabInfos, GetFunc());
+        _tabMgr.SetBtnLblFont(20, "2d2d2d", 18, ColorConstantV3.Color_VerticalUnSelectColor2_Str);
+    }
+
+    public Func<int, ITabBtnController> GetFunc()
+    {
+        Func<int, ITabBtnController> func = i => AddChild<TabBtnWidgetController, TabBtnWidget>(
+            _view.TabGrid_UIGrid.gameObject
+            , TabbtnPrefabPath.TabBtnWidget_S3.ToString()
+            , "Tabbtn_" + i);
+
+        _view.TabGrid_UIGrid.Reposition();
+        return func;
+    }
+
+    public void SetRankList(RankInfoDto dto)
     {
         _playerList.ForEachI((item, idx) =>
         {
-            var data = list.TryGetValue(idx);
+            var data = dto.list.TryGetValue(idx);
             if (data == null)
                 item.gameObject.SetActive(false);
             else
@@ -82,6 +114,8 @@ public partial class MartialViewController
                 item.SetItemInfo(data, idx + 1);
             }
         });
+
+        UpdateMyRank(dto.myData, dto.myRank);
     }
 
     private void UpdateMyRank(RankItemDto myInfo, int rank)
@@ -136,15 +170,12 @@ public partial class MartialViewController
                 _view.StateLb_UILabel.text = "匹配尚未开始";
                 break;
             case (int)KungfuInfoDto.MatchState.MatchState_2:
-                _view.StateLb_UILabel.text = "等待加入匹配列表";
+                _view.StateLb_UILabel.text = "正在匹配中…";
                 break;
             case (int)KungfuInfoDto.MatchState.MatchState_3:
-                _view.StateLb_UILabel.text = "正在匹配中";
-                break;
-            case (int)KungfuInfoDto.MatchState.MatchState_4:
                 _view.StateLb_UILabel.text = "暂离队员不能匹配";
                 break;
-            case (int)KungfuInfoDto.MatchState.MatchState_5:
+            case (int)KungfuInfoDto.MatchState.MatchState_4:
                 _view.StateLb_UILabel.text = "没有可匹配的队伍";
                 break;
         }

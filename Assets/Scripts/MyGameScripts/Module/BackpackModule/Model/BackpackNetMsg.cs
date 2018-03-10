@@ -14,19 +14,21 @@ public sealed partial class BackpackDataMgr
 //            long version = GameDataManager.DataMgr.GetDataVersion(GameDataManager.Data_Self_PackDto_Backpack);
             ServiceRequestAction.requestServer(Services.Backpack_Check()
                 , ""
-                , delegate(GeneralResponse response) {
+                , delegate
+                {
                     GameUtil.SafeRun(onComplete);
                   }
-                , delegate(ErrorResponse response)
+                , delegate
                 {
                     GameUtil.SafeRun(onError);
                 });
             ServiceRequestAction.requestServer(Services.Temppack_Check()
                 , ""
-                , delegate(GeneralResponse response) {
+                , delegate
+                {
                     GameUtil.SafeRun(onComplete);
                 }
-                , delegate(ErrorResponse response)
+                , delegate
                 {
                     GameUtil.SafeRun(onError);
                 });
@@ -38,7 +40,7 @@ public sealed partial class BackpackDataMgr
         {
             GameUtil.GeneralReq(Services.Backpack_Sort(), resp => {
                 DataMgr._data.lastSortBagTime = DateTime.Now;
-                BackpackDataMgr.DataMgr.HandleBagDtoNotify(resp as BagDto);
+                DataMgr.HandleBagDtoNotify(resp as BagDto);
                 GameUtil.SafeRun(onSuccess);
             },null, error => { GameUtil.SafeRun(onFail); });
         }
@@ -130,11 +132,9 @@ public sealed partial class BackpackDataMgr
         /// <param name="newName"></param>
         public static void ReqModifyWarehouseName(string newName)
         {
-            
-
             GameUtil.GeneralReq(
                 Services.Warehouse_EditPageName(DataMgr._data.CurWareHousePage, newName)
-                , delegate(GeneralResponse resp)
+                , delegate
                 {
                     DataMgr._data._wareHouseNameStrSet[DataMgr._data.CurWareHousePage] = newName;
                     FireData();
@@ -200,7 +200,6 @@ public sealed partial class BackpackDataMgr
             {
                 return;
             }
-            
 
             GameUtil.GeneralReq(
                 Services.Warehouse_Sort(page)
@@ -282,7 +281,7 @@ public sealed partial class BackpackDataMgr
                 //, null);
 
                 var controller = ProxyBaseWinModule.Open();
-                BaseTipData tipData = BaseTipData.Create("提示", "包裹剩余格子不多，合成后可能丢失大部分道具， 确定继续合成？", 0, () =>
+                var tipData = BaseTipData.Create("提示", "包裹剩余格子不多，合成后可能丢失大部分道具， 确定继续合成？", 0, () =>
                 {
                     GameUtil.GeneralReq(Services.Items_CompositeProps(propsId, count, circulationType, quick), resp =>
                     {

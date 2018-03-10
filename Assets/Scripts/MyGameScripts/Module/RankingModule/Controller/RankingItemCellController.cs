@@ -14,21 +14,21 @@ using UnityEngine;
 
 public partial interface IRankingItemCellController
 {
-    UniRx.IObservable<long> ClickHandler { get; }
+    UniRx.IObservable<IRankItemData> ClickHandler { get; }
 }
 
 public partial class RankingItemCellController
 {
-    private Subject<long> _clickEvt = new Subject<long>();
-    public UniRx.IObservable<long> ClickHandler { get { return _clickEvt; } }  
+    private Subject<IRankItemData> _clickEvt = new Subject<IRankItemData>();
+    public UniRx.IObservable<IRankItemData> ClickHandler { get { return _clickEvt; } }  
 
     private List<UILabel> labels = new List<UILabel>();
 
     private readonly float[] COLUMN_POS_5 = { -265, -148f, 16f, 120, 237 };
     private readonly float[] COLUMN_POS_4 = { -265, -116, 61, 230, 0 };
 
+    private IRankItemData _itemdata;
     private int _index;
-    private long _playerId;
 
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
@@ -43,7 +43,7 @@ public partial class RankingItemCellController
     // 客户端自定义事件
     protected override void RegistCustomEvent ()
     {
-        EventDelegate.Add(_view.RankingItemCell_UIButton.onClick, () => { _clickEvt.OnNext(_playerId); });
+        EventDelegate.Add(_view.RankingItemCell_UIButton.onClick, () => { _clickEvt.OnNext(_itemdata); });
     }
 
     protected override void OnDispose()
@@ -91,6 +91,9 @@ public partial class RankingItemCellController
             ResetUI(-1);
             return;
         }
+
+        Rankings rankings = DataCache.getDtoByCls<Rankings>(rankId);
+        _itemdata = RankItemData.Create(dto.id, rankings);
         var type = dto.GetType();
         switch (type.ToString())
         {

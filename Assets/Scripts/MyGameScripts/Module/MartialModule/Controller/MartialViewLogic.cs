@@ -43,11 +43,20 @@ public sealed partial class MartialDataMgr
             _disposable.Add(ctrl.OnFirstWarBtn_UIButtonClick.Subscribe(_=>FirstWarBtn_UIButtonClick()));
             _disposable.Add(ctrl.OnFirstWinBtn_UIButtonClick.Subscribe(_=>FirstWinBtn_UIButtonClick()));
             _disposable.Add(ctrl.OnToggleBtn_UIButtonClick.Subscribe(_=>ToggleBtn_UIButtonClick()));
+            _disposable.Add(ctrl.GetTabManager.Stream.Subscribe(idx =>
+            {
+                DataMgr._data.CurTab = (MartialData.MartialTab)idx;
+                if(idx == (int)MartialData.MartialTab.Win)
+                    ctrl.SetRankList(DataMgr._data.WinRankInfo);
+                else
+                    ctrl.SetRankList(DataMgr._data.LoserRankInfo);
+            }));
         }
 
         private static void Dispose()
         {
             _disposable = _disposable.CloseOnceNull();
+            DataMgr._data.CurTab = MartialData.MartialTab.Win;
             OnDispose();    
         }
         

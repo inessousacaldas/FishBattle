@@ -161,8 +161,8 @@ public partial class EquipmentSmithController
                 x.Hide();
         });
         View.EquipmentGrid_UITable.Reposition();
-        
-        
+
+        View.TimesLb_UILabel.text = string.Format("今日剩余打造次数: {0}", data.CurrentEquipmentInfo.curSmithCount);
 
         UpdateChoice(data);
     }

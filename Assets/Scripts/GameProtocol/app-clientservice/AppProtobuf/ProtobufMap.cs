@@ -441,7 +441,6 @@ public class ProtobufMap{
             typeMap.Add(639,typeof(AppDto.FunctionFrameState));
             typeMap.Add(640,typeof(AppDto.CollectionItemCategorySubmitDto));
             typeMap.Add(641,typeof(AppDto.ItemCategory));
-            typeMap.Add(642,typeof(AppDto.PlayerTreasuryMissionDto));
             typeMap.Add(643,typeof(AppDto.ArenaInfoDto));
             typeMap.Add(644,typeof(AppDto.ArenaReportDto));
             typeMap.Add(645,typeof(AppDto.OpponentInfoDto));
@@ -527,6 +526,47 @@ public class ProtobufMap{
             typeMap.Add(731,typeof(AppDto.HighTreasueyChangeNotify));
             typeMap.Add(732,typeof(AppDto.HighTreasuryNotify));
             typeMap.Add(733,typeof(AppDto.CopyMissionConfig));
+            typeMap.Add(734,typeof(AppDto.CopyExtra));
+            typeMap.Add(735,typeof(AppDto.BattleWatchExit));
+            typeMap.Add(736,typeof(AppDto.GuildWelfare));
+            typeMap.Add(737,typeof(AppDto.PlayerCopyExtraMissionDto));
+            typeMap.Add(738,typeof(AppDto.RegainInfoDto));
+            typeMap.Add(739,typeof(AppDto.GuildBoxDto));
+            typeMap.Add(741,typeof(AppDto.GuildWelfareDto));
+            typeMap.Add(742,typeof(AppDto.GuildEventDto));
+            typeMap.Add(743,typeof(AppDto.GuildPointBox));
+            typeMap.Add(744,typeof(AppDto.ProtectSubmitDto));
+            typeMap.Add(745,typeof(AppDto.PlayerRedPackDto));
+            typeMap.Add(746,typeof(AppDto.RedPackDetailDto));
+            typeMap.Add(747,typeof(AppDto.RedPackInfoDto));
+            typeMap.Add(748,typeof(AppDto.RedPackNotify));
+            typeMap.Add(749,typeof(AppDto.RedPack));
+            typeMap.Add(750,typeof(AppDto.WealthDelayNotify));
+            typeMap.Add(751,typeof(AppDto.PlayerGuildMissionDto));
+            typeMap.Add(752,typeof(AppDto.NpcPlayerMonster));
+            typeMap.Add(753,typeof(AppDto.GuildMagEventDto));
+            typeMap.Add(754,typeof(AppDto.SpeakSubmitDto));
+            typeMap.Add(755,typeof(AppDto.PlayerTreasuryMissionDto));
+            typeMap.Add(756,typeof(AppDto.AccessTitleCondition));
+            typeMap.Add(757,typeof(AppDto.AccessTitleCondition_1));
+            typeMap.Add(758,typeof(AppDto.AccessTitleCondition_2));
+            typeMap.Add(759,typeof(AppDto.Title));
+            typeMap.Add(760,typeof(AppDto.GuildMembersDto));
+            typeMap.Add(761,typeof(AppDto.NpcSceneRobberMonster));
+            typeMap.Add(762,typeof(AppDto.DailyLimit));
+            typeMap.Add(763,typeof(AppDto.WeeklyLimit));
+            typeMap.Add(764,typeof(AppDto.QuartzSmithDto));
+            typeMap.Add(765,typeof(AppDto.GuildDonate));
+            typeMap.Add(766,typeof(AppDto.StateBar));
+            typeMap.Add(767,typeof(AppDto.ScaleStateBarDto));
+            typeMap.Add(768,typeof(AppDto.StateBarDto));
+            typeMap.Add(769,typeof(AppDto.PlayerTransformNotify));
+            typeMap.Add(770,typeof(AppDto.RobberSateBarDto));
+            typeMap.Add(771,typeof(AppDto.AccessTitleCondition_3));
+            typeMap.Add(772,typeof(AppDto.PlayerDeleteTitleNotify));
+            typeMap.Add(773,typeof(AppDto.PlayerTitleDto));
+            typeMap.Add(774,typeof(AppDto.PlayerTitleListDto));
+            typeMap.Add(775,typeof(AppDto.KungfuBattleInfoNotify));
               return typeMap;
       }
 
@@ -1361,8 +1401,6 @@ public class ProtobufMap{
     
         classMap.Add(typeof(AppDto.ItemCategory),641);
     
-        classMap.Add(typeof(AppDto.PlayerTreasuryMissionDto),642);
-    
         classMap.Add(typeof(AppDto.ArenaInfoDto),643);
     
         classMap.Add(typeof(AppDto.ArenaReportDto),644);
@@ -1532,6 +1570,88 @@ public class ProtobufMap{
         classMap.Add(typeof(AppDto.HighTreasuryNotify),732);
     
         classMap.Add(typeof(AppDto.CopyMissionConfig),733);
+    
+        classMap.Add(typeof(AppDto.CopyExtra),734);
+    
+        classMap.Add(typeof(AppDto.BattleWatchExit),735);
+    
+        classMap.Add(typeof(AppDto.GuildWelfare),736);
+    
+        classMap.Add(typeof(AppDto.PlayerCopyExtraMissionDto),737);
+    
+        classMap.Add(typeof(AppDto.RegainInfoDto),738);
+    
+        classMap.Add(typeof(AppDto.GuildBoxDto),739);
+    
+        classMap.Add(typeof(AppDto.GuildWelfareDto),741);
+    
+        classMap.Add(typeof(AppDto.GuildEventDto),742);
+    
+        classMap.Add(typeof(AppDto.GuildPointBox),743);
+    
+        classMap.Add(typeof(AppDto.ProtectSubmitDto),744);
+    
+        classMap.Add(typeof(AppDto.PlayerRedPackDto),745);
+    
+        classMap.Add(typeof(AppDto.RedPackDetailDto),746);
+    
+        classMap.Add(typeof(AppDto.RedPackInfoDto),747);
+    
+        classMap.Add(typeof(AppDto.RedPackNotify),748);
+    
+        classMap.Add(typeof(AppDto.RedPack),749);
+    
+        classMap.Add(typeof(AppDto.WealthDelayNotify),750);
+    
+        classMap.Add(typeof(AppDto.PlayerGuildMissionDto),751);
+    
+        classMap.Add(typeof(AppDto.NpcPlayerMonster),752);
+    
+        classMap.Add(typeof(AppDto.GuildMagEventDto),753);
+    
+        classMap.Add(typeof(AppDto.SpeakSubmitDto),754);
+    
+        classMap.Add(typeof(AppDto.PlayerTreasuryMissionDto),755);
+    
+        classMap.Add(typeof(AppDto.AccessTitleCondition),756);
+    
+        classMap.Add(typeof(AppDto.AccessTitleCondition_1),757);
+    
+        classMap.Add(typeof(AppDto.AccessTitleCondition_2),758);
+    
+        classMap.Add(typeof(AppDto.Title),759);
+    
+        classMap.Add(typeof(AppDto.GuildMembersDto),760);
+    
+        classMap.Add(typeof(AppDto.NpcSceneRobberMonster),761);
+    
+        classMap.Add(typeof(AppDto.DailyLimit),762);
+    
+        classMap.Add(typeof(AppDto.WeeklyLimit),763);
+    
+        classMap.Add(typeof(AppDto.QuartzSmithDto),764);
+    
+        classMap.Add(typeof(AppDto.GuildDonate),765);
+    
+        classMap.Add(typeof(AppDto.StateBar),766);
+    
+        classMap.Add(typeof(AppDto.ScaleStateBarDto),767);
+    
+        classMap.Add(typeof(AppDto.StateBarDto),768);
+    
+        classMap.Add(typeof(AppDto.PlayerTransformNotify),769);
+    
+        classMap.Add(typeof(AppDto.RobberSateBarDto),770);
+    
+        classMap.Add(typeof(AppDto.AccessTitleCondition_3),771);
+    
+        classMap.Add(typeof(AppDto.PlayerDeleteTitleNotify),772);
+    
+        classMap.Add(typeof(AppDto.PlayerTitleDto),773);
+    
+        classMap.Add(typeof(AppDto.PlayerTitleListDto),774);
+    
+        classMap.Add(typeof(AppDto.KungfuBattleInfoNotify),775);
     
           return classMap;
       }

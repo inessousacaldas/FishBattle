@@ -23,7 +23,7 @@ public interface IEquipmentSmithViewData
     IEnumerable<Equipment> CurEquipmentCells { get; }
 
     IEnumerable<SmithItemVo> CurSmithItems { get; }
-
+    EquipmentInfoDto CurrentEquipmentInfo { get; }
 
     int GetEquipmentAtrifactMaxValue(int grade, int part, int quality);
     int GetGetEquipmentAtrifactCurValue(int grade, int part, int quality);
@@ -164,6 +164,9 @@ public sealed partial class EquipmentMainDataMgr
                     UpdateCurSmithItems();
             }
         }
+
+        public EquipmentInfoDto CurrentEquipmentInfo { get { return DataMgr._data.CurrentEquipmentInfo; } }
+
         public List<Equipment> _curSmithCells = new List<Equipment>();
         public IEnumerable<Equipment> CurEquipmentCells
         {

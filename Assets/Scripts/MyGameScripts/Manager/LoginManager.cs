@@ -89,7 +89,7 @@ public class LoginManager
     //public List<ServiceInfo> serviceInfoList = new List<ServiceInfo>();
 
     public string Token { get; private set; }
-
+    
     public string LoginId { get; set; }
 
     public uint HaState { get; private set; }
@@ -173,8 +173,10 @@ public class LoginManager
         PrintLog("连接服务器...");
 
         TalkingDataHelper.OnEventSetp("GameLogin/ConnectSocket"); //连接服务器
-
-        SPSdkManager.Instance.CYEnterServer(_serverInfo.serverId, _serverInfo.name);
+        if (GameSetting.Channel == AgencyPlatform.Channel_cyou)
+        {
+            SPSdkManager.Instance.CYEnterServer(_serverInfo.serverId, _serverInfo.name);
+        }
 
         Connect();
     }
@@ -199,8 +201,8 @@ public class LoginManager
         {
             _playerDto = null;
         }
-
-        OnRequestTokenCallback(Token, "");
+        string errorMsg = ServerManager.Instance.loginAccountDto == null ? "" : ServerManager.Instance.loginAccountDto.msg;
+        OnRequestTokenCallback(Token, errorMsg);
 
         ExitGameScript.CheckConnected = true;
         ExitGameScript.NeedReturnToLogin = false;
@@ -403,9 +405,27 @@ public class LoginManager
 
         if (e.id == 19)
         {
+            string deviceId;
+            string channelId;
+            string bundleId;
+            string version;
+            if (GameSetting.IsCyouChannel)
+            {
+                deviceId = SPSDK.deviceId();
+                channelId = SPSDK.channelId();
+                bundleId = SPSDK.appName();
+                version = SPSDK.appVersionName().ToString();
+            }
+            else
+            {
+                deviceId = BaoyugameSdk.getUUID();
+                channelId = GameSetting.SubChannel;
+                bundleId = GameSetting.BundleId;
+                version = AppGameVersion.BundleVersion;
+            }
             //会话ID失效
             ServiceProviderManager.RequestSsoAccountLogin(ServerManager.Instance.sid, ServerManager.Instance.uid, GameSetting.Channel,
-                GameSetting.SubChannel, GameSetting.LoginWay, GameSetting.AppId, GameSetting.PlatformTypeId, SPSDK.deviceId(), SPSDK.channelId(), SPSDK.appName(), SPSDK.appVersionName().ToString(),
+                GameSetting.SubChannel, GameSetting.LoginWay, GameSetting.AppId, GameSetting.PlatformTypeId, deviceId, channelId, bundleId, version,
                 delegate (LoginAccountDto response)
                 {
                     if (response != null && response.code == 0)
@@ -586,7 +606,10 @@ public class LoginManager
         //}
         if (newRole)
         {
-            SPSdkManager.Instance.CYRoleCreate(playerDto.id.ToString(), playerDto.name, playerDto.grade, playerDto.roleCreateTime);
+            if (GameSetting.Channel == AgencyPlatform.Channel_cyou)
+            {
+                SPSdkManager.Instance.CYRoleCreate(playerDto.id.ToString(), playerDto.name, playerDto.grade, playerDto.roleCreateTime);
+            }
          //SPSdkManager.Instance.SubmitRoleData(ServerManager.Instance.uid, newRole, playerDto.id.ToString(), playerDto.name, playerDto.grade.ToString(), serverInfo.serverId.ToString(), serverInfo.name);
         }
 
@@ -697,7 +720,7 @@ public class LoginManager
 
         ServiceRequestAction.requestServer(Services.Player_AfterLogin(BaoyugameSdk.getUUID()), "Player_AfterLogin", e =>
             {
-
+                var data = e as AfterLoginDto;
                 WorldManager.Create();
                 //设置保存的自动巡逻
                 ModelManager.Player.IsAutoFram = PlayerGameState.IsAutoFram;
@@ -721,6 +744,7 @@ public class LoginManager
  TeamModel.Instance.Setup();
 
           ");
+//                TeamDataMgr.DataMgr.HandleTeamDtoNotify(data.teamßInfo);
                 Asyn.AsynInitManager.StartInit();
             });
 
@@ -828,15 +852,18 @@ public class LoginManager
         SPSDK.gameEvent("10023");       //进入游戏
         GameDebuger.Log("ExitLoginScene");
 
-        try
+        if (GameSetting.Channel == AgencyPlatform.Channel_cyou)
         {
-            //调用后会唤起畅游SDK的悬浮球，应该在场景资源加载完成后调用
-            int balance = _playerDto.balance > Int32.MaxValue ? Int32.MaxValue : (int)_playerDto.balance;
-            SPSdkManager.Instance.CYGameStarted(_playerDto.id.ToString(), _playerDto.name, _playerDto.grade, _playerDto.partyName, balance, _playerDto.vipLevel, _playerDto.roleCreateTime);
-        }
-        catch (Exception ex)
-        {
-            GameDebuger.LogException(ex);
+            try
+            {
+                //调用后会唤起畅游SDK的悬浮球，应该在场景资源加载完成后调用
+                int balance = _playerDto.balance > Int32.MaxValue ? Int32.MaxValue : (int)_playerDto.balance;
+                SPSdkManager.Instance.CYGameStarted(_playerDto.id.ToString(), _playerDto.name, _playerDto.grade, _playerDto.partyName, balance, _playerDto.vipLevel, _playerDto.roleCreateTime);
+            }
+            catch (Exception ex)
+            {
+                GameDebuger.LogException(ex);
+            }
         }
 
 

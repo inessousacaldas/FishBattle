@@ -9,19 +9,42 @@ using AppDto;
 
 public interface IMartialData
 {
-    IEnumerable<RankItemDto> PlayerList { get; }
-    RankInfoDto RankInfo { get; }
     KungfuInfoDto KungFuInfo { get; }
     KungfuActivityInfo ActivityInfo { get; }
     int EndAtTime { get; }
+
+    RankInfoDto WinRankInfo { get; }
+    RankInfoDto LoserRankInfo { get; }
+    MartialDataMgr.MartialData.MartialTab CurTab { get; }
 }
 
 public sealed partial class MartialDataMgr
 {
     public sealed partial class MartialData:IMartialData
     {
-        private int _endAtTime;
+        private int _sceneId;
 
+        public int SceneId
+        {
+            get { return _sceneId; }
+            set { _sceneId = value; }
+        }
+
+        public enum MartialTab
+        {
+            Win = 0,
+            loser = 1
+        }
+
+        private MartialTab _curTab;
+
+        public MartialTab CurTab
+        {
+            get { return _curTab; }
+            set { _curTab = value; }
+        }
+
+        private int _endAtTime;
         public int EndAtTime
         {
             get { return _endAtTime; }
@@ -36,13 +59,6 @@ public sealed partial class MartialDataMgr
             set { _activityInfo = value; }
         }
 
-        private RankInfoDto _rankInfo;
-        public RankInfoDto RankInfo
-        {
-            get { return _rankInfo; }
-            set { _rankInfo = value; }
-        }
-
         private KungfuInfoDto _kungfuInfo;
 
         public KungfuInfoDto KungFuInfo
@@ -50,13 +66,21 @@ public sealed partial class MartialDataMgr
             get { return _kungfuInfo;}
             set { _kungfuInfo = value; }
         }
-
-        private IEnumerable<RankItemDto> _playerList = new List<RankItemDto>();  
-        public IEnumerable<RankItemDto> PlayerList { get { return _playerList; } }
-
-        public void UpdatePlayerList(List<RankItemDto> list)
+        
+        //胜者组
+        private RankInfoDto _winRankInfo;
+        public RankInfoDto WinRankInfo
         {
-            _playerList = list;
+            get { return _winRankInfo; }
+            set { _winRankInfo = value; }
+        }
+
+        //败者组
+        private RankInfoDto _loserRankInfo;
+        public RankInfoDto LoserRankInfo
+        {
+            get { return _loserRankInfo; }
+            set { _loserRankInfo = value; }
         }
 
         public void UpdateActiveState(int state)

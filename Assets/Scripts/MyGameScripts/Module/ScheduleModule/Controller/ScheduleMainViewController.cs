@@ -13,6 +13,7 @@ public partial interface IScheduleMainViewController
 {
     event Action<ScheduleRightViewTab, IMonolessViewController> OnChildCtrlAdd;
     TabbtnManager TabbtnMgr { get; }
+    UniRx.IObservable<ScheduleRewardBackStruct> ScheduleRewardBackItemDisapear { get; }
 }
 public partial class ScheduleMainViewController
 {
@@ -26,6 +27,8 @@ public partial class ScheduleMainViewController
     public TabbtnManager TabbtnMgr { get { return tabbtnMgr; } }
     private Func<int, ITabBtnController> func;
 
+    private Subject<ScheduleRewardBackStruct> scheduleRewardBackItemEvt = new Subject<ScheduleRewardBackStruct>();
+    public UniRx.IObservable<ScheduleRewardBackStruct> ScheduleRewardBackItemDisapear { get { return scheduleRewardBackItemEvt; } }
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
@@ -33,8 +36,7 @@ public partial class ScheduleMainViewController
         View.TabBtnTable_UIGrid.gameObject
         , TabbtnPrefabPath.TabBtnWidget.ToString()
         , "Tabbtn_" + i);
-
-        tabbtnMgr = TabbtnManager.Create(ScheduleMainViewDataMgr.ScheduleMainViewData._RightViewTabInfos, func);
+        tabbtnMgr = TabbtnManager.Create(ScheduleMainViewDataMgr.DataMgr.RightViewTabInfos, func);
     }
 
 	// 客户端自定义代码
@@ -88,6 +90,7 @@ public partial class ScheduleMainViewController
                 {
                     _rewardBackViewCtrl = AddChild<ScheduleRewardBackViewController, ScheduleRewardBackView>(View.MainContent_Transform.gameObject, ScheduleRewardBackView.NAME);
                     //OnChildCtrlAdd(ScheduleRightViewTab.DaliyActView, _rewardBackViewCtrl);
+                    _disposable.Add(_rewardBackViewCtrl.ScheduleRewardBackItemDisapear.Subscribe(e => scheduleRewardBackItemEvt.OnNext(e)));
                 }
                 _rewardBackViewCtrl.UpdateView(data);
                 curCtrl = _rewardBackViewCtrl;

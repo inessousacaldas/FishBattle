@@ -91,7 +91,7 @@ public class DoubleTeleportUnit : TriggerNpcUnit
             WorldManager.Instance.Enter(
                 npcDoubleTeleport.toSceneId
                 , true
-                , flyPos:string.Format("x={0}&y={1}",npcDoubleTeleport.x, npcDoubleTeleport.z));
+                , flyPos:string.Format("x={0}&y={1}&z={2}",npcDoubleTeleport.x, npcDoubleTeleport.y, npcDoubleTeleport.z));
     }
 
     public void StopTrigger()

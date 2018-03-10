@@ -37,7 +37,7 @@ public class MySceneManager
         }
 	    if (commandRunner != null)
 	        return;
-		ProfileHelper.SystimeBegin("Change To Scene " + sceneName);
+		//ProfileHelper.SystimeBegin("Change To Scene " + sceneName);
 		this.onChangeFinish = onChangeFinish;
 		commandRunner = new QueueCommandRunner ();
         SceneTriggerMgr oldTriggerMgr = sceneTriggerMgr;
@@ -65,7 +65,7 @@ public class MySceneManager
 	void OnChangeFinish (ICommand command)
 	{
         commandRunner = null;
-        ProfileHelper.SystimeEnd("Change To Scene " + currentSceneName);
+        //ProfileHelper.SystimeEnd("Change To Scene " + currentSceneName);
         if (this.onProgress != null)
             this.onProgress(1f);
         if (this.onChangeFinish != null)

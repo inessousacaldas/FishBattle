@@ -33,8 +33,8 @@ public class SocketManager
 
 	private static int MAX_GAME_HEARTBEATTIME = 120;
 	private static int MAX_CONNECT_HEARTBEATTIME = 120;
-
-	private const string HA_SESSION_KEY = "";
+	
+	private const string HA_SESSION_KEY = "UTzpWM8jZdgHFgN8";
 	
 	private int _checkMaxHearbeaTime = MAX_CONNECT_HEARTBEATTIME;
 
@@ -213,6 +213,7 @@ public class SocketManager
 
 		HaApplicationContext.getConfiguration().setHost(serverInfo.host);
 		HaApplicationContext.getConfiguration().setPort(serverInfo.port);
+	
 		HaApplicationContext.getConfiguration().SetSessionKey(HA_SESSION_KEY);
 		
 		SetupHAConnecter();
@@ -354,9 +355,9 @@ public class SocketManager
 					string.Format("[RECEIVE] type:{0} len:{1} serial:{2}", messageType, len, generalResponse.serial).WrapColorWithLog());	
 			}
 			else
-			{
+            {
 				GameDebuger.Log(
-					string.Format("[RECEIVE] type:{0} len:{1}", messageType, len).WrapColorWithLog());				
+					string.Format("[RECEIVE] type:{0} len:{1}", messageType, len).WrapColorWithLog());
 			}
 		}
 

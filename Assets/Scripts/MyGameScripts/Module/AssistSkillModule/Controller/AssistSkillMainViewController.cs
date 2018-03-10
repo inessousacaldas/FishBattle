@@ -35,7 +35,7 @@ public partial class AssistSkillMainViewController    {
     TabbtnManager tabbtnMgr;
     public TabbtnManager TabbtnMgr { get { return tabbtnMgr; } }
     private Func<int, ITabBtnController> func;
-    RedPointController _redPointCtrl;
+//    RedPointController _redPointCtrl;
 
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
@@ -48,8 +48,8 @@ public partial class AssistSkillMainViewController    {
         tabbtnMgr = TabbtnManager.Create(AssistSkillMainDataMgr.AssistSkillMainData._RightViewTabInfos, func);
 
         //红点测试xjd
-        _redPointCtrl = AddCachedChild<RedPointController, RedPointView>(View.DelegateRedPos, RedPointView.NAME);
-        _redPointCtrl.InitView(2, 301);
+//        _redPointCtrl = AddCachedChild<RedPointController, RedPointView>(View.DelegateRedPos, RedPointView.NAME);
+//        _redPointCtrl.InitView(2, 301);
     }
 
 	// 客户端自定义代码
@@ -58,10 +58,7 @@ public partial class AssistSkillMainViewController    {
         //红点测试xjd
         _disposable.Add(RedPointDataMgr.Stream.Subscribe(e =>
         {
-            if (e.PushSingleData.redPointType == 2)
-            {
-                _redPointCtrl.SetShow(e.PushSingleData.isShow, e.PushSingleData.num);
-            }
+            
         }));
     }
 
@@ -264,7 +261,7 @@ public partial class AssistSkillMainViewController    {
             ShowAssistDelegateView(true, data);
 
             //红点测试xjd
-            RedPointDataMgr.DataMgr.UpdateSingleData(2, false);
+//            RedPointDataMgr.DataMgr.UpdateSingleData(2, false);
         }
     }
     

@@ -12,7 +12,7 @@ public class CamFollowPlayerPosCommand : BaseCommand {
     public override void Execute()
     {
         base.Execute();
-        playerPos = SceneHelper.GetSceneStandPosition(this.playerPos, playerPos);
+        playerPos = SceneHelper.GetPositionInScene(this.playerPos);
         GamePlayer.CameraManager.Instance.SceneCamera.ResetTargetPos(playerPos);
         this.OnFinish();
     }

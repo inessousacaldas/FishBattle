@@ -17,6 +17,7 @@ public class SceneTriggerLoader : BaseCommand
     {
         base.Execute();
         string sceneTriggerName = "sceneTrigger_" + sceneName;
+        //ProfileHelper.SystimeBegin(sceneTriggerName);
         ResourcePoolManager.Instance.LoadStreamSceneConfig(
            sceneTriggerName,
            OnGetConfig,
@@ -37,7 +38,8 @@ public class SceneTriggerLoader : BaseCommand
         {
             sceneTriggerMgr.Init(textAsset.text, sceneName);
         }
-
+        //string sceneTriggerName = "sceneTrigger_" + sceneName;
+        //ProfileHelper.SystimeEnd(sceneTriggerName);
         OnFinish();
     }
 

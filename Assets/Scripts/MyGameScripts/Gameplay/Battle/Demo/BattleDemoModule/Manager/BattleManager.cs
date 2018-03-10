@@ -47,7 +47,7 @@ public sealed partial class BattleDataManager
             }
         }
 
-        public void PlayBattle(Video gv, int watchTeamId = 0, bool needRefreshBattle = false/**, BarrageVideo barrageVideo= null*/)
+        public void PlayBattle(Video gv, bool needRefreshBattle = false/**, BarrageVideo barrageVideo= null*/)
         {
             if (gv == null)
             {
@@ -75,7 +75,6 @@ public sealed partial class BattleDataManager
                 GameDebuger.Log(string.Format("当前正在进入场景， 先暂存战斗{0}", gv.id));
 
                 DataMgr._nextGameVideo = gv;
-                DataMgr._data._watchTeamId = watchTeamId;
                 return;
             }
 
@@ -112,7 +111,7 @@ public sealed partial class BattleDataManager
             if (!DataMgr.IsInBattle)
             {
                 BattleInstController.Instance.Setup(gv);
-                DataMgr.PlayBattle(gv, watchTeamId, needRefreshBattle);
+                DataMgr.PlayBattle(gv, needRefreshBattle);
             }
             else
             {
@@ -127,37 +126,34 @@ public sealed partial class BattleDataManager
                 }
             }
         }
-        
+
         public static void ExecuteDispose()
         {
             if (_ins != null)
                 _ins.Dispose();
             _ins = null;
         }
-        
+
         public void Dispose()
         {
             _trasition.Dispose();
             BattleModuleDispose();
         }
-        
+
         public bool CheckNextBattle()
         {
             if (DataMgr._nextGameVideo == null) return false;
-            var tempWatchId = DataMgr._data._watchTeamId;
+
             var tempGameVideo = DataMgr._nextGameVideo;
-
-            PlayBattle(DataMgr._nextGameVideo);
-
-            DataMgr._data._watchTeamId = 0;
+            PlayBattle(tempGameVideo);
             DataMgr._nextGameVideo = null;
             return true;
         }
-        
+
         private static void BeforeExitBattle()
     {
         UIModuleManager.Instance.CloseModule(BattleSkillSelectView.NAME);
-        
+
         switch (DataMgr.IsWin)
         {
             case BattleResult.LOSE:
@@ -203,7 +199,7 @@ public sealed partial class BattleDataManager
                                 tCameraPath.enabled = false;
                                 tCameraPathAnimator.enabled = false;
                             });
-                    
+
                     });
                 break;
             }
@@ -213,11 +209,11 @@ public sealed partial class BattleDataManager
         {
             BattleModuleDispose();
             LayerManager.Instance.SwitchLayerMode(UIMode.GAME);
-        
+
             ProxyMainUI.Show();
             ResourcePoolManager.UnloadAssetsAndGC();
         }
-        
+
         private static void BattleModuleDispose()
         {
             if (!DataMgr.IsInBattle) return;
@@ -225,9 +221,9 @@ public sealed partial class BattleDataManager
                 {
                     TalkingDataHelper.OnEventSetp('StartBattle', 'End');
                 }");
-                
+
             MonsterManager.Instance.ResetData();
-        
+
             BattleActionPlayerPoolManager.Instance.Dispose();
 
             DataMgr.LateExitBattle();

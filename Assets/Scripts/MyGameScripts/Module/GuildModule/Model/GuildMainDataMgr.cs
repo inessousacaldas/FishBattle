@@ -5,7 +5,9 @@
 // **********************************************************************
 
 
+using System;
 using AppDto;
+using Asyn;
 using System.Collections.Generic;
 using UniRx;
 
@@ -17,14 +19,22 @@ namespace StaticInit
     }
 }
 
-public sealed partial class GuildMainDataMgr
+public sealed partial class GuildMainDataMgr : AbstractAsynInit
 {
-    
+    public override void StartAsynInit(Action<IAsynInit> onComplete)
+    {
+        Action act = delegate ()
+        {
+            onComplete(this);
+        };
+        GuildMainNetMsg.ReqEnterGuildInfo(act);
+    }
+
     // 初始化
     private void LateInit()
     {
         _disposable.Add(NotifyListenerRegister.RegistListener<GuildInvitationNotify>(GuildInvitation));
-        _disposable.Add(WorldModel.Stream.Subscribe(e =>  _data.UpdateGuildState(e.PlayerSceneDto)));
+        _disposable.Add(WorldModel.PlayerGuildInfoStream.Subscribe(e =>  _data.UpdateGuildState()));
         if (WorldManager.WorkdModelStream != null)
         {
             _disposable.Add(WorldManager.WorkdModelStream.Subscribe(e => _data.UpdateGuildState(e.PlayerGuildInfoDto)));
@@ -53,4 +63,19 @@ public sealed partial class GuildMainDataMgr
     {
         get { return _data.GuildPosition; }
     }
+    public PlayerGuildInfoDto PlayerGuildInfo
+    {
+        get { return _data.PlayerGuildInfo; }
+    }
+    public void FindToNpc()
+    {
+        WorldManager.Instance.FlyToByNpc(_data.GuildManager, 0);
+    }
+
+    public GuildState GuildState { get { return _data.GuildState; } }
+
+    //需要做判空处理,自身公会信息（为什么不从scenepalyer.guildinfodto去取自身公会信息，是因为有些数据例如人数，取不到，所以需要从这边去请求）
+    public  GuildBaseInfoDto PlayerGuildBase { get { return _data.GuildBaseInfo; } }
+
+    public IEnumerable<GuildDonate> GuildDonateList { get { return _data.GuildDonateList; } }
 }

@@ -55,6 +55,7 @@ public sealed partial class BattleDataManager
     // 太多权限要改，改不动，临时改为public －－fish 2017.7.19
     public static void FireData()
     {
+        if (_ins == null) return;
         DataMgr.UpdateBattleState();
         stream.OnNext(DataMgr._data);
     }

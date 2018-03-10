@@ -20,6 +20,7 @@ public sealed class EquipmentSmith : BaseView
     public UILabel ArtifactCount_UILabel;
     public UITable SmithItemAnchor_UITable;
     public UILabel SmithMoney_UILabel;
+    public UISprite SmithMoneyIcon_UISprite;
     public UIButton SmithBtn_UIButton;
     public GameObject Popup_quality;
     public GameObject Popup_grade;
@@ -30,7 +31,9 @@ public sealed class EquipmentSmith : BaseView
     public GameObject ModeDisplayAnchor;
     public GameObject AtrifactContent;
     public UILabel AttrTipsLbl_UILabel;
-    public UISprite SmithMoneyIcon_UISprite;
+    public UILabel TimesLb_UILabel;
+    public UIButton TipsBtn_UIButton;
+
 
     protected override void InitElementBinding ()
     {
@@ -55,6 +58,8 @@ public sealed class EquipmentSmith : BaseView
         ModeDisplayAnchor = root.FindGameObject("MiddleContent/ModelDisplay/ModeDisplayAnchor");
         AtrifactContent = root.FindGameObject("MiddleContent/M_UpContent/AttrContent/AtrifactContent");
         AttrTipsLbl_UILabel = root.FindScript<UILabel>("MiddleContent/M_UpContent/AttrContent/AttrTipsLbl");
+        TimesLb_UILabel = root.FindScript<UILabel>("MiddleContent/TimesLb");
+        TipsBtn_UIButton = root.FindScript<UIButton>("TipsBtn");
 
     }
     #endregion

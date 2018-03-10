@@ -432,4 +432,14 @@ public class SceneGoManager
         Unvisible,
         Visible,
     }
+
+    public int GetLayer()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void SetLayer(int paramLayerMask)
+    {
+        throw new System.NotImplementedException();
+    }
 }

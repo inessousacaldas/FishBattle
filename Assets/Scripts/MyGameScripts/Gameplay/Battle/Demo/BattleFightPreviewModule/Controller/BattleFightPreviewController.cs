@@ -151,7 +151,7 @@ public class BattleFightPreviewController : MonoViewController<BattleFightPrevie
         BattleDataManager.DataMgr.BattleDemo.GameVideo.bteam.teamSoldiers.Sort(OnVideoSoldierSort);
     }
 
-    public void StartGameVideo()
+    private void StartGameVideo()
     {
         ShowTeamMonsters(BattlePosition.MonsterSide.Enemy);
         ShowTeamMonsters(BattlePosition.MonsterSide.Player);

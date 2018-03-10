@@ -26,10 +26,11 @@ public enum ScheduleActivityState : int
 
 public interface IScheduleMainViewData
 {
+    IEnumerable<ScheduleActivity> ScheduleActivityList { get; }
     ScheduleRightViewTab CurRightTab { get; }
     IEnumerable<ActiveDto> DailyActivityList { get; }
     IEnumerable<ActiveDto> LimitActivityList { get; }
-    IEnumerable<ActiveDto> RewardBackList { get; }
+    IEnumerable<RegainInfoDto> RewardBackList { get; }
     IEnumerable<int> ActivityRewardList { get; }
     int ActiveValue { get; }
     int ActiveMaxValue { get; }
@@ -42,12 +43,29 @@ public sealed partial class ScheduleMainViewDataMgr
     {
         public ScheduleRightViewTab CurRightTab { get; set; }
 
-        public static readonly List<ITabInfo> _RightViewTabInfos = new List<ITabInfo>()
+        public static List<ITabInfo> _RightViewTabInfos = new List<ITabInfo>()
         {
             TabInfoData.Create((int)ScheduleRightViewTab.DaliyActView,"日常活动"),
             TabInfoData.Create((int)ScheduleRightViewTab.LimitActView,"限时活动"),
-            //TabInfoData.Create((int)ScheduleRightViewTab.RewardBackView,"奖励找回"),
+            TabInfoData.Create((int)ScheduleRightViewTab.RewardBackView,"奖励找回")
         };
+
+        public List<ITabInfo> RightViewTabInfos
+        {
+            
+            get
+            {
+                if (_rewardBackList.Count == 0)
+                    _RightViewTabInfos.Remove(e => e.EnumValue == (int)ScheduleRightViewTab.RewardBackView);
+                else
+                {
+                    var item = _RightViewTabInfos.Find(e => e.EnumValue == (int)ScheduleRightViewTab.RewardBackView);
+                    if(item == null)
+                        _RightViewTabInfos.Add(TabInfoData.Create((int)ScheduleRightViewTab.RewardBackView, "奖励找回"));
+                }
+                return _RightViewTabInfos;
+            }
+        }
 
         public void InitData()
         {
@@ -83,8 +101,17 @@ public sealed partial class ScheduleMainViewDataMgr
 
         private JSTimer.TimerTask _remindActivityTimer;
         private static readonly string TimerName = "ScheduleViewData";
-        private Dictionary<int, ScheduleActivity> _allActivityDataList = DataCache.getDicByCls<ScheduleActivity>();
         private Dictionary<string, List<string>> _remindActivityList = new Dictionary<string, List<string>>();
+        private List<ScheduleActivity> scheduleActivityList;
+        public IEnumerable<ScheduleActivity> ScheduleActivityList   //日程表格数据
+        {
+            get
+            {
+                if (scheduleActivityList == null)
+                    scheduleActivityList = DataCache.getArrayByCls<ScheduleActivity>();
+                return scheduleActivityList;
+            }
+        }
 
         //日常活动
         private List<ActiveDto> _dailyActivityList = new List<ActiveDto>();
@@ -99,8 +126,8 @@ public sealed partial class ScheduleMainViewDataMgr
             get { return _limitActivityList; }
         }
         //奖励找回
-        private List<ActiveDto> _rewardBackList = new List<ActiveDto>();
-        public IEnumerable<ActiveDto> RewardBackList
+        private List<RegainInfoDto> _rewardBackList = new List<RegainInfoDto>();
+        public IEnumerable<RegainInfoDto> RewardBackList
         {
             get { return _rewardBackList; }
         }
@@ -140,27 +167,35 @@ public sealed partial class ScheduleMainViewDataMgr
 
             _dailyActivityList.Clear();
             _limitActivityList.Clear();
+            _rewardBackList.Clear();
+            _rewardBackList = dto.regainInfos;
             var dailyStateList = new Dictionary<int, int>();
             var limitStateList = new Dictionary<int, int>();
             dto.activeList.ForEach(activityItem =>
             {
-                if (_allActivityDataList.ContainsKey(activityItem.id) && FunctionOpenHelper.isFuncOpen(_allActivityDataList[activityItem.id].openGradeId))
+                var val = ScheduleActivityList.Find(e => e.id == activityItem.id);
+                if (val != null && FunctionOpenHelper.isFuncOpen(val.openGradeId))
                 {
                     if (activityItem.type == 1) //日常活动
                     {
                         _dailyActivityList.Add(activityItem);
-                        dailyStateList.Add(activityItem.id, GetActivityState(activityItem, _allActivityDataList[activityItem.id]));
+                        dailyStateList.Add(activityItem.id, GetActivityState(activityItem, val));
                     }
                     else if (activityItem.type == 2) //显示活动
                     {
                         _limitActivityList.Add(activityItem);
-                        limitStateList.Add(activityItem.id, GetActivityState(activityItem, _allActivityDataList[activityItem.id]));
+                        limitStateList.Add(activityItem.id, GetActivityState(activityItem, val));
                     }
                 }
             });
-
             ActivitySort(_dailyActivityList, dailyStateList);
             ActivitySort(_limitActivityList, limitStateList);
+            //找回奖励按时间排序
+            _rewardBackList.Sort((a, b) =>
+            {
+                return a.expiredTime.CompareTo(b.expiredTime);
+            });
+            RemoveOverTimeReward();
         }
 
         //活动按状态排序
@@ -213,11 +248,11 @@ public sealed partial class ScheduleMainViewDataMgr
         private void UpdateRemindList()
         {
             _remindActivityList.Clear();
-            _allActivityDataList.ForEach(itemData =>
+            ScheduleActivityList.ForEach(itemData =>
             {
-                if (itemData.Value.deliver && !_cancelNotifyIdList.Contains(itemData.Value.id))
+                if (itemData.deliver && !_cancelNotifyIdList.Contains(itemData.id))
                 {
-                    _remindActivityList.Add(itemData.Value.name, itemData.Value.openTimes);
+                    _remindActivityList.Add(itemData.name, itemData.openTimes);
                 }
             });
         }
@@ -396,5 +431,53 @@ public sealed partial class ScheduleMainViewDataMgr
                 }
             }
         }
+
+        //奖励找回，数据更新
+        public void UpdateRewardBack(int regainType, long regainId)
+        {
+            ScheduleActivity.RegainTypeEnum type = (ScheduleActivity.RegainTypeEnum)regainType;
+            JSTimer.Instance.CancelCd(ScheduleMainViewLogic.ScheduleRewardBackItemStr + regainId);
+            if (type == ScheduleActivity.RegainTypeEnum.RegainType_3 || type == ScheduleActivity.RegainTypeEnum.RegainType_4)
+            {
+                //_rewardBackList.ForEach(e =>
+                //{
+                //    e.receive = true;
+                //});
+                _rewardBackList.Clear();
+            }
+            else
+            {
+                //var item = _rewardBackList.Find(e => e.regainId == regainId);
+                //item.receive = true;
+                //_rewardBackList.Replace<RegainInfoDto>(e => e.regainId == regainId, item);
+                _rewardBackList.Remove(e => e.regainId == regainId);
+            }
+            RemoveOverTimeReward();
+        }
+        //奖励到期，数据更新
+        public void UpdateRewardBack(long regainId)
+        {
+            _rewardBackList.Remove(e => e.regainId == regainId);
+        }
+
+        #region 移除已过期奖励
+        //移除已过期奖励
+        private void RemoveOverTimeReward()
+        {
+            _rewardBackList.RemoveItems(e => RemoveOver(e.expiredTime));
+        }
+
+        private bool RemoveOver(long ms)
+        {
+            var timer = GetTimer(ms);
+            return timer <= 0;
+        }
+        private long GetTimer(long ms)
+        {
+            var _unixTimeStamp = DateUtil.DateTimeToUnixTimestamp(DateTime.Now);
+            var res = ms - _unixTimeStamp;
+            return res;
+        }
+        #endregion
     }
 }

@@ -125,7 +125,7 @@ public sealed partial class MissionDataMgr :AbstractAsynInit
     }
     #endregion
 
-
+    #region 获得NPC身上的任务
     /// <summary>
     /// 获得NPC身上的任务
     /// </summary>
@@ -135,17 +135,22 @@ public sealed partial class MissionDataMgr :AbstractAsynInit
     {
         List<MissionOption> tMissionOptionList = new List<MissionOption>();
         _data.GetMissionOptionListByNpcInternal(npc).ForEach(m => {
-            if(m.mission == _data.GetLastSubmitMission())
+            if(m.mission == _data.GetLastFindMission())
                 tMissionOptionList.Add(m);
         });
         return tMissionOptionList;
     }
+    #endregion
+    #region 进行宝图任务
 
     public void TreasureMission(BagItemDto tCurBagItem) {
         _data.TreasureMission(BackpackDataMgr.DataMgr.GetTreasureMapItems(),tCurBagItem);
     }
-    public MissionStatDto GetMissionStatDto(int missiontype) {
-        return _data.GetMissionStatDto(missiontype);
-    }
+    #endregion
 
+    #region 获得当前任务需要取得商店的数据
+    public MissionShopItemMarkModel GetMissionShopItem() {
+        return DataMgr._data.GetMissionShopItem();
+    }
+    #endregion
 }

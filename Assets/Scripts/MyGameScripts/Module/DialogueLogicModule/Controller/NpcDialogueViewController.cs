@@ -558,6 +558,7 @@ public partial class NpcDialogueViewController {
     protected virtual void SetupDialogueInfo()
     {
         bool isShowFaction = true;
+        bool isShowGuild = true;
         int functionOptionCount = _functionIdList != null ? _functionIdList.Count : 0;
         if(_missionOptionList == null)
         {
@@ -575,16 +576,6 @@ public partial class NpcDialogueViewController {
                 {
                     MissionOption tMissionOption = _missionOptionList[i];
                     Mission tMission = tMissionOption.mission;
-                    SubmitDto tSubmitDto = MissionHelper.GetSubmitDtoByMission(tMission);
-                    //bool tIsLastFindMissionSta = ModelManager.MissionData.lastFindMissionID == tMission.id;
-                    //    //	当历练任务，特殊处理一下 Bengin
-                    //    if(tIsLastFindMissionSta && ModelManager.MissionData.IsTrialMissionAndTalkTarget(tMission,tSubmitDto))
-                    //    {
-                    //        OpenMissionOption(tMissionOption);
-                    //        return;
-                    //    }
-                    //    //	End
-                    //string optionName = MissionHelper.GetMissionTitleNameInDialogue(tMission, tMissionOption.isExis);
                     //显示任务信息
                     _optionItemList[i].SetData(i,tMission.name,OnSelectMissionOption,false);
                 }
@@ -600,10 +591,18 @@ public partial class NpcDialogueViewController {
                         isShowFaction = false;
                     }
                 });
+                MissionStatDto tmMissionStatDto = _data.GetMissionStatDto((int)MissionType.MissionTypeEnum.Guild);
+                if(_functionIdList.Contains(29))
+                {
+                    MissionStatDto tMissionStatDto = _data.GetMissionStatDto((int)MissionType.MissionTypeEnum.Guild);
+                    if(tMissionStatDto.daily >= DataCache.GetStaticConfigValue(AppStaticConfigs.GUILD_MISSION_DAILY_FINISH_COUNT)) {
+                        isShowGuild = false;
+                    }
+                }
                 for(int i = 0;i < functionOptionCount;++i)
                 {
                     //如果身上有委托任务，且NPC绑定了静态的委托选项就不显示
-                    if(!isShowFaction && _functionIdList[i] == 4) { continue; }
+                    if((!isShowFaction&&_functionIdList[i] == 4)|| (!isShowGuild && _functionIdList[i] == 29)) { continue; }
                     //四轮之塔塔层Npc判断 如果没有全部通关关卡，则不显示传送下一层
                     if (!TowerDataMgr.DataMgr.IsTowerClear && _functionIdList[i] == 22) continue;
 
@@ -611,7 +610,6 @@ public partial class NpcDialogueViewController {
                     if (functionInfo != null && FunctionOpenHelper.isFuncOpen(functionInfo.functionOpenId,false))
                     {
                         int itemIndex = _missionOptionList.Count + openCount;
-                        //string optionName = GetFunctionOptionName(functionInfo);
                         _optionItemList[itemIndex].SetData(i,functionInfo.name,OnSelectFunctionOption,false,false,functionInfo.type);
                         openCount++;
                     }

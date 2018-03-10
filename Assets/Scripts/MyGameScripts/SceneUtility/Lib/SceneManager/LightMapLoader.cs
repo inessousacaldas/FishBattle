@@ -9,7 +9,7 @@ public class LightMapLoader : BaseCommand{
 	{
 		base.Execute ();
         this.assetName = "lightmap_" + sceneName;
-        ProfileHelper.SystimeBegin(assetName);
+        //ProfileHelper.SystimeBegin(assetName);
         ResourcePoolManager.Instance.LoadStreamSceneConfig(this.assetName, this.OnLightMapAssetLoaded, this.OnLightMapAssetLoadedError, AssetLoadPriority.StreamScene);
 	}
 
@@ -52,7 +52,7 @@ public class LightMapLoader : BaseCommand{
         LightmapSettings.lightmapsMode = LightmapsMode.NonDirectional;
         Resources.UnloadAsset(asset);
         //MySceneManager.Instance.lastLightMapAsset = asset;
-        ProfileHelper.SystimeEnd(assetName);
+        //ProfileHelper.SystimeEnd(assetName);
         this.OnFinish ();
     }
 

@@ -13,20 +13,21 @@ using AppDto;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using System.Reflection;
 
 public partial interface IPlayerPropertyViewController
 {
     TabbtnManager TabBtnMgr { get; }
-    void OnHandleChangeName(string name);
+    void OnHandleChangeName(string name);   
+    
 }
 
-public partial class PlayerPropertyViewController {
-
+public partial class PlayerPropertyViewController
+{
     private TabbtnManager tabBtnMgr;
     private Func<int, ITabBtnController> func;
-
+    private Dictionary<Equipment.PartType, ItemCellController> _equipDic = new Dictionary<Equipment.PartType, ItemCellController>();
     public TabbtnManager TabBtnMgr { get { return tabBtnMgr; } }
-
 
     //初始化子view ctrl
 
@@ -50,13 +51,22 @@ public partial class PlayerPropertyViewController {
     // 客户端自定义代码
     protected override void RegistCustomEvent()
     {
-        
+
     }
 
     protected override void RemoveCustomEvent()
     {
     }
+    private void OnEquipmentCellChange()
+    {
 
+        var equipDatas = BackpackDataMgr.DataMgr.equipmentCellsData; 
+        _equipDic.ForEach(x =>
+        {
+            var equip = equipDatas.Find(g => g.partType == (int)x.Key);
+            x.Value.UpdateEquipView(equip);
+        });
+    }
     protected override void OnDispose()
     {
         base.OnDispose();
@@ -97,6 +107,18 @@ public partial class PlayerPropertyViewController {
         modelDisplayController.SetupMainRoleModel();
         modelDisplayController.SetBoxColliderEnabled(true);
         modelDisplayController.SetPosition(new Vector3(0, -29, 0));
+        //装备属性
+        AddEquipmentCell(Equipment.PartType.Glove, View.LeftEquipGrid.gameObject);        
+        AddEquipmentCell(Equipment.PartType.Clothes, View.LeftEquipGrid.gameObject);
+        AddEquipmentCell(Equipment.PartType.Weapon, View.LeftEquipGrid.gameObject);
+
+        View.LeftEquipGrid.Reposition();
+        AddEquipmentCell(Equipment.PartType.AccOne, View.RightEquipGrid.gameObject);
+        AddEquipmentCell(Equipment.PartType.AccTwo, View.RightEquipGrid.gameObject);
+        AddEquipmentCell(Equipment.PartType.Shoe, View.RightEquipGrid.gameObject);
+        View.LeftEquipGrid.Reposition();
+        OnEquipmentCellChange();
+
 
         //基本信息
         View.PropertyNameLabel_UILabel.text = ModelManager.Player.GetPlayerName();
@@ -107,12 +129,13 @@ public partial class PlayerPropertyViewController {
         ExpGrade grade = DataCache.getDtoByCls<ExpGrade>(ModelManager.Player.GetPlayerLevel() + 1); //当前等级到下一级经验 so +1 (满级越界要判断)
         long needExp = grade == null ? DataCache.getDtoByCls<ExpGrade>(ModelManager.Player.GetPlayerLevel()).mainCharactorExp : grade.mainCharactorExp;
         long curExp = ModelManager.Player.GetPlayerExp();
-        if(grade == null)
+        if (grade == null)
             curExp = curExp > needExp * 10 ? needExp * 10 : curExp;
 
-        View.ExpLabel_UILabel.text = string.Format("{0}/{1}", curExp, needExp);
+        //View.ExpLabel_UILabel.text = string.Format("{0}/{1}",curExp,needExp );
         View.ExpSlider_UISlider.value = needExp > 0 ? (float)curExp / (float)needExp : 0;
-
+        int percentExp = (int)(View.ExpSlider_UISlider.value * 100);
+        View.ExpLabel_UILabel.text = string.Format("{0}%", percentExp);
         //战斗属性
         foreach (var propertyId in GlobalAttr.SECOND_ATTRS)
         {
@@ -121,7 +144,7 @@ public partial class PlayerPropertyViewController {
             fightPropertyItemCtr.Add(fightProCtr);
         }
     }
-     
+
     //刷新属性
     private void InitFightProPanel(IPlayerPropertyData data)
     {
@@ -139,7 +162,7 @@ public partial class PlayerPropertyViewController {
             fightPropertyItemCtr[index].Init(tCharacterAbility.name, (int)data.GetPropertyById(propertyId));
             index++;
         }
-        
+
         View.FightPropertyTable_UITable.Reposition();
     }
 
@@ -147,4 +170,17 @@ public partial class PlayerPropertyViewController {
     {
         View.PropertyNameLabel_UILabel.text = name;
     }
+    private void AddEquipmentCell(Equipment.PartType partType, GameObject parent)
+    {
+        var cell = AddChild<ItemCellController, ItemCell>(
+            parent
+        , ItemCell.Prefab_EquipItemCell
+        , "Equip_" + partType.ToString());
+
+        cell.SetShowTips(true);
+        cell.SetTipsPosition(new Vector3(-315, 168, 0.0f));
+        
+        _equipDic[partType] = cell;
+
+    }    
 }

@@ -74,15 +74,13 @@ public class LoginController : MonoViewController<LoginView>
         SPSdkManager.Instance.OnLoginSuccess -= OnSwitchLoginSuccess;
         SPSdkManager.Instance.OnLogoutNotify -= OnLogout;
 
-        //畅游SDK接口
-        SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.SWITCH_USER_SUCCESS, OnCYSwitchLoginSuccess);
-        SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGOUT, OnCYLogout);
-        SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGIN_SUCCESS, OnCYLoginSuccess);
-        SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGIN_FAILED, OnCYLoginFail);
-        SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGIN_CANCEL, OnCYLoginCancel);
 
-
-
+            //畅游SDK接口
+            SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.SWITCH_USER_SUCCESS, OnCYSwitchLoginSuccess);
+            SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGOUT, OnCYLogout);
+            SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGIN_SUCCESS, OnCYLoginSuccess);
+            SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGIN_FAILED, OnCYLoginFail);
+            SPSdkManager.Instance.RemoveCYCallback(CySdk.ResultCode.LOGIN_CANCEL, OnCYLoginCancel);
 
     }
 
@@ -593,8 +591,27 @@ public class LoginController : MonoViewController<LoginView>
         {
             TalkingDataHelper.OnEventSetp("GameAccountLogin/RequestSsoAccountLogin"); //请求token
             SPSDK.gameEvent("10011");       //登陆成功，请求token
+            string deviceId;
+            string channelId;
+            string bundleId;
+            string version;
+            if (GameSetting.IsCyouChannel)
+            {
+                deviceId = SPSDK.deviceId();
+                channelId = SPSDK.channelId();
+                bundleId = SPSDK.appName();
+                version = SPSDK.appVersionName().ToString();
+            }
+            else
+            {
+                deviceId = BaoyugameSdk.getUUID();
+                channelId = GameSetting.SubChannel;
+                bundleId = GameSetting.BundleId;
+                version = AppGameVersion.BundleVersion;
+            }
+
             ServiceProviderManager.RequestSsoAccountLogin(ServerManager.Instance.sid, ServerManager.Instance.uid, GameSetting.Channel,
-                GameSetting.SubChannel, GameSetting.LoginWay, GameSetting.AppId, GameSetting.PlatformTypeId, SPSDK.deviceId(), SPSDK.channelId(),SPSDK.appName(), SPSDK.appVersionName(), delegate (LoginAccountDto response)
+                GameSetting.SubChannel, GameSetting.LoginWay, GameSetting.AppId, GameSetting.PlatformTypeId, deviceId, channelId, bundleId, version, delegate (LoginAccountDto response)
                 {
                     if (response != null)
                     {

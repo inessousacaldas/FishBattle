@@ -66,7 +66,20 @@ public class HeroView : PlayerView
     #endregion
     protected override void Update()
     {
+        UpdateTowerFly();
         base.Update();
+        // todo fish: cp from D1, not sure this problem exist in S3
+        //        var pos = GetFeetPosition();
+        //        WorldManager.Instance.UpdateHeroPos(pos.x, pos.y, pos.z);
+        //
+        //        // 组队位置偏移问题
+        //        if (_prePos != pos)
+        //        {
+        //            _prePos = pos;
+        //            _mPlayerMoveController.OnPosChange(pos, _prePos, true);
+        //
+        //        }
+
         if (IsAutoFram)
         {
             _autoFramTimer += Time.deltaTime;
@@ -90,7 +103,7 @@ public class HeroView : PlayerView
             _verifyWalkTimer = 0f;
             if (ValidateHeroPos())
             {
-                WorldManager.Instance.VerifyWalk(_lastX, _lastZ);
+                WorldManager.Instance.VerifyWalk(_lastX, _lastY, _lastZ);
             }
         }
 
@@ -102,7 +115,27 @@ public class HeroView : PlayerView
                 _planWalkTimer = 0f;
                 if (ValidateHeroPos())
                 {
-                    WorldManager.Instance.PlanWalk(_lastX, _lastZ);
+                    WorldManager.Instance.PlanWalk(_lastX, _lastY, _lastZ);
+                }
+            }
+        }
+    }
+
+    private void UpdateTowerFly()
+    {
+        if (MySceneManager.Instance.currentSceneName == "Scene_10001")
+        {
+            if (Input.GetKeyDown(KeyCode.O) && Input.GetKey(KeyCode.I))
+            {
+                Vector3 upPoin = new Vector3(0.046f, 8.465f, 0.112f);
+                Vector3 downPoin = new Vector3(-0.1f, 0.25f, 2.88f);
+                if (Vector3.Distance(upPoin, cachedTransform.position) < 2f) //判断是不在塔顶
+                {
+                    ResetPos(downPoin);
+                }
+                else
+                {
+                    ResetPos(upPoin);
                 }
             }
         }
@@ -115,8 +148,6 @@ public class HeroView : PlayerView
             var heroTrans = cachedTransform;
             heroTrans.rotation = Quaternion.LookRotation(forward);
             heroTrans.Translate(forward * Speed * Time.deltaTime, Space.World);
-            Vector3 curPos = heroTrans.position;
-            heroTrans.position = SceneHelper.GetSceneStandPosition(curPos, curPos);
             PlayRunAnimation();
         }
     }
@@ -135,9 +166,15 @@ public class HeroView : PlayerView
         }
     }
 
-    public void TextPlayAnimation(ModelHelper.AnimType action)
-    {
-        _modelDisplayer.PlayAnimation(action);
+    /// <summary>
+    ///添加一个播放主角动画的接口
+    /// </summary>
+    /// <param name="action">动画名称（枚举）</param>
+    /// <param name="crossFade">是否淡出淡入</param>
+    /// <param name="checkSameAnim">检查相同动画</param>
+    public void PlayAnimation(ModelHelper.AnimType action,bool crossFade = false,bool checkSameAnim = false) {
+        _modelDisplayer.PlayAnimation(action,crossFade,checkSameAnim);
+        _isRunning = false;
     }
 
     #endregion
@@ -163,7 +200,7 @@ public class HeroView : PlayerView
     private void AutoWalk()
     {
         var walkPoint = WorldManager.Instance.GetView().GetRandomNavPoint();
-        WorldManager.Instance.PlanWalk(walkPoint.x, walkPoint.z);
+        WorldManager.Instance.PlanWalk(walkPoint.x, walkPoint.y, walkPoint.z);
         _mAgent.enabled = true;
         _mAgent.SetDestination(walkPoint);
     }
@@ -176,6 +213,7 @@ public class HeroView : PlayerView
     private const float VerifyWalkInterval = 1.0f;
 
     private float _lastX;
+    private float _lastY;
     private float _lastZ;
     private float _planWalkTimer;
     private float _verifyWalkTimer;
@@ -186,15 +224,15 @@ public class HeroView : PlayerView
     /// <returns></returns>
     private bool ValidateHeroPos()
     {
-        float newX = _mTrans.position.x;
-        float newZ = _mTrans.position.z;
-        if (Mathf.Abs(_lastX - newX) > 0.1f || Mathf.Abs(_lastZ - newZ) > 0.1f)
-        {
-            _lastX = newX;
-            _lastZ = newZ;
-            return true;
-        }
-        return false;
+        var newX = _mTrans.position.x;
+        var newY = _mTrans.position.y;
+        var newZ = _mTrans.position.z;
+        if (!(Mathf.Abs(_lastX - newX) > 0.1f) && !(Mathf.Abs(_lastZ - newZ) > 0.1f) &&
+            !(Mathf.Abs(_lastY - newY) > 0.1f)) return false;
+        _lastX = newX;
+        _lastY = newY;
+        _lastZ = newZ;
+        return true;
     }
 
     /// <summary>
@@ -204,7 +242,7 @@ public class HeroView : PlayerView
     {
         if (ValidateHeroPos())
         {
-            WorldManager.Instance.VerifyWalk(_lastX, _lastZ);
+            WorldManager.Instance.VerifyWalk(_lastX, _lastY, _lastZ);
         }
     }
 
@@ -212,6 +250,6 @@ public class HeroView : PlayerView
 
     public string GetPosStr()
     {
-        return string.Format("x={0}&z={1}",_mTrans.position.x, _mTrans.position.z);
+        return string.Format("x={0}&y={1}&z={2}",_mTrans.position.x, _mTrans.position.y, _mTrans.position.z);
     }
 }

@@ -12,6 +12,7 @@ using AppDto;
 using UniRx;
 using UnityEngine;
 using System.Collections.Generic;
+using AppStaticConfigs = AppProtobuf.AppStaticConfigs;
 
 public sealed partial class TeamDataMgr
 {
@@ -364,6 +365,13 @@ public sealed partial class TeamDataMgr
             if (!DataMgr._data.IsLeader())
             {
                 TipManager.AddTip("只有队长才能喊话");
+                return;
+            }
+
+            if (DataMgr._data.GetMatchTargetData.GetActiveId == 0 ||
+                DataMgr._data.teamDto.actionTargetId == 0) //0代表组对目标为全部
+            {
+                TipManager.AddTip("请选择具体组队目标");
                 return;
             }
             ProxySpeakViewModule.Open();

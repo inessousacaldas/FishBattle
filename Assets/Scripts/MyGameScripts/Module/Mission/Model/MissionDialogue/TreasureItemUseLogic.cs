@@ -39,12 +39,12 @@ public class TreasureItemUseLogic{
         if(mCurBagItem == null)
             mCurBagItem = CurBagItem;
         mBagtoList = bagtoList.ToList();
-        PropsExtraDto_17 itemDto = CurBagItem.extra as PropsExtraDto_17;
+        PropsExtraDto_17 extraDto = CurBagItem.extra as PropsExtraDto_17;
         var heroView = WorldManager.Instance.GetHeroView();
-        if(heroView != null && WorldManager.Instance.GetModel().GetSceneId() == itemDto.sceneId)
+        if(heroView != null && WorldManager.Instance.GetModel().GetSceneId() == extraDto.sceneId)
         {
             Vector3 a = heroView.transform.position;
-            Vector3 b = new Vector3(itemDto.x,0,itemDto.z);
+            Vector3 b = SceneHelper.GetPositionInScene(extraDto.x, extraDto.y, extraDto.z);
             float distance = Vector3.Distance(a,b);
             if(distance <= 1)
             {
@@ -52,11 +52,11 @@ public class TreasureItemUseLogic{
             }
             else
             {
-                GoTreausreMapPosition(itemDto);
+                GoTreausreMapPosition(extraDto);
             }
         }
         else {
-            GoTreausreMapPosition(itemDto);
+            GoTreausreMapPosition(extraDto);
         }
     }
 
@@ -125,6 +125,7 @@ public class TreasureItemUseLogic{
         var npc = new Npc();
         npc.sceneId = packItem.sceneId;
         npc.x = packItem.x;
+        npc.y = packItem.y;
         npc.z = packItem.z;
         JoystickModule.Instance.CanControlByPlayer(false);
         JSTimer.Instance.SetupCoolDown(

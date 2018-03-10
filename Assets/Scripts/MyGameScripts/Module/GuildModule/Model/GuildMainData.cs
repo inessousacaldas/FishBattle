@@ -5,6 +5,9 @@
 // **********************************************************************
 using AppDto;
 using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json.Utilities;
+
 public enum GuildState
 {
     None,   //未知
@@ -60,6 +63,15 @@ public interface IGuildMainData
     IEnumerable<GuildBuilding> GuildBuildList { get; }  //公会建筑配表数据
     IEnumerable<long> BuildUpTimeList { get; }  //公会建筑时间
     #endregion
+    #region 福利
+    IEnumerable<GuildWelfare> GuildWelfareList { get; } //福利表
+    bool IsGainSalary { get; } //是否领取工资
+    GuildBoxDto GuildBox { get; }   //宝箱
+    IEnumerable<BagItemDto> DonateItemsList { get; }    //捐献物资
+    int ItemCapacity { get; }   //捐献容量
+    int DonateCount { get; }    //捐献次数
+    #endregion
+
 }
 
 public sealed partial class GuildMainDataMgr
@@ -83,6 +95,19 @@ public sealed partial class GuildMainDataMgr
         private PlayerGuildInfoDto playerGuildInfo = null;                      //自身公会信息
 
         private SceneMap guildScene = null;             //公会场景
+        private int mainSceneId = -1;   //主城地图id
+        private Npc guildManager = null;
+        
+        public Npc GuildManager
+        {
+            get
+            {
+                if (guildManager == null)
+                    guildManager = DataCache.getArrayByCls<NpcGeneral>().Find(e => e.id == 522);
+                return guildManager;
+            }
+        }
+
         public SceneMap GuildScene
         {
             get
@@ -93,6 +118,21 @@ public sealed partial class GuildMainDataMgr
                 }
                 return guildScene;
             }
+        }
+
+        private int MainSceneId
+        {
+            get
+            {
+                if (mainSceneId == -1)
+                    mainSceneId = DataCache.getArrayByCls<SceneMap>().Find(e => e.type == (int)SceneMap.SceneType.City && e.id == 10001/*不应该直接取id,后面需和策划商量，逻辑先不删除*/).id;
+                return mainSceneId;
+            }
+        }
+
+        public void BackToMainCity()
+        {
+            WorldManager.Instance.Enter(MainSceneId, false);
         }
         public PlayerGuildInfoDto PlayerGuildInfo
         {
@@ -106,17 +146,35 @@ public sealed partial class GuildMainDataMgr
 
         public void Dispose()
         {
+            guildScene = null;           
+            mainSceneId = -1;   
+            guildManager = null;
             playerGuildInfo = null;
+            #region Welfare
+            isGainSalary = false;
+            guildWelfareList = null;
+            guildBox = null;
+            #endregion
         }
 
-        //覆盖公会数据
-        public void UpdateGuildState(ScenePlayerDto dto)
+        //覆盖公会数据(SceneObject)
+        public void UpdateGuildState()
         {
+            ScenePlayerDto dto = null;
+            if (WorldManager.Instance != null && WorldManager.Instance.GetModel() != null)
+                dto = WorldManager.Instance.GetModel().GetPlayerDto(ModelManager.Player.GetPlayerId());
             if(dto != null)
             {
                 if (dto.guildInfoDto == null && playerGuildInfo != null)
                 {
                     GuildMainViewLogic.CloseHasJoinView();  //被开除后关闭界面
+                    if(WorldManager.Instance != null && WorldManager.Instance.GetModel() != null && WorldManager.Instance.GetModel().GetSceneDto() != null)
+                    {
+                        if (WorldManager.Instance.GetModel().GetSceneDto().sceneMap.type == (int)SceneMap.SceneType.Guild)
+                        {
+                            BackToMainCity();//被开除后回到主城
+                        }
+                    }
                 }
             }
             playerGuildInfo = dto == null ? null : dto.guildInfoDto;
@@ -203,16 +261,15 @@ public sealed partial class GuildMainDataMgr
             curServerGuildCount = dto.count;
         }
         
-        //搜索时的公会列表数据刷新
+        //进入游戏后的数据初始化，用于给其他模块
         public void UpdateGuildList(GuildBaseInfoDto dto)
         {
-            searchGuildState = IsSearchGuildState.Yes;
-            needReposition = true;
-            if (guildList == null)
-                guildList = new List<GuildBaseInfoDto>();
-            guildList.Clear();
-            guildList.Add(dto);
-            FireData();
+            guildBaseInfo = dto;
+        }
+
+        public void SetguildBaseInfoNull()
+        {
+            guildBaseInfo = null;
         }
         //搜索时的公会列表数据刷新
         public void UpdateSearchGuildList(GuildBaseInfoListDto dto)
@@ -526,7 +583,128 @@ public sealed partial class GuildMainDataMgr
         public void UpdateBuildUpTime(int idx,OnUpgradeBuildingDto dto)
         {
             buildUpTimeList[idx] = dto.finishTime;
+            var serverTime = SystemTimeManager.Instance.GetUTCTimeStamp();  //取服务器时间
+            var finishTime = dto.finishTime;
+            long value = finishTime - serverTime;
+            //如果配置的升级时间是0，客户端直接做++升级操作
+            if (value <= 0)
+            {
+                switch (idx)
+                {
+                    case 1:
+                        guildBaseInfo.grade++;
+                        break;
+                    case 2:
+                        guildDetailInfo.buildingInfo.barpubGrade++;
+                        break;
+                    case 3:
+                        guildDetailInfo.buildingInfo.treasuryGrade++;
+                        break;
+                    case 4:
+                        guildDetailInfo.buildingInfo.guardTowerGrade++;
+                        break;
+                    case 5:
+                        guildDetailInfo.buildingInfo.workshopGrade++;
+                        break;
+                }
+            }
             guildDetailInfo.wealthInfo.assets = dto.assets;
+        }
+        #endregion
+
+        #region 福利
+
+        private bool isGainSalary = false;
+        private List<GuildWelfare> guildWelfareList = null; //所有福利列表
+        private GuildBoxDto guildBox = null;             //公会宝箱
+        private List<GuildDonate> guildDonateList = null;//捐献物资表 
+        private int donateCount = 0;
+
+        //捐献次数
+        public int DonateCount { get { return donateCount; } }
+
+        //捐献物资容量（跟背包相同）
+        public int ItemCapacity
+        {
+            get { return BackpackDataMgr.DataMgr.ItemBagCapability; }
+        }
+        //宝箱
+        public GuildBoxDto GuildBox { get { return guildBox; } }
+        //福利界面
+        public IEnumerable<GuildWelfare> GuildWelfareList
+        {
+            get
+            {
+                if (guildWelfareList == null)
+                    guildWelfareList = DataCache.getArrayByCls<GuildWelfare>();
+                return guildWelfareList;
+            }
+        }
+
+        //是否领取工资
+        public bool IsGainSalary
+        {
+            get { return isGainSalary; }
+        }
+
+        //设置领取工资
+        public void SetGainSalary(bool isGain)
+        {
+            isGainSalary = isGain;
+        }
+
+        //福利界面数据
+        public void SetGuildWelfareDto(GuildWelfareDto dto)
+        {
+            SetGainSalary(dto.isSalaryRecieved);
+            donateCount = dto.donateCount;
+        }
+
+        //捐献物品表数据
+        public IEnumerable<GuildDonate> GuildDonateList
+        {
+            get
+            {
+                if (guildDonateList == null)
+                    guildDonateList = DataCache.getArrayByCls<GuildDonate>();
+                return guildDonateList;
+            }
+        }
+
+        //筛选捐献物品
+        public IEnumerable<BagItemDto> DonateItemsList
+        {
+            get
+            {
+                int capacity = ItemCapacity;
+                List<BagItemDto> donateItemsList = new List<BagItemDto>();
+                var donateList = GuildDonateList;
+                var bagList = BackpackDataMgr.DataMgr.GetBagItems();
+                var tmpList = bagList.Filter(e => donateList.Find(f => f.id == e.itemId) != null);
+                int i = 0;
+                tmpList.ForEach(e =>
+                {
+                    donateItemsList.Add(e);
+                    i++;
+                });
+                //补充后面的null
+                for (;i < capacity; i++)
+                {
+                    donateItemsList.Add(null);
+                }
+                return donateItemsList;
+            }
+        } 
+        //宝箱数据
+        public void UpdateTreasureBox(GuildBoxDto dto)
+        {
+            guildBox = dto;
+        }
+
+        //捐献成功则捐献次数加一
+        public void UpdateDonateCount()
+        {
+            donateCount++;
         }
         #endregion
     }

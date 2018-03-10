@@ -16,6 +16,7 @@ public partial interface ITradeViewController
     TabbtnManager GetTabMgr { get; }
 
 	void UpdateTabPage(TradeTab page);
+    UniRx.IObservable<Unit> InitPitchViewHandler { get; }
 }
 
 public partial class TradeViewController
@@ -24,9 +25,7 @@ public partial class TradeViewController
     private ICmomerceViewController _cmomerceCtrl;
     public IPitchViewController GetPitchCtrl {get { return _pitchCtrl; }}
     public ICmomerceViewController GetCmomerceCtrl { get { return _cmomerceCtrl; } }
-
     private ITradeData _data;
-
     private TabbtnManager tabMgr;
 	public TabbtnManager GetTabMgr { get { return tabMgr; } }
 	
@@ -38,13 +37,16 @@ public partial class TradeViewController
 		//TabInfoData.Create((int)TradeTab.Sales,"寄售")
 	};
 
+    private Subject<Unit> _initPitchViewEvt = new Subject<Unit>();
+    public UniRx.IObservable<Unit> InitPitchViewHandler { get { return _initPitchViewEvt; } }  
+
 	// 界面初始化完成之后的一些后续初始化工作
 	protected override void AfterInitView ()
 	{
 		InitTab();
         InitCmomerceView();
-        InitPitchView();
-        UpdateTabPage(TradeTab.Cmomerce);
+        //InitPitchView();
+        //UpdateTabPage(TradeTab.Cmomerce);
     }
 
     // 客户端自定义代码
@@ -75,10 +77,24 @@ public partial class TradeViewController
         switch (data.CurTab)
 	    {
             case TradeTab.Cmomerce:
-                _cmomerceCtrl.UpdateDataAndView(data);
+	            if (data.CmomerceGoodsId != 0)
+	            {
+                    _cmomerceCtrl.UpdateDataAndView(data);
+                    _cmomerceCtrl.ChoiseGoods(data.CmomerceGoodsId);
+	            }
+                else
+                    _cmomerceCtrl.UpdateDataAndView(data);
                 break;
             case TradeTab.Pitch:
-	            _pitchCtrl.UpdateDataAndView(data);
+	            if (_pitchCtrl == null)
+	                InitPitchView();
+	            if (data.CurPitchId != 0)
+	            {
+                    _pitchCtrl.UpdateDataAndView(data);
+                    _pitchCtrl.ChoiseGoods(data.CurPitchId);
+	            }
+                else
+                    _pitchCtrl.UpdateDataAndView(data);
                 break;
             case TradeTab.Auction:
 	            break;
@@ -106,7 +122,8 @@ public partial class TradeViewController
 	private void InitPitchView()
 	{
 		_pitchCtrl = AddChild<PitchViewController, PitchView>(_view.PitchGroup.gameObject, PitchView.NAME);
-	}
+        _initPitchViewEvt.OnNext(new Unit());
+    }
 
     private void InitCmomerceView()
     {
@@ -126,7 +143,7 @@ public partial class TradeViewController
                 break;
 			case TradeTab.Pitch:
 				_view.PitchGroup.SetActive(true);
-				break;
+                break;
 			case TradeTab.Auction:
 				_view.AuctionGroup.SetActive(true);
 				break;
@@ -134,7 +151,8 @@ public partial class TradeViewController
 				_view.SalesGroup.SetActive(true);
 				break;
 		}
-	}
+        tabMgr.SetTabBtn((int)page);
+    }
 
 	private void HideAllGroup()
 	{

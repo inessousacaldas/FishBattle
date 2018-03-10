@@ -21,6 +21,7 @@ public partial interface IGuildHasJoinViewController
     IGuildInfoViewController GuildInfoViewCtrl { get; }     //信息界面
     IGuildManageViewController GuildManageViewCtrl { get; } //管理界面
     IGuildBuildViewController GuildBuildViewCtrl { get; }   //建筑界面
+    IGuildWelfareViewController GuildWeilfareViewCtrl { get; }
     IEnumerable<ITabInfo> FilterList { get; }
 }
 public partial class GuildHasJoinViewController
@@ -40,15 +41,22 @@ public partial class GuildHasJoinViewController
     }
     private GuildTab curTab = GuildTab.None;
     private UnityEngine.GameObject lastGo = null;   //上一次打开的界面
+    //信息
     
     private IGuildInfoViewController guildInfoViewCtrl;
     public IGuildInfoViewController GuildInfoViewCtrl { get { return guildInfoViewCtrl; } }
+    //管理
 
     private IGuildManageViewController guildManageViewCtrl;
     public IGuildManageViewController GuildManageViewCtrl { get { return guildManageViewCtrl; } }
+    //建筑
 
     private IGuildBuildViewController guildBuildViewCtrl;
     public IGuildBuildViewController GuildBuildViewCtrl { get { return guildBuildViewCtrl; } }
+    //福利
+    private IGuildWelfareViewController guildWelfareViewCtrl;
+    public IGuildWelfareViewController GuildWeilfareViewCtrl { get { return guildWelfareViewCtrl; } }
+
 
     private IEnumerable<ITabInfo> filterList = null;
     public IEnumerable<ITabInfo> FilterList { get { return filterList; } }
@@ -74,12 +82,12 @@ public partial class GuildHasJoinViewController
     {
         switch (tab)
         {
-            case GuildTab.ManageView:
-                return FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_81);
+            //case GuildTab.ManageView:
+                //return FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_81);
             case GuildTab.ActivityView:
                 return FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_79);
             case GuildTab.WelfareView:
-                return FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_78);
+               // return FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_78);
             case GuildTab.BuildView:
                 return FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_80);
             default:return true;
@@ -194,6 +202,13 @@ public partial class GuildHasJoinViewController
             case GuildTab.ActivityView:
                 break;
             case GuildTab.WelfareView:
+                if(guildWelfareViewCtrl == null)
+                {
+                    guildWelfareViewCtrl = AddChild<GuildWelfareViewController, GuildWelfareView>(View.WelfareView, GuildWelfareView.NAME, GuildWelfareView.NAME);
+                    _disposable.Add(guildWelfareViewCtrl.OnexplainBtn_UIButtonClick.Subscribe(e => welfareExplainBtn_UIButtonEvt.OnNext(e)));
+                    _disposable.Add(guildWelfareViewCtrl.OncheckBtn_UIButtonClick.Subscribe(e => welfareCheckBtn_UIButtonEvt.OnNext(e)));
+                }
+                guildWelfareViewCtrl.UpdateView(data);
                 break;
             case GuildTab.BuildView:
                 if (guildBuildViewCtrl == null)

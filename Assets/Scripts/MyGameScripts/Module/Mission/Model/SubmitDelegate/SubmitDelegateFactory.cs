@@ -43,5 +43,15 @@ public class SubmitDelegateFactory {
         addSubmitDelegate(new CollectionSubmitDelegate(missionModel,typeof(PickItemSubmitInfoDto).Name));
         //多提交任务
         addSubmitDelegate(new FindtemSubmitDelegate(missionModel,typeof(FindtemSubmitInfoDto).Name));
+        //指定怪掉落道具
+        addSubmitDelegate(new ShowMonsterItemSubmitDelegate(missionModel, typeof(ShowMonsterItemSubmitDto).Name));
+        //护送任务
+        //addSubmitDelegate(new ProtectSubmitDelegate(missionModel,typeof(ProtectSubmitDto).Name));
+        //收集道具（商城购买）任务
+        addSubmitDelegate(new CollectionItemSubmitDelegate(missionModel,typeof(CollectionItemSubmitDto).Name));
+        //收集道具（商城购买）任务
+        addSubmitDelegate(new CollectionItemCategorySubmitDtoDelegate(missionModel,typeof(CollectionItemCategorySubmitDto).Name));
+        //宣言任务 
+        addSubmitDelegate(new SpeakSubmitDelegate(missionModel,typeof(SpeakSubmitDto).Name));
     }
 }

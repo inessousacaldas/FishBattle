@@ -116,6 +116,11 @@ public partial class PitchPutawayAgainViewController
 	{
         Props props = DataCache.getDtoByCls<GeneralItem>(goodsDto.itemId) as Props;
         _goodsDto = goodsDto;
+	    if (goodsDto == null || goodsDto.item == null)
+	    {
+	        GameDebuger.LogError("goodsDto数据有问题,请检查");
+	        return;
+	    }
 	    _basePrice = ExpressionManager.StallGoodsBasePrice(string.Format("goodsDto{0}", goodsDto.stallId), goodsDto.item.basePriceFormula);
         _precent = goodsDto.price * 10 / _basePrice;
         UIHelper.SetItemIcon(_view.Icon_UISprite, props != null ? props.icon : "");

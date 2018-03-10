@@ -4,7 +4,10 @@
 // Created  : 1/16/2018 2:27:53 PM
 // **********************************************************************
 
+using AppDto;
+using AppServices;
 using UniRx;
+using UnityEngine;
 
 public sealed partial class RankDataMgr
 {
@@ -44,6 +47,35 @@ public sealed partial class RankDataMgr
                if(index < 0)
                    RankNetMsg.RankingsInfo(rankid);
            }));
+            _disposable.Add(ctrl.RankingPageCtrl.OnPlayerClickHandler.Subscribe(data =>
+            {
+                if (data.Getuid == ModelManager.Player.GetPlayerId()) return;
+                switch (data.GetRankings.rankAlertType)
+                {
+                    //玩家综合实力
+                    case 1:
+                        TipManager.AddTip("玩家实力榜");
+                        break;
+                    //伙伴查看
+                    case 2:
+                        TipManager.AddTip("伙伴战力榜");
+                        break;
+                    //玩家交互
+                    case 3:
+                        GameUtil.GeneralReq(Services.Player_TipInfo(data.Getuid), resp =>
+                        {
+                            var tipsDto = resp as PlayerTipDto;
+                            var win = FriendDetailViewController.Show<FriendDetailViewController>(FriendDetailView.NAME,
+                            UILayerType.ThreeModule, false);
+                            win.UpdateRankView(tipsDto);
+                            win.SetPosition(new Vector3(225, 197, 0));
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                
+            }));
         }
             
         private static void Dispose()
@@ -60,7 +92,7 @@ public sealed partial class RankDataMgr
         }
         private static void CloseBtn_UIButtonClick()
         {
-            ProxyRank.CloseTradeView();
+            ProxyRank.CloseRankView();
         }
 
     

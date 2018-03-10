@@ -21,6 +21,7 @@ public sealed class RecommendTeamView : BaseView
     public UIButton OneKeyApplyBtn_UIButton;
     public UISprite Texture_UISprite;
     public UILabel DescLb_UILabel;
+    public UIRecycledList GuildGrid_UIRecycledList;
 
 
     protected override void InitElementBinding ()
@@ -36,6 +37,7 @@ public sealed class RecommendTeamView : BaseView
         OneKeyApplyBtn_UIButton = root.FindScript<UIButton>("BottomBtnGroup/OneKeyApplyBtn");
         Texture_UISprite = root.FindScript<UISprite>("Texture");
         DescLb_UILabel = root.FindScript<UILabel>("DescLb");
+        GuildGrid_UIRecycledList = root.FindScript<UIRecycledList>("Member/MemberGroup/GuildGrid");
 
     }
     #endregion

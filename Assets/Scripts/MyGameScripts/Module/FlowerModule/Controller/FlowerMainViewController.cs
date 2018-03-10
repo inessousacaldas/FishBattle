@@ -130,8 +130,12 @@ public partial class FlowerMainViewController
             View.NoFriendPanel.SetActive(false);
         data.SearchList.ForEachI((itemDto, index) =>
         {
+            var friendDto = FriendDataMgr.DataMgr.GetFriendDtoById(itemDto.friendId);
             var ctrl = AddFriendItemIfNotExist(index);
-            ctrl.UpdateView(itemDto, itemDto.friendId==data.CurFriendId);
+            if (friendDto != null)
+                ctrl.UpdateView(friendDto, itemDto.friendId == data.CurFriendId);
+            else
+                ctrl.UpdateView(itemDto, itemDto.friendId == data.CurFriendId);
             ctrl.Show();
 
             viewDisposable.Add(ctrl.OnClickItemStream.Subscribe(id =>
@@ -143,21 +147,6 @@ public partial class FlowerMainViewController
 
         //花
         var flowerCount = 0;    //默认选中花的数量>0的 最靠前的 花
-        var curFlowerId = 0;    //默认选中花的id
-        //所有鲜花数量都为0 默认选择第一个鲜花
-        for(int i=0;i< _flowerIds.Length; i++)
-        {
-            flowerCount = BackpackDataMgr.DataMgr.GetBackpackItemCountByItemID(_flowerIds[i]);
-            if (flowerCount > 0)
-            {
-                curFlowerId = _flowerIds[i];
-                break;
-            }
-        }
-        if (flowerCount == 0)
-            data.CurFlowerId = _flowerIds[0];
-        else
-            flowerCount = 0;
         _flowerList.ForEach(item => item.Hide());
         _flowerIds.ForEachI((id, index) =>
         {

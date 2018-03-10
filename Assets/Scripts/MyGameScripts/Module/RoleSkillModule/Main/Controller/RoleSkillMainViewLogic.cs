@@ -104,11 +104,13 @@ public sealed partial class RoleSkillDataMgr
             else if(costVO.itemCount1 > 0 && costVO.itemCount1 > BackpackDataMgr.DataMgr.GetItemCountByItemID(vo.cfgVO.consumeBook1))
             {
                 TipManager.AddTip("身上的战技书数量不足，升级失败");
+                GainWayTipsViewController.OpenGainWayTip(vo.cfgVO.consumeBook1, new UnityEngine.Vector3(164, -46));
                 return false;
             }
             else if(costVO.itemCount2 > 0 && costVO.itemCount2 > BackpackDataMgr.DataMgr.GetItemCountByItemID(vo.cfgVO.consumeBook2))
             {
                 TipManager.AddTip("身上的战技书数量不足，升级失败");
+                GainWayTipsViewController.OpenGainWayTip(vo.cfgVO.consumeBook2, new UnityEngine.Vector3(164, -46));
                 return false;
             }
             else

@@ -306,13 +306,20 @@ public class SPSdkManager
 #if (UNITY_EDITOR || UNITY_STANDALONE)
             OnNoExiterProvideCallback();
 #elif UNITY_ANDROID || UNITY_IPHONE
-            //if (SPSDK.DoExiter())
-            //{
-            //    OnNoExiterProvideCallback();
-            //}
-            CYCallback(CySdk.ResultCode.EXIT_GAME, CYExitCallback);
-            CYCallback(CySdk.ResultCode.EXIT_GAME_DIALOG, CYNoExiterProvideCallback);
-            CYExit();
+
+            if (GameSetting.Channel == AgencyPlatform.Channel_cyou)
+            {
+                CYExit();
+                CYCallback(CySdk.ResultCode.EXIT_GAME, CYExitCallback);
+                CYCallback(CySdk.ResultCode.EXIT_GAME_DIALOG, CYNoExiterProvideCallback);
+            }
+            else
+            {
+                if (SPSDK.DoExiter())
+                {
+                    OnNoExiterProvideCallback();
+                }
+            }
 
 
 #endif

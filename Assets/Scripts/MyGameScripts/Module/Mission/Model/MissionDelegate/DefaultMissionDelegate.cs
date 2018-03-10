@@ -56,4 +56,9 @@ public class DefaultMissionDelegate :BaseMissionDelegate, IMissionDelegate
     {
 
     }
+
+    public void ReqEnterMission(Mission mission,SubmitDto submitDto)
+    {
+        
+    }
 }

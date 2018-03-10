@@ -24,9 +24,11 @@ public sealed class BattleConfigManager
     }
 
 	private const string BattleConfig_ReadPath = "ConfigFiles/BattleConfig/BattleConfig";
-
+	private const string ConvertedBattleConfig_Path = "ConfigFiles/BattleConfig/ConvertedBattleConfig";
+	
     public void Setup()
     {
+#if UNITY_EDITOR
 	    ResourcePoolManager.Instance.LoadConfig("BattleConfig", (asset) => {
 		    if (asset == null) return;
 		    var textAsset = asset as TextAsset;
@@ -68,8 +70,14 @@ public sealed class BattleConfigManager
 			    }
 		    });
 	    });
-	    
-	    _correctCfg = OldBattleConfigConverter.LoadConvertedBattleConfig();
+#endif
+	    ResourcePoolManager.Instance.LoadConfig("ConvertedBattleConfig", (asset) => {
+		    if (asset == null) return;
+		    var textAsset = asset as TextAsset;
+		    if (textAsset == null) return;
+		    var cfgJsonStr = textAsset.text;
+		    _correctCfg = OldBattleConfigConverter.LoadConvertedBattleConfig(cfgJsonStr);
+	    });
     }
 	
 	private static Dictionary<int,CorrectSkillConfig> _correctCfg = new Dictionary<int, CorrectSkillConfig>();
@@ -80,7 +88,6 @@ public sealed class BattleConfigManager
 		return result;
 	}
 	
-
 	public SkillConfigInfo getSkillConfigInfo(int skillID)
 	{
 		int key = skillID;
@@ -97,8 +104,15 @@ public sealed class BattleConfigManager
 		return skillConfigInfo;
 	}
 
+	public bool UpdateCorrectSkillConfigInfo(SkillConfigInfo pSkillConfigInfo)
+	{
+		var info = OldBattleConfigConverter.FromOld(pSkillConfigInfo);
+		return UpdateSkillConfigInfo(info);
+	}
+
     public bool UpdateSkillConfigInfo(SkillConfigInfo pSkillConfigInfo)
     {
+	    
         if (null == pSkillConfigInfo || pSkillConfigInfo.id <= 0)
             return false;
         SkillConfigInfo tSkillConfigInfo = null;

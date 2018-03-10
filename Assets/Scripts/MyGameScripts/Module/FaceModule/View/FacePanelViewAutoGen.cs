@@ -37,6 +37,7 @@ public partial class FacePanelView : BaseView
     public UIButton closeBtn_UIButton;
     public UIInput Search_UIInput;
     public GameObject pageFlagGrid_Go;
+    public GameObject RedPackView_Go;
 
     protected override void InitElementBinding ()
     {

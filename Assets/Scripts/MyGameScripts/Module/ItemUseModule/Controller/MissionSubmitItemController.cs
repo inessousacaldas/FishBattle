@@ -31,67 +31,109 @@ public class MissionSubmitItemController : ItemUseViewController {
 
     virtual public void SetData(BagItemDto useDto,List<BagItemDto> items,Dictionary<int,int> itemListNeet,bool isMultiple = false,bool isBefore = false,bool isCanReClick = true)
     {
-        _useDto = useDto;
-        _items = items;
-        mitemNeetNumberList = itemListNeet;
-        List<int> tItemListNeet = itemListNeet.Keys.ToList<int>();
-        for(int i = 0;i < tItemListNeet.Count;i++)
+        BagItemDto selectDto = null;
+        if(items.Count >= 1)
         {
-            mitemSelectNumberList.Add(tItemListNeet[i],0);
-        }
-        _isMultiple = isMultiple;
-        _isBefore = isBefore;
-        _isCanReClick = isCanReClick;
-        mitemNeetNumberList = itemListNeet;
-        int iTotalPage = (int)Math.Ceiling((double)_items.Count / PAGE_COUNT);
-        _summary = Summary.create(_items.Count,iTotalPage,1,PAGE_COUNT);
-        iTotalPage = iTotalPage == 0 ? 1 : iTotalPage;
-        AddItem(iTotalPage);
-        View.LGroup.SetActive(_items.Count > 0);
-        _leftView.SetUseDto(useDto);
-    }
-
-    override protected void OnItemClick(UseItemCellController cell)
-    {
-        if(cell.GetData() != null)
-        {
-            if(_isMultiple)
+            selectDto = items[0];
+            for(int index = 1;index < items.Count;index++)
             {
-                cell.SelectMultiple();
-            }
-            else
-            {
-                if(mitemNeetNumberList.ContainsKey(cell.GetData().itemId))
+                if(selectDto.item is Equipment && items[index].item is Equipment)
                 {
-                    int index = cell.GetData().itemId;
-                    if(mitemSelectNumberList[index] >= mitemNeetNumberList[index])
+                    if((selectDto.item as Equipment).grade > (items[index].item as Equipment).grade)
                     {
-                        if(!cell.IsSelect)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            mitemSelectNumberList[index]--;
-                        }
+                        selectDto = items[index];
+                        continue;
                     }
-                    else
-                    {
-                        if(!cell.IsSelect)
-                        {
-                            mitemSelectNumberList[index]++;
-                        }
-                        else
-                        {
-                            mitemSelectNumberList[index]--;
-                        }
-                    }
-                    cell.SelectSingle(!cell.IsSelect);
+
+                    int currS = selectDto.item.quality;
+                    int newS = items[index].item.quality;
+
+                    if(currS > newS)
+                        selectDto = items[index];
+                }
+                //else if(selectDto.item is Props && items[index].item is Props)
+               // {
+                    //PropsExtraDto_21 curr = selectDto.extra as PropsExtraDto_21;
+                    //PropsExtraDto_21 newDto = items[index].extra as PropsExtraDto_21;
+                    //if(curr != null && newDto != null && curr.rarity > newDto.rarity)
+                    //    selectDto = items[index];
+                //}
+            }
+
+            //if(selectDto.item is Equipment && !EquipmentHelper.IsLowGradeEquip(selectDto))
+            //{
+            //    selectDto = null;
+            //}
+        }
+        base.SetData(useDto,items,isMultiple,isBefore,isCanReClick);
+        if(selectDto != null)
+        {
+            for(int index = 0;index < _itemCellList.Count;index++)
+            {
+                if(_itemCellList[index].GetData() == selectDto)
+                {
+                    OnItemClick(_itemCellList[index]);
+                    break;
                 }
             }
-            _leftView.SetData(cell.GetData());
+
+            int cd = 20;
+            View.OptlblLabel.text = string.Format("{0}({1}秒)",_submitStr,cd);
+            View.OptBtn.GetComponent<ButtonLabelSpacingAdjust>().ReAdjust();
+            // 如果是在自动化模式下,选择最差的物品,并且倒计时 cd 秒,自动提交
+            JSTimer.Instance.SetupCoolDown("__AutoSubmitMissionItem",cd,(remainTime) =>
+            {
+                View.OptlblLabel.text = string.Format("{0}({1}秒)",_submitStr,(int)remainTime);
+            },
+            OnOptBtn,1f);
+        }
+        else
+        {
+            base.SetData(useDto,items,isMultiple,isBefore,isCanReClick);
         }
     }
+
+    //override protected void OnItemClick(UseItemCellController cell)
+    //{
+    //    if(cell.GetData() != null)
+    //    {
+    //        if(_isMultiple)
+    //        {
+    //            cell.SelectMultiple();
+    //        }
+    //        else
+    //        {
+    //            if(mitemNeetNumberList.ContainsKey(cell.GetData().itemId))
+    //            {
+    //                int index = cell.GetData().itemId;
+    //                if(mitemSelectNumberList[index] >= mitemNeetNumberList[index])
+    //                {
+    //                    if(!cell.IsSelect)
+    //                    {
+    //                        return;
+    //                    }
+    //                    else
+    //                    {
+    //                        mitemSelectNumberList[index]--;
+    //                    }
+    //                }
+    //                else
+    //                {
+    //                    if(!cell.IsSelect)
+    //                    {
+    //                        mitemSelectNumberList[index]++;
+    //                    }
+    //                    else
+    //                    {
+    //                        mitemSelectNumberList[index]--;
+    //                    }
+    //                }
+    //                cell.SelectSingle(!cell.IsSelect);
+    //            }
+    //        }
+    //        _leftView.SetData(cell.GetData());
+    //    }
+    //}
     override protected void OnOptBtn()
     {
         List<BagItemDto> dto = _leftView.GetDataList();
@@ -113,6 +155,7 @@ public class MissionSubmitItemController : ItemUseViewController {
 
     protected override void OnDispose()
     {
+        JSTimer.Instance.CancelCd("__AutoSubmitMissionItem");
         _callBackDelegate = null;
         base.OnDispose();
     }

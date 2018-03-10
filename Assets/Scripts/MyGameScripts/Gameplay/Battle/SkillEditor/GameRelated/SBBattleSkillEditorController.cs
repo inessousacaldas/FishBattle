@@ -215,7 +215,7 @@ namespace SkillEditor
             DrawBaseEffectInifoView(actionInfo, info);
 
             GUI.changed = false;
-            float delayTime = GUIHelper.DrawFloatField("持续时间", info.delayTime, 30, false, 0);
+            float delayTime = GUIHelper.DrawFloatField("持续时间", info.duaration, 30, false, 0);
             float intensity_x = GUIHelper.DrawFloatField("强度 (0.3) x", info.intensity.x, 30, false, 0);
             float intensity_y = GUIHelper.DrawFloatField("强度 (0.3) y", info.intensity.y, 30, false, 0);
 
@@ -226,7 +226,7 @@ namespace SkillEditor
 
             if (GUI.changed)
             {
-                info.delayTime = delayTime;
+                info.duaration = delayTime;
                 info.intensity = new Vector3(intensity_x, intensity_y, intensity_z);
                 info.isHit = isHit;
                 info.PlayIndex = PlayIndex;

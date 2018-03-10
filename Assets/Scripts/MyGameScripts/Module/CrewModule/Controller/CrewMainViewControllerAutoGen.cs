@@ -12,8 +12,6 @@ public partial interface ICrewMainViewController : ICloseView
      UniRx.IObservable<Unit> OnShowTypeBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnPullBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnTypeBtn_UIButtonClick{get;}
-     UniRx.IObservable<Unit> OnCallBtn_UIButtonClick{get;}
-     UniRx.IObservable<Unit> OnCommentBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnFormationBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnFollowBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnAddExpBtn_UIButtonClick{get;}
@@ -26,6 +24,10 @@ public partial interface ICrewMainViewController : ICloseView
      UniRx.IObservable<Unit> OnExtendCloseBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnPageInfoBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OnFavorableBtn_UIButtonClick{get;}
+     UniRx.IObservable<Unit> OnCrewNameBtn_UIButtonClick{get;}
+     UniRx.IObservable<Unit> OnCrewTalkBtn_UIButtonClick{get;}
+     UniRx.IObservable<Unit> OnCrewVoiceBtn_UIButtonClick{get;}
+     UniRx.IObservable<Unit> OnMoreOperationBtn_UIButtonClick{get;}
 
 }
 
@@ -43,8 +45,6 @@ public partial class CrewMainViewController:FRPBaseController<
     ShowTypeBtn_UIButtonEvt = View.ShowTypeBtn_UIButton.AsObservable();
     PullBtn_UIButtonEvt = View.PullBtn_UIButton.AsObservable();
     TypeBtn_UIButtonEvt = View.TypeBtn_UIButton.AsObservable();
-    CallBtn_UIButtonEvt = View.CallBtn_UIButton.AsObservable();
-    CommentBtn_UIButtonEvt = View.CommentBtn_UIButton.AsObservable();
     FormationBtn_UIButtonEvt = View.FormationBtn_UIButton.AsObservable();
     FollowBtn_UIButtonEvt = View.FollowBtn_UIButton.AsObservable();
     AddExpBtn_UIButtonEvt = View.AddExpBtn_UIButton.AsObservable();
@@ -57,6 +57,10 @@ public partial class CrewMainViewController:FRPBaseController<
     ExtendCloseBtn_UIButtonEvt = View.ExtendCloseBtn_UIButton.AsObservable();
     PageInfoBtn_UIButtonEvt = View.PageInfoBtn_UIButton.AsObservable();
     FavorableBtn_UIButtonEvt = View.FavorableBtn_UIButton.AsObservable();
+    CrewNameBtn_UIButtonEvt = View.CrewNameBtn_UIButton.AsObservable();
+    CrewTalkBtn_UIButtonEvt = View.CrewTalkBtn_UIButton.AsObservable();
+    CrewVoiceBtn_UIButtonEvt = View.CrewVoiceBtn_UIButton.AsObservable();
+    MoreOperationBtn_UIButtonEvt = View.MoreOperationBtn_UIButton.AsObservable();
 
         }
         
@@ -66,8 +70,6 @@ public partial class CrewMainViewController:FRPBaseController<
         ShowTypeBtn_UIButtonEvt = ShowTypeBtn_UIButtonEvt.CloseOnceNull();
         PullBtn_UIButtonEvt = PullBtn_UIButtonEvt.CloseOnceNull();
         TypeBtn_UIButtonEvt = TypeBtn_UIButtonEvt.CloseOnceNull();
-        CallBtn_UIButtonEvt = CallBtn_UIButtonEvt.CloseOnceNull();
-        CommentBtn_UIButtonEvt = CommentBtn_UIButtonEvt.CloseOnceNull();
         FormationBtn_UIButtonEvt = FormationBtn_UIButtonEvt.CloseOnceNull();
         FollowBtn_UIButtonEvt = FollowBtn_UIButtonEvt.CloseOnceNull();
         AddExpBtn_UIButtonEvt = AddExpBtn_UIButtonEvt.CloseOnceNull();
@@ -80,6 +82,10 @@ public partial class CrewMainViewController:FRPBaseController<
         ExtendCloseBtn_UIButtonEvt = ExtendCloseBtn_UIButtonEvt.CloseOnceNull();
         PageInfoBtn_UIButtonEvt = PageInfoBtn_UIButtonEvt.CloseOnceNull();
         FavorableBtn_UIButtonEvt = FavorableBtn_UIButtonEvt.CloseOnceNull();
+        CrewNameBtn_UIButtonEvt = CrewNameBtn_UIButtonEvt.CloseOnceNull();
+        CrewTalkBtn_UIButtonEvt = CrewTalkBtn_UIButtonEvt.CloseOnceNull();
+        CrewVoiceBtn_UIButtonEvt = CrewVoiceBtn_UIButtonEvt.CloseOnceNull();
+        MoreOperationBtn_UIButtonEvt = MoreOperationBtn_UIButtonEvt.CloseOnceNull();
 
         }
         
@@ -101,16 +107,6 @@ public partial class CrewMainViewController:FRPBaseController<
     private Subject<Unit> TypeBtn_UIButtonEvt;
     public UniRx.IObservable<Unit> OnTypeBtn_UIButtonClick{
         get {return TypeBtn_UIButtonEvt;}
-    }
-
-    private Subject<Unit> CallBtn_UIButtonEvt;
-    public UniRx.IObservable<Unit> OnCallBtn_UIButtonClick{
-        get {return CallBtn_UIButtonEvt;}
-    }
-
-    private Subject<Unit> CommentBtn_UIButtonEvt;
-    public UniRx.IObservable<Unit> OnCommentBtn_UIButtonClick{
-        get {return CommentBtn_UIButtonEvt;}
     }
 
     private Subject<Unit> FormationBtn_UIButtonEvt;
@@ -171,6 +167,26 @@ public partial class CrewMainViewController:FRPBaseController<
     private Subject<Unit> FavorableBtn_UIButtonEvt;
     public UniRx.IObservable<Unit> OnFavorableBtn_UIButtonClick{
         get {return FavorableBtn_UIButtonEvt;}
+    }
+
+    private Subject<Unit> CrewNameBtn_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnCrewNameBtn_UIButtonClick{
+        get {return CrewNameBtn_UIButtonEvt;}
+    }
+
+    private Subject<Unit> CrewTalkBtn_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnCrewTalkBtn_UIButtonClick{
+        get {return CrewTalkBtn_UIButtonEvt;}
+    }
+
+    private Subject<Unit> CrewVoiceBtn_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnCrewVoiceBtn_UIButtonClick{
+        get {return CrewVoiceBtn_UIButtonEvt;}
+    }
+
+    private Subject<Unit> MoreOperationBtn_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnMoreOperationBtn_UIButtonClick{
+        get {return MoreOperationBtn_UIButtonEvt;}
     }
 
 

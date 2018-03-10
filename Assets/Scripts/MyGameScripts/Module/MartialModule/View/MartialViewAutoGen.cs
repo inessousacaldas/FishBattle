@@ -28,6 +28,7 @@ public sealed class MartialView : BaseView
     public UILabel StateLb_UILabel;
     public UISprite FirstWinBox_UISprite;
     public UISprite FirstWarBox_UISprite;
+    public UIGrid TabGrid_UIGrid;
 
 
     protected override void InitElementBinding ()
@@ -50,6 +51,7 @@ public sealed class MartialView : BaseView
         StateLb_UILabel = root.FindScript<UILabel>("MainContent/StateLb");
         FirstWinBox_UISprite = root.FindScript<UISprite>("MainContent/FirstWinBox");
         FirstWarBox_UISprite = root.FindScript<UISprite>("MainContent/FirstWarBox");
+        TabGrid_UIGrid = root.FindScript<UIGrid>("MainContent/TabGrid");
 
     }
     #endregion

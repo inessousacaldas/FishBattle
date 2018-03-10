@@ -100,7 +100,7 @@ public sealed partial class EquipmentMainDataMgr
                 var equip = DataCache.getDtoByCls<GeneralItem>(equipmentDto.equipId) as Equipment;
 
                 TipManager.AddTopTip("恭喜你成功打造" + equip.name);
-
+                DataMgr._data.UpdateCurSmithCount(dto.curSmithCount);
                 //DataMgr.ShowPv_Equipment(equipmentDto);
                 OpenEquipmentItemTips(equipmentDto);
                 FireData();
@@ -136,8 +136,8 @@ public sealed partial class EquipmentMainDataMgr
                     var equipment = equipments.Find(x => x.equipUid == uid);
                     DataMgr._data.ResetData.CurChoiceEquipment = equipment;
                 }
-                    
-               
+
+                DataMgr._data.UpdateCurResetCount(dto.curResetCount);
                 FireData();
                 TipManager.AddTopTip("洗练成功");
                 //DataMgr._data.ResetData.CurResetEquipmentResult = dto.equipExtraDto;

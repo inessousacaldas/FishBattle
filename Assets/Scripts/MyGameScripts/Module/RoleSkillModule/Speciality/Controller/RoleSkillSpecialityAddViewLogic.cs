@@ -84,6 +84,7 @@ public sealed partial class RoleSkillDataMgr
             }
             else if(BackpackDataMgr.DataMgr.GetItemCountByItemID(itemID) == 0)
             {
+                GainWayTipsViewController.OpenGainWayTip(itemID, new UnityEngine.Vector3(164, -46));
                 TipManager.AddTip(string.Format("身上{0}数量不足",ItemHelper.GetItemName(itemID)));
             }
             else

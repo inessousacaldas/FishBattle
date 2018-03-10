@@ -26,32 +26,31 @@ public sealed partial class CrewSkillDataMgr
                 DataMgr._data.MainTab = (CrewSkillTab)e;
                 ctrl.OnTabChange((CrewSkillTab)e, DataMgr._data);
             }));
-            //ctrl.TabMgr.SetTabBtn((int)CrewSkillTab.Crafts);
             ctrl.OnTabChange(CrewSkillTab.Crafts, DataMgr._data);
             DataMgr._data.MainTab = CrewSkillTab.Crafts;
             ctrl.InitWindow();
             _disposable.Add(ctrl.GetBGClickEvt.Subscribe(_ => InitWindowEvenst(_)));
-            _disposable.Add(ctrl.PsvTabMgr.Subscribe(_ => ctrl.GetPsvTipCtrl.OnTabChange((PassiveType)_,DataMgr._data)));
             _disposable.Add(ctrl.PsvBtnAdd.Subscribe(_ => ctrl.GetPsvTipCtrl.OnBtnAddClick()));
             _disposable.Add(ctrl.PsvBtnMinus.Subscribe(_ => ctrl.GetPsvTipCtrl.OnBtnMinusClick()));
-            _disposable.Add(ctrl.PsvBtnForget.Subscribe(_ => ctrl.GetPsvTipCtrl.ShowForgetWindow()));
             _disposable.Add(ctrl.PsvBtnMax.Subscribe(_ => ctrl.GetPsvTipCtrl.OnBtnMaxClick()));
-            _disposable.Add(ctrl.PsvBtnUp.Subscribe(_ => OnPsvBtnUpClick()));
-            _disposable.Add(ctrl.PsvBtnUse.Subscribe(_ => OnPsvBtnUseClick(ctrl.GetPsvTipCtrl.GetConsumNum)));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnUseBtn_UIButtonClick.Subscribe(_ => OnPsvBtnUseClick(1)));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnUpBtn_UIButtonClick.Subscribe(_ => OnPsvBtnUseClick(10)));
             _disposable.Add(ctrl.InputValueChange.Subscribe(_ => ctrl.GetPsvTipCtrl.OnValueChange()));
-            _disposable.Add(ctrl.PsvBtnLearn.Subscribe(_ => OnPsvTipBtnClick(_)));
-            _disposable.Add(ctrl.PsvBtnForgetSure.Subscribe(_ => OnPsvBtnForgetClick()));
-            _disposable.Add(ctrl.PsvBtnCancel.Subscribe(_ => ctrl.GetPsvTipCtrl.CloseForgetWindow()));
-            _disposable.Add(ctrl.PsvBtnBlackBG.Subscribe(_ => ctrl.GetPsvTipCtrl.CloseForgetWindow()));
-            _disposable.Add(ctrl.CraftsBtnUp.Subscribe(_ => BtnCraftsUpClick()));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnbtnWindowForget_UIButtonClick.Subscribe(_ => OnPsvBtnForgetClick()));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnbtnCancel_UIButtonClick.Subscribe(_ => ctrl.GetPsvViewCtrl.CloseForgetWindow()));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnBlackBG_UIButtonClick.Subscribe(_ => ctrl.GetPsvViewCtrl.CloseForgetWindow()));
+            _disposable.Add(ctrl.GetPsvViewCtrl.TabBtnClick.Subscribe(_ => ctrl.GetPsvViewCtrl.OnTabChange((PassiveType)_, DataMgr._data)));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnForgetBtn_UIButtonClick.Subscribe(_ => ctrl.GetPsvViewCtrl.ShowForgetWindow()));
+            _disposable.Add(ctrl.GetPsvViewCtrl.OnEquipBtn_UIButtonClick.Subscribe(_ => { OnPsvTipBtnClick(ctrl.GetPsvViewCtrl); }));
             _disposable.Add(ctrl.MagicBtn.Subscribe(_ => 
                             {
                                 ProxyQuartz.OpenQuartzMainView();
                                 ctrl.InitWindow();
                             }));
-            _disposable.Add(ctrl.GetCraftsViewCtrl.CraftsViewBtnUp.Subscribe(_ => OnCraftsBtnClick(_,ctrl)));
-            _disposable.Add(ctrl.GetMagicViewCtrl.MagicViewBtnUp.Subscribe(_ => OnMagicBtnClick(_,ctrl)));
-            _disposable.Add(ctrl.GetPsvViewCtrl.PsvViewBtnUp.Subscribe(_ => OnPsvBtnClick(_,ctrl)));
+            _disposable.Add(ctrl.GetCraftsViewCtrl.CraftsSkillUpClick.Subscribe(_ => OnCraftsBtnClick(_, ctrl)));
+            _disposable.Add(ctrl.GetCraftsViewCtrl.CraftsSkillIconClick.Subscribe(_ => OnCraftSkillIconClick(_, ctrl)));
+            _disposable.Add(ctrl.GetMagicViewCtrl.MagicSkillIconClick.Subscribe(_ => OnCraftSkillIconClick(_, ctrl)));
+            _disposable.Add(ctrl.GetPsvViewCtrl.PsvSkillIconClick.Subscribe(_ => OnPsvBtnClick(_,ctrl)));
             _disposable.Add(QuartzDataMgr.Stream.Subscribe(e =>
             {
                 var val = e.QuartzInfoData.GetCurOrbmentInfoDto;
@@ -68,30 +67,36 @@ public sealed partial class CrewSkillDataMgr
             ctrl.HideWindow();
         }
 
-        private static void OnMagicBtnClick(ICrewSkillItemNController itemCtrl, ICrewSkillViewController ctrl)
+        private static void OnMagicBtnClick(ICrewSkillItemController itemCtrl, ICrewSkillViewController ctrl)
         {
             if (itemCtrl.SkillVO == null)
             {
-                if( itemCtrl.SkillState == CrewSkillItemNController.MagicSkillState.NoEquiped)
+                if( itemCtrl.SkillState == CrewSkillItemController.MagicSkillState.NoEquiped)
                 {
                     ProxyQuartz.OpenQuartzMainView();
                 }
-                else if(itemCtrl.SkillState == CrewSkillItemNController.MagicSkillState.Locked)
+                else if(itemCtrl.SkillState == CrewSkillItemController.MagicSkillState.Locked)
                 {
                     TipManager.AddTip("该伙伴的这个技能格尚未解锁");
                 }
             }
             else
-                ctrl.ShowWindowsView(itemCtrl.SkillVO);
+                ctrl.UpdateSkillDescript(itemCtrl);
         }
 
         #region ---------------------------------------------------------战技---------------------------------------------------------
 
-        
-        private static void OnCraftsBtnClick(ICrewSkillItemNController itemCtrl, ICrewSkillViewController ctrl)
+
+        private static void OnCraftsBtnClick(ICrewSkillItemController itemCtrl, ICrewSkillViewController ctrl)
         {
             DataMgr.CraftsData.curSelCrafVO = itemCtrl.SkillVO as CrewSkillCraftsVO;
-            ctrl.ShowWindowsView(itemCtrl.SkillVO);
+            
+            BtnCraftsUpClick();
+        }
+        private static void OnCraftSkillIconClick(ICrewSkillItemController itemCtrl, ICrewSkillViewController ctrl)
+        {
+            DataMgr.CraftsData.curSelCrafVO = itemCtrl.SkillVO as CrewSkillCraftsVO;
+            ctrl.UpdateSkillDescript(itemCtrl);
         }
 
         private static void BtnCraftsUpClick()
@@ -109,7 +114,6 @@ public sealed partial class CrewSkillDataMgr
                 }
                 else if (curVO.Grade * 5 + curVO.cfgVO.playerGradeLimit > CrewViewDataMgr.DataMgr.GetCurCrewGrade)
                 {
-
                     TipManager.AddTip("伙伴等级不足，升级失败");
                 }
                 else if (CheckCostCanUpGrade(curVO))
@@ -117,7 +121,11 @@ public sealed partial class CrewSkillDataMgr
                     var dic = DataMgr._data.GetCrewInfo();
                     if (dic.ContainsKey(curVO.belongCrew))
                     {
-                        CrewSkillNetMsg.ReqSkillUpgrade(dic[curVO.belongCrew].Id, curVO.cfgVO.skillMapId);
+                        var needCost = DataMgr.CraftsData.GetCostByGradeDto(curVO).silver;
+                        ExChangeHelper.CheckIsNeedExchange(AppVirtualItem.VirtualItemEnum.SILVER, needCost, delegate
+                        {
+                            CrewSkillNetMsg.ReqSkillUpgrade(dic[curVO.belongCrew].Id, curVO.cfgVO.skillMapId);
+                        });
                     }
                 }
             }
@@ -130,19 +138,15 @@ public sealed partial class CrewSkillDataMgr
         private static bool CheckCostCanUpGrade(CrewSkillCraftsVO vo)
         {
             var cost = DataMgr.CraftsData.GetCostByGradeDto(vo);
-            if (cost.silver > 0 && cost.silver > ModelManager.Player.GetPlayerWealthSilver())
+            if (cost.itemCount1 > 0 && cost.itemCount1 > BackpackDataMgr.DataMgr.GetItemCountByItemID(vo.cfgVO.consumeBook1))
             {
-                TipManager.AddTip(string.Format("身上的货币不足{0}，升级失败", cost.silver));
-                TipManager.AddTip("弹出货币快捷兑换界面(还没实现，先弹提示)");
-                return false;
-            }
-            else if (cost.itemCount1 > 0 && cost.itemCount1 > BackpackDataMgr.DataMgr.GetItemCountByItemID(vo.cfgVO.consumeBook1))
-            {
+                GainWayTipsViewController.OpenGainWayTip(vo.cfgVO.consumeBook1, new UnityEngine.Vector3(164, -46));
                 TipManager.AddTip("身上的战技书数量不足，升级失败");
                 return false;
             }
             else if (cost.itemCount2 > 0 && cost.itemCount2 > BackpackDataMgr.DataMgr.GetItemCountByItemID(vo.cfgVO.consumeBook2))
             {
+                GainWayTipsViewController.OpenGainWayTip(vo.cfgVO.consumeBook2, new UnityEngine.Vector3(164, -46));
                 TipManager.AddTip("身上的战技书数量不足，升级失败");
                 return false;
             }
@@ -173,7 +177,7 @@ public sealed partial class CrewSkillDataMgr
 
         #region---------------------------------------------------------技巧---------------------------------------------------------
         //点击出现弹窗
-        private static void OnPsvBtnClick(ICrewSkillItemNController itemCtrl, ICrewSkillViewController ctrl)
+        private static void OnPsvBtnClick(ICrewSkillItemController itemCtrl, ICrewSkillViewController ctrl)
         {
             if(itemCtrl.PsvItemData.state == PassiveState.Lock)
             {
@@ -221,6 +225,7 @@ public sealed partial class CrewSkillDataMgr
             int count = BackpackDataMgr.DataMgr.GetItemCountByItemID(psvItem.psvVO.itemId);
             if (count <= 0)
             {
+                GainWayTipsViewController.OpenGainWayTip(psvItem.psvVO.itemId, new UnityEngine.Vector3(164, -46));
                 TipManager.AddTip(psvItem.psvVO.item.name + "不足");
             }
             else
@@ -229,8 +234,8 @@ public sealed partial class CrewSkillDataMgr
                 CrewSkillNetMsg.ReqPassiveUp(crewTmp.Id, psvItem.psvVO.skillMapId);
             }
         }
-        
-        private static void OnPsvTipBtnClick(ICrewSkillPassiveTipsController ctrl)
+
+        private static void OnPsvTipBtnClick(ICrewPassiveSkillViewController ctrl)
         {
             if (ctrl.LastCtrl.GetItemInBag)
             {

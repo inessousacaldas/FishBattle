@@ -18,14 +18,13 @@ public enum TabbtnPrefabPath
     TabBtnWidget_H3_SHORT,
     TabBtnWidget_H4,
     TabBtnWidget_S1,
-    TabBtnWidget_S2,
     TabBtnWidget_S3,
     ExpressionBtn,
     TabBtnWidget_ChatTab,
     TabBtnShop_2,
     TabBtnExchange,
     TabBtnBattle,
-    TabBtnWidget_AssistCrew,
+    TabBtnEquip,
 }
 
 public interface ITabInfo

@@ -708,46 +708,12 @@ public class BattleActionPlayer : MonoBehaviour
                 if ((VideoSoldier.SoldierStatus)videoActionTargetStat.soldierStatus == VideoSoldier.SoldierStatus.SelfDefense
                     && (Skill.SkillType)skill.skillAttackType != Skill.SkillType.Magic)
                 {
-                    //                  if (_monster.dead)
-                    //                  {
-                    //                      if (_monster.IsMonster())
-                    //                      {
-                    //                          actionName = ModelHelper.AnimType.def;
-                    //                          mc.BodyShift( 0.2f,0.2f,3 ,-1f);
-                    //                      }
-                    //                      else
-                    //                      {
-                    //                          actionName = ModelHelper.AnimType.death;
-                    //                      }
-                    //                  }
-                    //                  else
-                    //                  {
-                    //                      actionName = ModelHelper.AnimType.def;
-                    //                      mc.BodyShift( 0.2f,0.2f,3 ,node.delayTime);
-                    //                  }
                     actionName = ModelHelper.AnimType.hit;
                     mc.BodyShift(0.2f, 0.2f, 3, node.delayTime);
                     PlayDefenseEffect(mc);
                 }
                 else
                 {
-                    //					if (_monster.dead)
-                    //					{
-                    //						if (_monster.IsMonster())
-                    //						{
-                    //							actionName = ModelHelper.AnimType.hit;
-                    //							mc.BodyShift( 0.4f,0.2f,3, -1f);
-                    //						}
-                    //						else
-                    //						{
-                    //							actionName = ModelHelper.AnimType.death;
-                    //						}
-                    //					}
-                    //					else
-                    //					{
-                    //						actionName = ModelHelper.AnimType.hit;
-                    //						mc.BodyShift( 0.4f,0.2f,3, node.delayTime);
-                    //					}
                     actionName = ModelHelper.AnimType.hit;
                     mc.BodyShift(0.4f, 0.2f, 3, node.delayTime);
                 }
@@ -1410,7 +1376,7 @@ public class BattleActionPlayer : MonoBehaviour
                         }
                         break;
                     case EffectTargetType.scene: //场景中心
-                        targetPoint = Vector3.zero;
+                        targetPoint = BattleConst.SceneCenterVector3;
                         break;
                     case EffectTargetType.player: //我方中心
                         effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
@@ -1437,7 +1403,7 @@ public class BattleActionPlayer : MonoBehaviour
                 }
 
                 float tDistance = Vector3.Distance(effectTime.transform.position, targetPoint);
-                if (_isAttack)//飞行特效不按顺序受击约数，直接根据攻击者受击者间距按等速执行。
+                if (_isAttack)//飞行特效不按顺序受击约束，直接根据攻击者受击者间距按等速执行。
                 {
 //                        BattleSpecialFlowManager.Instance.hitInOrderParam = tDistance / flyTime;
                     //                GameDebuger.LogError(string.Format("tDistance:{0} , flyTime:{1}, mEffectMoveSpeed:{2} ", tDistance, flyTime, mBattleController.EffectMoveSpeed));
@@ -1607,7 +1573,7 @@ public class BattleActionPlayer : MonoBehaviour
             if (node.PlayIndex >= 0 && mCurrentFinishRound != node.PlayIndex)
                 return;
             
-            LayerManager.Instance.BattleShakeEffectHelper.Launch(node.delayTime, node.intensity);
+            LayerManager.Instance.BattleShakeEffectHelper.Launch(node.duaration, node.intensity);
         }
         else
         {
@@ -1621,7 +1587,7 @@ public class BattleActionPlayer : MonoBehaviour
             if (node.PlayIndex >= 0 && mTargetIndex != node.PlayIndex)
                 return;
 
-            LayerManager.Instance.BattleShakeEffectHelper.Launch(node.delayTime, node.intensity);
+            LayerManager.Instance.BattleShakeEffectHelper.Launch(node.duaration, node.intensity);
         }
     }
 
@@ -1866,7 +1832,7 @@ public class BattleActionPlayer : MonoBehaviour
                }
                break;
             case EffectTargetType.scene: //场景中心
-                effectStartPosition = Vector3.zero;
+                effectStartPosition = BattleConst.SceneCenterVector3;
                 break;
             case EffectTargetType.player: //我方中心
                 effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);
@@ -1967,7 +1933,7 @@ public class BattleActionPlayer : MonoBehaviour
                     }
                     break;
                 case EffectTargetType.scene: //场景中心
-                    targetPoint = Vector3.zero;
+                    targetPoint = BattleConst.SceneCenterVector3;
                     break;
                 case EffectTargetType.player: //我方中心
                     effectStartPosition = BattlePositionCalculator.GetZonePosition(monster.side);

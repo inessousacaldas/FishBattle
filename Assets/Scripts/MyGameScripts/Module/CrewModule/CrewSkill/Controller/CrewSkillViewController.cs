@@ -9,6 +9,7 @@
 using System;
 using AppDto;
 using UniRx;
+using UnityEngine;
 
 public partial interface ICrewSkillViewController
 {
@@ -18,12 +19,14 @@ public partial interface ICrewSkillViewController
     void ShowWindowsView(ICrewSkillVO data);
 
     void ShowWindowsView(PsvItemData data, ICrewSkillData _data);
+
+    void UpdateSkillDescript(ICrewSkillItemController itemCtrl);
     UniRx.IObservable<ICrewSkillWindowController> GetBGClickEvt { get; }
     ICrewSkillPassiveTipsController GetPsvTipCtrl { get; }
     ICrewSkillCraftsTipsController GetCraftsTipCtrl { get; }
-    ICrewSkillCraftsViewController GetCraftsViewCtrl { get; }
-    ICrewSkillMagicViewController GetMagicViewCtrl { get; }
-    ICrewSkillPassiveViewController GetPsvViewCtrl { get; }
+    ICrewCraftSkillViewController GetCraftsViewCtrl { get; }
+    ICrewMagicSkillViewController GetMagicViewCtrl { get; }
+    ICrewPassiveSkillViewController GetPsvViewCtrl { get; }
     UniRx.IObservable<int> PsvTabMgr { get; }
     UniRx.IObservable<Unit> PsvBtnAdd { get; }
     UniRx.IObservable<Unit> PsvBtnMinus{ get; }
@@ -53,9 +56,9 @@ public partial class CrewSkillViewController
     private TabbtnManager tabMgr = null;
     private BaseView curView;
 
-    private CrewSkillCraftsViewController craftsCtrl;               //战技
-    private CrewSkillMagicViewController magicCtrl;                 //魔法
-    private CrewSkillPassiveViewController passiveCtrl;             //技巧
+    private CrewCraftSkillViewController craftsCtrl;               //战技
+    private CrewMagicSkillViewController magicCtrl;                 //魔法
+    private CrewPassiveSkillViewController passiveCtrl;             //技巧
     private CrewSkillTrainingViewController trainingCtrl;           //研修
 
     private CrewSkillMagicTipsController magicTipCtrl;
@@ -107,17 +110,17 @@ public partial class CrewSkillViewController
 
     private void CreateTabItem()
     {
-        Func<int, ITabBtnController> func = i => AddChild<TabBtnWidgetController, TabBtnWidget>(
-            View.tabBtn_UIGrid.gameObject,
-            TabbtnPrefabPath.TabBtnWidget_H1.ToString(),
-            "Tabbtn_" + i
-             );
+        tabMgr = TabbtnManager.Create(tabInfoList, i => AddTabBtn(i, View.tabBtn_UIGrid.gameObject, "TabBtnWidget_CrewSkill", "Tabbtn_"));
+        tabMgr.SetBtnLblFont(selectColor: "000000",normalColor: ColorConstantV3.Color_VerticalUnSelectColor2_Str);
+    }
 
-        tabMgr = TabbtnManager.Create(tabInfoList, func);
-        tabMgr.SetBtnLblFont(normalColor: ColorConstantV3.Color_VerticalUnSelectColor2_Str);
-
-        tabMgr.SetTabBtn(2);        //切换标签页颜色
-        tabMgr.SetTabBtn(0);
+    private ITabBtnController AddTabBtn(int i, GameObject parent, string tabPath, string name)
+    {
+        var ctrl = AddChild<TabBtnWidgetController, TabBtnWidget>(
+            parent
+            , tabPath
+            , name + i);
+        return ctrl;
     }
 
     private Subject<ICrewSkillWindowController> _bgClickEvt = new Subject<ICrewSkillWindowController>();
@@ -192,30 +195,30 @@ public partial class CrewSkillViewController
     {
         if (craftsCtrl == null)
         {
-            craftsCtrl = AddChild<CrewSkillCraftsViewController, CrewSkillCraftsView>(
+            craftsCtrl = AddChild<CrewCraftSkillViewController, CrewCraftSkillView>(
                 View.CraftsView_Transform.gameObject,
-                CrewSkillCraftsView.NAME
+                CrewCraftSkillView.NAME
             );
             craftsCtrl.SetData(data);
             craftsCtrl.UpdateView(crewID);
         }
         if (magicCtrl == null)
         {
-            magicCtrl = AddChild<CrewSkillMagicViewController, CrewSkillMagicView>(
+            magicCtrl = AddChild<CrewMagicSkillViewController, CrewMagicSkillView>(
                 View.MagicView_Transform.gameObject,
-                CrewSkillMagicView.NAME
+                CrewMagicSkillView.NAME
                 );
             magicCtrl.SetData(data);
             magicCtrl.UpdateView(crewID);
         }
         if (passiveCtrl == null)
         {
-            passiveCtrl = AddChild<CrewSkillPassiveViewController, CrewSkillPassiveView>(
+            passiveCtrl = AddChild<CrewPassiveSkillViewController, CrewPassiveSkillView>(
                 View.TechnicView_Transform.gameObject,
-                CrewSkillPassiveView.NAME
+                CrewPassiveSkillView.NAME
                 );
             passiveCtrl.SetData(data);
-            passiveCtrl.UpdateView(crewID, this);
+            passiveCtrl.UpdateView(crewID);
         }
     }
 
@@ -232,7 +235,7 @@ public partial class CrewSkillViewController
         }
         if (passiveCtrl != null)
         {
-            passiveCtrl.UpdateView(id, this);
+            passiveCtrl.UpdateView(id);
         }
         UpdateWindowView();
     }
@@ -263,16 +266,18 @@ public partial class CrewSkillViewController
         {
             case CrewSkillTab.Crafts:
                 IWindowCtrl.UpdateView("战技升级");
-                if (craftsTipCtrl == null)
-                {
-                    craftsTipCtrl = AddChild<CrewSkillCraftsTipsController, CrewSkillCraftsTips>(
-                        IWindowCtrl.Trans.gameObject,
-                        CrewSkillCraftsTips.NAME
-                        );
-                    _disposable.Add(craftsTipCtrl.OnbtnUp_UIButtonClick.Subscribe(e => craftsBtnUp.OnNext(e)));
-                }
-                craftsTipCtrl.UpdateView(skillVO);
-                curTipView = craftsTipCtrl.View;
+                GameDebuger.LogError("战技升级");
+                //if (craftsTipCtrl == null)
+                //{
+                //    craftsTipCtrl = AddChild<CrewSkillCraftsTipsController, CrewSkillCraftsTips>(
+                //        IWindowCtrl.Trans.gameObject,
+                //        CrewSkillCraftsTips.NAME
+                //        );
+                //    _disposable.Add(craftsTipCtrl.OnbtnUp_UIButtonClick.Subscribe(e => craftsBtnUp.OnNext(e)));
+                //}
+                //craftsTipCtrl.UpdateView(skillVO);
+                
+                //curTipView = craftsTipCtrl.View;
                 break;
             case CrewSkillTab.Magic:
                 IWindowCtrl.UpdateView("详细属性");
@@ -290,6 +295,31 @@ public partial class CrewSkillViewController
 
         }
         if (curTipView != null) curTipView.Show();
+    }
+
+    public void UpdateSkillDescript(ICrewSkillItemController itemCtrl)
+    {
+        var curSkillTab = CrewSkillDataMgr.DataMgr.MainTab;
+        //if (itemCtrl.SkillVO == null) return;
+        switch (curSkillTab)
+        {
+            case CrewSkillTab.Crafts:
+                //IWindowCtrl.UpdateView("战技升级");
+
+                //if (itemCtrl.SkillVO == null) return;
+                craftsCtrl.UpdateSkillDescripe(itemCtrl as CrewSkillItemController);
+                break;
+            case CrewSkillTab.Magic:
+                //IWindowCtrl.UpdateView("详细属性");
+
+                magicCtrl.UpdateSkillDescripe(itemCtrl as CrewSkillItemController);
+                break;
+            case CrewSkillTab.Passive:
+
+
+                break;
+
+        }
     }
 
     #region 技巧弹窗初始化
@@ -331,45 +361,18 @@ public partial class CrewSkillViewController
     #endregion
 
     //因为前面设计技巧数据是直接取自于dto，所以无法沿用上面的接口。
-    public void ShowWindowsView(PsvItemData data,ICrewSkillData _data)
+    public void ShowWindowsView(PsvItemData data, ICrewSkillData _data)
     {
-        //IWindowCtrl = CrewSkillDataMgr.DataMgr.GetWindonwCtrl;
-        if (IWindowCtrl == null || data.state == PassiveState.Lock) return;
-        IWindowCtrl.ShowWindow();
-        if (curTipView != null) curTipView.Hide();
-
-        if (psvTipCtrl == null)
-        {
-            psvTipCtrl = AddChild<CrewSkillPassiveTipsController, CrewSkillPassiveTips>(
-                IWindowCtrl.Trans.gameObject,
-                CrewSkillPassiveTips.NAME
-                );
-            _disposable.Add(psvTipCtrl.TabMgr.Stream.Subscribe(e => psvTabMgr.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnAdd_UIButtonClick.Subscribe(e => psvBtnAdd.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnMinus_UIButtonClick.Subscribe(e => psvBtnMinus.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnForget_UIButtonClick.Subscribe(e => psvBtnForget.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnMax_UIButtonClick.Subscribe(e => psvBtnMax.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnUp_UIButtonClick.Subscribe(e => psvBtnUp.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnUse_UIButtonClick.Subscribe(e => psvBtnUse.OnNext(e)));
-            _disposable.Add(psvTipCtrl.InputValueChange.Subscribe(e => inputValueChange.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnLearn_UIButtonClick.Subscribe(e => psvBtnLearn.OnNext(psvTipCtrl)));
-            _disposable.Add(psvTipCtrl.OnbtnWindowsForget_UIButtonEvt.Subscribe(e => psvBtnForgetSure.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnCancel_UIButtonEvt.Subscribe(e => psvBtnCancel.OnNext(e)));
-            _disposable.Add(psvTipCtrl.OnbtnBlackBG_UIButtonEvt.Subscribe(e => psvBtnBlackBG.OnNext(e)));
-            psvTipCtrl.SetData(_data);
-        }
-        curTipView = psvTipCtrl.View;
         if (data.state == PassiveState.NeedItem)
         {
-            psvTipCtrl.ShowStudyView(IWindowCtrl);
-            psvTipCtrl.OnTabChange(PassiveType.All, _data);
+            passiveCtrl.ShowSkillBookView();
+            passiveCtrl.OnTabChange(PassiveType.All, _data);
         }
-        else if(data.state == PassiveState.HaveItem)
+        else if (data.state == PassiveState.HaveItem)
         {
-            psvTipCtrl.ShowDesView(IWindowCtrl);
-            psvTipCtrl.UpdatePropertyView();
+            passiveCtrl.ShowSkillDescriptView();
         }
-        if (curTipView != null) curTipView.Show();
+
     }
     
     //当窗口打开时，也需要刷新界面数据
@@ -412,16 +415,16 @@ public partial class CrewSkillViewController
     {
         get { return craftsTipCtrl; }
     }
-    public ICrewSkillCraftsViewController GetCraftsViewCtrl
+    public ICrewCraftSkillViewController GetCraftsViewCtrl
     {
         get { return craftsCtrl; }
     }
 
-    public ICrewSkillMagicViewController GetMagicViewCtrl
+    public ICrewMagicSkillViewController GetMagicViewCtrl
     {
         get { return magicCtrl; }
     }
-    public ICrewSkillPassiveViewController GetPsvViewCtrl
+    public ICrewPassiveSkillViewController GetPsvViewCtrl
     {
         get { return passiveCtrl; }
     }

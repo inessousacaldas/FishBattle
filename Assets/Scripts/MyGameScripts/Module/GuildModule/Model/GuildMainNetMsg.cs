@@ -12,6 +12,24 @@ public sealed partial class GuildMainDataMgr
     public static class GuildMainNetMsg
     {
         private static string DELAYOPENGUILDVIEW = "DelayOpenGuildView";
+
+        public static void ReqEnterGuildInfo(System.Action completeAction)
+        {
+            GameUtil.GeneralReq(Services.Guild_QueryByPlayer(false), e => RespEnterGuildInfo(e, completeAction));
+        }
+
+        private static void RespEnterGuildInfo(GeneralResponse e, System.Action completeAction)
+        {
+            if (e is GuildBaseInfoDto)
+            {
+                var dto = e as GuildBaseInfoDto;;
+                DataMgr._data.UpdateGuildList(dto);
+            }
+            else
+                DataMgr._data.SetguildBaseInfoNull();
+            GameUtil.SafeRun(completeAction);
+        }
+
         /// <summary>
         /// 请求公会列表
         /// </summary>
@@ -82,12 +100,12 @@ public sealed partial class GuildMainDataMgr
         /// </summary>
         /// <param name="showId"></param>
         /// <param name="isDetail"></param>
-        public static void ReqGuildInfo(int showId,bool isDetail)
+        public static void ReqGuildInfo(int showId,bool isDetail,System.Action completeAction = null)
         {
             if (isDetail)
-                GameUtil.GeneralReq<GuildDetailInfoDto>(Services.Guild_QueryByShowId(showId, isDetail), RespGuildInfo);
+                GameUtil.GeneralReq<GuildDetailInfoDto>(Services.Guild_QueryByShowId(showId, isDetail),e=> RespGuildInfo(e,completeAction));
             else
-                GameUtil.GeneralReq<GuildBaseInfoDto>(Services.Guild_QueryByShowId(showId, isDetail), RespGuildInfo);
+                GameUtil.GeneralReq<GuildBaseInfoDto>(Services.Guild_QueryByShowId(showId, isDetail), e => RespGuildInfo(e, completeAction));
         }
 
         /// <summary>
@@ -95,22 +113,24 @@ public sealed partial class GuildMainDataMgr
         /// </summary>
         /// <param name="name"></param>
         /// <param name="isDetail"></param>
-        public static void ReqGuildInfo(string name,bool isDetail)
+        public static void ReqGuildInfo(string name,bool isDetail, System.Action completeAction = null)
         {
             if (isDetail)
-                GameUtil.GeneralReq<GuildDetailInfoDto>(Services.Guild_QueryByName(name, isDetail), RespGuildInfo);
+                GameUtil.GeneralReq<GuildDetailInfoDto>(Services.Guild_QueryByName(name, isDetail), e => RespGuildInfo(e, completeAction));
             else
-                GameUtil.GeneralReq<GuildBaseInfoDto>(Services.Guild_QueryByName(name, isDetail), RespGuildInfo);
+                GameUtil.GeneralReq<GuildBaseInfoDto>(Services.Guild_QueryByName(name, isDetail), e => RespGuildInfo(e, completeAction));
         }
 
-        private static void RespGuildInfo(GuildDetailInfoDto dto)
+        private static void RespGuildInfo(GuildDetailInfoDto dto, System.Action completeAction = null)
         {
             DataMgr._data.UpdateGuildDetailInfo(dto);
+            GameUtil.SafeRun(completeAction);
         }
 
-        private static void RespGuildInfo(GuildBaseInfoDto dto)
+        private static void RespGuildInfo(GuildBaseInfoDto dto, System.Action completeAction = null)
         {
             DataMgr._data.UpdateGuildList(dto);
+            GameUtil.SafeRun(completeAction);
         }
 
         /// <summary>
@@ -119,6 +139,7 @@ public sealed partial class GuildMainDataMgr
         /// <param name="showId"></param>
         public static void ReqRequstGuild(int showId,string guildName)
         {
+            if (!GuildMainViewLogic.CanRequstGuild(showId)) return;
             GameUtil.GeneralReq(Services.Guild_ApplyJoin(showId),e=> RespRequstGuild(showId, guildName));
         }
 
@@ -162,10 +183,9 @@ public sealed partial class GuildMainDataMgr
         /// 拒绝
         /// </summary>
         /// <param name="applyId"></param>
-        public static void ReqRefuse(long applyId)
+        public static void ReqRefuse(string applyId)
         {
-            GameDebuger.LogError("拒绝：" + applyId);
-            //GameUtil.GeneralReq(Services.Guild_Refuse(applyId));
+            GameUtil.GeneralReq(Services.Guild_RefuseApply(applyId));
         }
 
         /// <summary>
@@ -238,6 +258,7 @@ public sealed partial class GuildMainDataMgr
         {
             PlayerGuildInfoDto dto = null;
             DataMgr._data.UpdateGuildState(dto);
+            DataMgr._data.BackToMainCity();
             GuildMainViewLogic.CloseHasJoinView();
             TipManager.AddTip("你已成功脱离公会");
         }
@@ -367,10 +388,15 @@ public sealed partial class GuildMainDataMgr
         /// <param name="sceneName"></param>
         public static void ReqEnterGuildMap(int sceneId,string sceneName)
         {
+
             WorldManager.Instance.Enter(sceneId, false);
             GuildMainViewLogic.CloseHasJoinView();
         }
         
+        /// <summary>
+        /// 搜索
+        /// </summary>
+        /// <param name="str"></param>
         public static void ReqSearch(string str)
         {
             GameUtil.GeneralReq<GuildBaseInfoListDto>(Services.Guild_Query(str), RespSearch);
@@ -379,6 +405,80 @@ public sealed partial class GuildMainDataMgr
         private static void RespSearch(GuildBaseInfoListDto dto)
         {
             DataMgr._data.UpdateSearchGuildList(dto);
+        }
+
+        /// <summary>
+        /// 领取工资
+        /// </summary>
+        public static void ReqGainSalary()
+        {
+            GameUtil.GeneralReq(Services.Guild_GainSalary(), null, RespGainSalary);
+        }
+
+        private static void RespGainSalary()
+        {
+            DataMgr._data.SetGainSalary(true);
+        }
+
+        /// <summary>
+        /// 福利界面数据
+        /// </summary>
+        public static void ReqGuildWelfareDto()
+        {
+            GameUtil.GeneralReq<GuildWelfareDto>(Services.Guild_Welfare(), RespGuildWelfareDto);
+        }
+
+        private static void RespGuildWelfareDto(GuildWelfareDto dto)
+        {
+            DataMgr._data.SetGuildWelfareDto(dto);
+            FireData();
+        }
+
+        /// <summary>
+        /// 宝箱数据
+        /// </summary>
+        public static void ReqTreasureBox()
+        {
+            GameUtil.GeneralReq<GuildBoxDto>(Services.Guild_SelPointBox(), RespTreasureBox);
+        }
+        private static void RespTreasureBox(GuildBoxDto dto)
+        {
+            DataMgr._data.UpdateTreasureBox(dto);
+            FireData();
+        }
+
+        /// <summary>
+        /// 打开宝箱
+        /// </summary>
+        public static void ReqOepnBox()
+        {
+            GameUtil.GeneralReq<GuildBoxDto>(Services.Guild_OpenPointBox(), RespTreasureBox);
+        }
+
+        /// <summary>
+        /// 捐献可叠堆物资
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="count"></param>
+        public static void ReqDonateByItemId(int id,int count)
+        {
+            GameUtil.GeneralReq(Services.Guild_DonateByItemId(id,count), null, RespDonate);
+        }
+        /// <summary>
+        /// 捐献不可叠堆物资
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="count"></param>
+        public static void ReqDonateByUniqueId(long id)
+        {
+            GameUtil.GeneralReq(Services.Guild_DonateByUniqueId(id), null, RespDonate);
+        }
+
+        private static void RespDonate()
+        {
+            TipManager.AddTip("捐献物资成功");
+            DataMgr._data.UpdateDonateCount();
+            FireData();
         }
     }
 }

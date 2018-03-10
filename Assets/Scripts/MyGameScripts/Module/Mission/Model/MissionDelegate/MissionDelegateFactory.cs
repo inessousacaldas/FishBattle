@@ -59,5 +59,7 @@ public class MissionDelegateFactory{
         addMissionDelegate(new TreasuryMissionDelegate(missionModel,(int)MissionType.MissionTypeEnum.Treasury));
         addMissionDelegate(new UrgentMissionDelegate(missionModel,(int)MissionType.MissionTypeEnum.Urgent));
         addMissionDelegate(new CopyMissionDelegate(missionModel,(int)MissionType.MissionTypeEnum.Copy));
+        addMissionDelegate(new CopyExtraMissionDelegate(missionModel,(int)MissionType.MissionTypeEnum.CopyExtra));
+        addMissionDelegate(new GuildMissionDelegate(missionModel,(int)MissionType.MissionTypeEnum.Guild));
     }
 }

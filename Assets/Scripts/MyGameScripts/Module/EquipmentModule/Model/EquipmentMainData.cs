@@ -60,6 +60,9 @@ public sealed partial class EquipmentMainDataMgr
         public EquipmentResetViewData ResetData;
         public EquipmentInsetMedallionViewData MedallionData;
         public EquipmentEmbedViewData EmbedData;
+
+        private DailyLimit _smithLimit;
+        private DailyLimit _resetLimit;
         EquipmentInfoDto _currentEquipmentInfo;
         public EquipmentInfoDto CurrentEquipmentInfo
         {
@@ -72,7 +75,20 @@ public sealed partial class EquipmentMainDataMgr
         public void UpdateEquipmentInfo(EquipmentInfoDto dto)
         {
             _currentEquipmentInfo = dto;
+            _currentEquipmentInfo.curSmithCount = _smithLimit.limit - dto.curSmithCount;
+            _currentEquipmentInfo.curResetCount = _resetLimit.limit - dto.curResetCount;
         }
+
+        public void UpdateCurSmithCount(int count)
+        {
+            _currentEquipmentInfo.curSmithCount = _smithLimit.limit - count;
+        }
+
+        public void UpdateCurResetCount(int count)
+        {
+            _currentEquipmentInfo.curResetCount = _resetLimit.limit - count;
+        }
+
         /// <summary>
         /// 更新玩家身上装备上的信息
         /// 背包里面的装备无需更新，因为增删改 都会有BagItemNotify进行返回操作~
@@ -128,6 +144,9 @@ public sealed partial class EquipmentMainDataMgr
             EmbedData.InitData();
             MedallionData = new EquipmentInsetMedallionViewData();
             MedallionData.IninData();
+
+            _smithLimit = DataCache.getDtoByCls<DailyLimit>(22);
+            _resetLimit = DataCache.getDtoByCls<DailyLimit>(23);
         }
 
         public void Dispose()

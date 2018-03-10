@@ -31,9 +31,7 @@ public sealed partial class ScheduleMainViewDataMgr
         {
             GameUtil.GeneralReq(Services.Schedule_ActiveReward(activeRewardId), resp =>
             {
-                TipManager.AddTip("领取成功");
                 DataMgr._data.AddActivityReward(activeRewardId);
-
                 FireData();
             });
         }
@@ -47,46 +45,12 @@ public sealed partial class ScheduleMainViewDataMgr
             });
         }
 
-        //奖励普通找回
-        public static void ReqRewardBackNormal(int activeRewardId)
-        {
-            GameUtil.GeneralReq(Services.Schedule_ActiveReward(activeRewardId), resp =>
-            {
-                TipManager.AddTip("领取成功");
-
-                FireData();
-            });
-        }
-
-        //奖励普通找回
-        public static void ReqRewardBackPrefect(int activeRewardId)
-        {
-            GameUtil.GeneralReq(Services.Schedule_ActiveReward(activeRewardId), resp =>
-            {
-                TipManager.AddTip("领取成功");
-
-                FireData();
-            });
-        }
-
-        //一键找回
-        public static void ReqAllRewardBackNormal(int activeRewardId)
-        {
-            GameUtil.GeneralReq(Services.Schedule_ActiveReward(activeRewardId), resp =>
-            {
-                TipManager.AddTip("领取成功");
-
-                FireData();
-            });
-        }
-
         //一键完美找回
-        public static void ReqAllRewardBackPrefect()
+        public static void ReqRewardBack(int regainType, long regainId)
         {
-            GameUtil.GeneralReq(Services.Schedule_ActiveReward(21), resp =>
+            GameUtil.GeneralReq(Services.Schedule_Regain(regainType, regainId), resp =>
             {
-                TipManager.AddTip("领取成功");
-
+                DataMgr._data.UpdateRewardBack(regainType, regainId);
                 FireData();
             });
         }

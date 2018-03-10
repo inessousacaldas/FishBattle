@@ -7,11 +7,11 @@ using AppDto;
 
 public class ProxyTrade
 {
-    public static void OpenTradeView()
+    public static void OpenTradeView(TradeTab tab = TradeTab.Cmomerce, int goodsId = -1)
     {
         TradeDataMgr.TradeNetMsg.OpenTradeView(() =>
         {
-            TradeDataMgr.TradeViewLogic.Open();
+            TradeDataMgr.TradeViewLogic.Open(tab, goodsId);
         });
     }
 
@@ -24,6 +24,11 @@ public class ProxyTrade
 
     public static void OpenPitchPutawayAgainView(StallGoodsDto goodsDto)
     {
+        if (goodsDto == null || goodsDto.item == null)
+        {
+            GameDebuger.LogError("数据有误,请检查");
+            return;
+        }
         PitchPutawayAgainViewLogic.Open(goodsDto);
     }
 
@@ -40,6 +45,27 @@ public class ProxyTrade
     public static void ClosePitchSellView()
     {
         UIModuleManager.Instance.CloseModule(PitchSellView.NAME);
+    }
+
+    public static void OpenCmomerceSellView(BagItemDto dto)
+    {
+        if (dto == null) TipManager.AddTip("异常");
+        TradeDataMgr.TradeNetMsg.TradeQuickSell(dto.itemId, (e) =>
+        {
+            if (e == null)
+            {
+                TipManager.AddTip("物品不能出售");
+                return;
+            }
+            dto.tradePrice = (int) e.price;
+            CmomerceSellViewLogic.Open(dto);
+        });
+        
+    }
+
+    public static void CloseCmomerceSellView()
+    {
+        UIModuleManager.Instance.CloseModule(CmomerceSellView.NAME);
     }
 }
 

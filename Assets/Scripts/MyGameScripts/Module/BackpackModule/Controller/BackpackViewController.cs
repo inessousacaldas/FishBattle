@@ -432,6 +432,7 @@ public sealed partial class BackpackDataMgr
             UIModuleManager.Instance.CloseModule(BackpackView.NAME);
         }
 
+        //整理
         private void ArrangeBtn_UIButtonClickHandler()
         {
             DataMgr._data.CurBackPackSelectIdx = -1;
@@ -449,6 +450,7 @@ public sealed partial class BackpackDataMgr
             }
             BackPackNetMsg.SortBagItems();
         }
+        //分解
         private void DecomposeBtn_UIButtonClickHandler()
         {
             //TipManager.AddTip("敬请期待!");
@@ -456,7 +458,7 @@ public sealed partial class BackpackDataMgr
             var dto = DataMgr._data.backPackDto.items.Find(s => s.index == DataMgr._data.CurBackPackSelectIdx);
             ProxyBackpack.OpenComposite(CompositeTabType.DeComposite, dto);
         }
-
+        //重合
         private void Composite_UIButtonClickHandler()
         {
             //TipManager.AddTip("敬请期待!");
@@ -464,25 +466,28 @@ public sealed partial class BackpackDataMgr
             var dto = DataMgr._data.backPackDto.items.Find(s=>s.index == DataMgr._data.CurBackPackSelectIdx);
             ProxyBackpack.OpenComposite(CompositeTabType.Composite, dto);
         }
-
+        //铜币
         private void CopperAddBtnSprite_UIButtonClickHandler()
         {
         }
+        //银币
         private void SiliverAddBtnSprite_UIButtonClickHandler()
         {
-        }
-
-        //取出按钮
+        }        
         private void GetItemBtn_UIButtonClickHandler()
         {
             var idx = DataMgr._data.SelectWarehouseItemIdx;
             GetItem(idx);
         }
+        //取出
         private void GetItem(int idx)
         {
             var dto = DataMgr._data.GetWarehouseItemsByIndex(idx);
             if (dto == null)
+            {
+                TipManager.AddTopTip("请选择取出的物品");
                 return;
+            }                
             BackPackNetMsg.ReqMoveItemToBackPack(idx);
         }
 
@@ -537,12 +542,14 @@ public sealed partial class BackpackDataMgr
                 }
                 , null,type: WindowInputPrefabController.CHANGE_WARE_NAME);
         }
-
+        
         private void SaveItemBtn_UIButtonClickHandler()
         {
             var idx = DataMgr._data.CurBackPackSelectIdx;
             SaveItem(idx);
+
         }
+        //存入
         private void SaveItem(int idx)
         {
             if (!DataMgr._data.CheckWareHousePageIsOpen(DataMgr._data.CurWareHousePage))
@@ -552,7 +559,10 @@ public sealed partial class BackpackDataMgr
             }
             var dto = DataMgr._data.GetBagItemByIndex(idx);
             if (dto == null)
+            {
+                TipManager.AddTopTip("请选择存入的物品");
                 return;
+            }
             BackPackNetMsg.ReqMoveItemToWareHouse(
                 idx
                 , DataMgr._data.CurWareHousePage);

@@ -11,7 +11,7 @@ public class ProxyRank
         RankDataMgr.RankingViewLogic.Open();
     }
 
-    public static void CloseTradeView()
+    public static void CloseRankView()
     {
         UIModuleManager.Instance.CloseModule(RankingView.NAME);
     }

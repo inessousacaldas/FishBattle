@@ -23,7 +23,7 @@ public sealed class MisRewardTipView : BaseView
         widgtBox_UIButton = root.FindScript<UIButton>("widgtBox");
         lblDes_UILabel = root.FindScript<UILabel>("lblDes");
         lblTitle_UILabel = root.FindScript<UILabel>("lblTitle");
-        rewardTrans_UIGrid = root.FindScript<UIGrid>("rewardTrans");
+        rewardTrans_UIGrid = root.FindScript<UIGrid>("rewardPanel/rewardTrans");
 
     }
     #endregion

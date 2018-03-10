@@ -74,8 +74,27 @@ public partial class TeamApplicationUnitedItemController: MonolessViewController
         });
     }
     #endregion
-    
-    
+
+    #region 公会成员
+    public void UpdateItemInfo(IEnumerable<GuildMemberDto> data, int lineNum)
+    {
+        if (data == null)
+            return;
+
+        _controllerList.ForEach(item => { item.gameObject.SetActive(false); });
+        _lineNum = lineNum;
+        data.ForEachI((dto, i) =>
+        {
+            _controllerList[i].gameObject.SetActive(dto != null);
+            if (dto == null)
+                return;
+
+            _controllerList[i].SetGuildMember(dto);
+        });
+    }
+    #endregion
+
+
     protected override void OnDispose()
     {
         _subject.CloseOnceNull();

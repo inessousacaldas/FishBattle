@@ -500,6 +500,7 @@ public partial class NpcViewManager
             return;
         var npcStateDto = new SceneNpcDto();
         npcStateDto.x = missionNpcInfo.x;
+        npcStateDto.y = missionNpcInfo.y;
         npcStateDto.z = missionNpcInfo.z;
         npcStateDto.npcId = missionNpcInfo.id;
         npcStateDto.id = missionNpcInfo.id;
@@ -543,6 +544,7 @@ public partial class NpcViewManager
     {
         var npcStateDto = new SceneNpcDto();
         npcStateDto.x = npc.x;
+        npcStateDto.y = npc.y;
         npcStateDto.z = npc.z;
         npcStateDto.npcId = npc.id;
         npcStateDto.id = npc.id;
@@ -1014,7 +1016,7 @@ public partial class NpcViewManager
             {
                 bool isOffset = false;
                 key = Mathf.RoundToInt(npcState.x + 1f).ToString();
-                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x + 1f, 0f, npcState.z)) &&
+                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x + 1f, npcState.y, npcState.z)) &&
                     (offsetDic.ContainsKey(key) == false))
                 {
                     npcState.x += 1f;
@@ -1023,7 +1025,7 @@ public partial class NpcViewManager
                 }
 
                 key = Mathf.RoundToInt(npcState.x - 1f).ToString();
-                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x - 1f, 0f, npcState.z)) &&
+                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x - 1f, npcState.y, npcState.z)) &&
                     offsetDic.ContainsKey(key) == false && isOffset == false)
                 {
                     npcState.x -= 1f;
@@ -1032,7 +1034,7 @@ public partial class NpcViewManager
                 }
 
                 key = Mathf.RoundToInt(npcState.x + 2f).ToString();
-                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x + 2f, 0f, npcState.z)) &&
+                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x + 2f, npcState.y, npcState.z)) &&
                     offsetDic.ContainsKey(key) == false && isOffset == false)
                 {
                     npcState.x += 2f;
@@ -1041,7 +1043,7 @@ public partial class NpcViewManager
                 }
 
                 key = Mathf.RoundToInt(npcState.x - 2f).ToString();
-                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x - 2f, 0f, npcState.z)) &&
+                if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x - 2f, npcState.y, npcState.z)) &&
                     offsetDic.ContainsKey(key) == false && isOffset == false)
                 {
                     npcState.x -= 2f;
@@ -1051,7 +1053,7 @@ public partial class NpcViewManager
 
                 if (isOffset == false)
                 {
-                    if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x + 1f, 0f, npcState.z)))
+                    if (SceneHelper.IsCanWalkScope(new Vector3(npcState.x + 1f, npcState.y, npcState.z)))
                     {
                         npcState.x += 1f;
                     }

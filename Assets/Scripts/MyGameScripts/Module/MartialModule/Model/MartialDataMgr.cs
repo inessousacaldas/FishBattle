@@ -14,6 +14,33 @@ public sealed partial class MartialDataMgr
     {
         _disposable.Add(NotifyListenerRegister.RegistListener<KungfuActivityInfo>(UpdateKungFuInfo));
         _disposable.Add(NotifyListenerRegister.RegistListener<BattleReadyNotify>(OpenBattleReadyView));
+        _disposable.Add(WorldManager.WorkdModelStream.Subscribe(e =>
+        {
+            var sceneDto = WorldManager.Instance.GetModel().GetSceneDto();
+            if (sceneDto == null) return;
+            if (sceneDto.sceneMap.type != (int) SceneMap.SceneType.Kungfu)
+                ProxyMartial.CloseMartialView();
+            else
+            {
+                if (e.SceneId == DataMgr._data.SceneId)
+                    return;
+                var hasteam = TeamDataMgr.DataMgr.HasTeam();
+                if (!hasteam)
+                {
+                    var ctrlWin = ProxyBaseWinModule.Open();
+                    var title = "武术大会";
+                    var txt = "你当前没有队伍,是否需要匹配队伍";
+                    BaseTipData data = BaseTipData.Create(title, txt, 0, () =>
+                    {
+                        var target = DataCache.getDtoByCls<TeamActionTarget>(1201);
+                        var matchData = TeamMatchTargetData.Create(target.id, target.maxGrade, target.minGrade, true);
+                        TeamDataMgr.TeamNetMsg.AutoMatchTeam(matchData, true);
+                    }, null);
+                    ctrlWin.InitView(data);
+                }
+            }
+            DataMgr._data.SceneId = e.SceneId;
+        }));
     }
     
     private void OnDispose(){
@@ -42,5 +69,12 @@ public sealed partial class MartialDataMgr
         var controller = UIModuleManager.Instance.OpenFunModule<BattleReadyViewController>(BattleReadyView.NAME,
             UILayerType.SubModule, true, false);
         controller.OpenBattleReadyView(notify);
+    }
+
+    public bool IsInMartialScene()
+    {
+        var sceneDto = WorldManager.Instance.GetModel().GetSceneDto();
+        if (sceneDto == null) return false;
+        return sceneDto.sceneMap.type == (int) SceneMap.SceneType.Kungfu;
     }
 }

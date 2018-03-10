@@ -77,6 +77,8 @@ public partial class MissionMainViewController    {
     private int curMisTypeIdx = -1;
     private RecordRewardType recordType = RecordRewardType.None;
 
+    private bool clickByTab = true;
+
     #region 按钮初始化
     private Subject<MissionTypeItemController> misTypeItemEvt = new Subject<MissionTypeItemController>();
     public UniRx.IObservable<MissionTypeItemController> MisTypeItemClick { get { return misTypeItemEvt; } }
@@ -134,6 +136,7 @@ public partial class MissionMainViewController    {
         curAreaId = "";
         curEvtId = -1;
         curMisTypeIdx = -1;
+        bool clickByTab = true;
     }
 
 	//在打开界面之前，初始化数据
@@ -178,6 +181,7 @@ public partial class MissionMainViewController    {
     public void OnTabBtnClick(MisViewTab tabType, IMissionData data)
     {
         curTab = tabType;
+        clickByTab = true;
         switch (tabType)
         {
             case MisViewTab.Accepted:
@@ -561,9 +565,13 @@ public partial class MissionMainViewController    {
             tween.Play(true);
             tween.playDirection = AnimationOrTween.Direction.Toggle;
             OnMisTypeItemClick(typeItemList[0]);
-            if (typeItemList[0].SubItemList.Count > 0)
+            if (clickByTab)
             {
-                OnSubItemClick(typeItemList[0].SubItemList[0]);
+                if (typeItemList[0].SubItemList.Count > 0)
+                {
+                    OnSubItemClick(typeItemList[0].SubItemList[0]);
+                    clickByTab = false;
+                }
             }
         }
         else
@@ -618,7 +626,7 @@ public partial class MissionMainViewController    {
             if(i<subMax)
             {
                 Mission mission = tSubMissionMenuList[i];
-                itemCtrl.SubItemList[i].UpdateView(mission,itemCtrl,curTab);
+                itemCtrl.SubItemList[i].UpdateView(mission,itemCtrl,curTab,data);
                 itemCtrl.SubItemList[i].SetParent(itemCtrl.Tween_UIGrid.transform);
             }
             else itemCtrl.SubItemList[i].SetParent(itemCtrl.PoolParent);
@@ -633,7 +641,7 @@ public partial class MissionMainViewController    {
                 itemCtrl.Tween_UIGrid.gameObject,
                 SubMissionItem.NAME
                 );
-                item.UpdateView(mission,itemCtrl,curTab);
+                item.UpdateView(mission,itemCtrl,curTab,data);
                 _disposable.Add(item.OnSubMissionItem_UIButtonClick.Subscribe(e => subItemEvt.OnNext(item)));
                 itemCtrl.SubItemList.Add(item);
             //}
@@ -693,7 +701,7 @@ public partial class MissionMainViewController    {
         *  |-- 主线
         *  |-- 支线
         *  |-- 日常
-        *  |-- 活动
+        *  |-- 副本
         */
         List<Mission> subMissionMenuList = curTab == MisViewTab.Accepted ? data.GetExistSubMissionMenuList() : data.GetMissedSubMissionMenuList();
         List<MissionType> tMainMissionMenuList = new List<MissionType>();
@@ -719,10 +727,19 @@ public partial class MissionMainViewController    {
                         break;
                     }
                 }
-                else if(tMission.type >= (int)MissionType.MissionTypeEnum.Faction)
+                else if(tMission.type >= (int)MissionType.MissionTypeEnum.Faction && tMission.type < (int)MissionType.MissionTypeEnum.Copy)
                 {
                     //日常
-                    if( tMainMissionMenuList[j].id >= (int)MissionType.MissionTypeEnum.Faction)
+                    if( tMainMissionMenuList[j].id >= (int)MissionType.MissionTypeEnum.Faction && tMainMissionMenuList[j].id < (int)MissionType.MissionTypeEnum.Copy)
+                    {
+                        tExitsInList = true;
+                        break;
+                    }
+                }
+                else if(tMission.type >= (int)MissionType.MissionTypeEnum.Copy && tMission.type <= (int)MissionType.MissionTypeEnum.CopyExtra)
+                {
+                    //副本任务
+                    if (tMainMissionMenuList[j].id >= (int)MissionType.MissionTypeEnum.Copy && tMainMissionMenuList[j].id <= (int)MissionType.MissionTypeEnum.CopyExtra)
                     {
                         tExitsInList = true;
                         break;
@@ -764,17 +781,43 @@ public partial class MissionMainViewController    {
     {
         List<Mission> tSubMissionMenuList = curTab == MisViewTab.Accepted ? data.GetExistSubMissionMenuList() : data.GetMissedSubMissionMenuList();
         List<Mission> tSubdivisionMenuList = new List<Mission>();
-
-        List<int> typeList = new List<int>();
+        List<int> typeList = new List<int>();   //任务类型（MissionType）
+        List<int> copyTypeList = new List<int>();//副本任务类型（Copy)
         for (int i = 0, len = tSubMissionMenuList.Count; i < len; i++)
         {
             Mission tMission = tSubMissionMenuList[i];
-            if(tMission.type >= (int)MissionType.MissionTypeEnum.Faction && menuID >= (int)MissionType.MissionTypeEnum.Faction)
+            MissionType.MissionTypeEnum missionType = (MissionType.MissionTypeEnum)tMission.type;
+            MissionType.MissionTypeEnum menuType = (MissionType.MissionTypeEnum)menuID;
+            if (missionType >= MissionType.MissionTypeEnum.Faction && menuType >= MissionType.MissionTypeEnum.Faction && missionType < MissionType.MissionTypeEnum.Copy && menuType < MissionType.MissionTypeEnum.Copy)
             {
                 if (!typeList.Contains(tMission.type))
                 {
                     tSubdivisionMenuList.Add(tMission);
                     typeList.Add(tMission.type);
+                }
+            }
+            else if(missionType >= MissionType.MissionTypeEnum.Copy && menuType >= MissionType.MissionTypeEnum.Copy && missionType <= MissionType.MissionTypeEnum.CopyExtra && menuType <= MissionType.MissionTypeEnum.CopyExtra)
+            {
+                if(missionType == MissionType.MissionTypeEnum.Copy && menuType == MissionType.MissionTypeEnum.Copy)
+                {
+                    var copyList = data.GetCopyMisConfig;
+                    var val = copyList.Find(e => e.id == tMission.id);
+                    if (val != null)
+                    {
+                        if (!copyTypeList.Contains(val.copyId))
+                        {
+                            tSubdivisionMenuList.Add(tMission);
+                            copyTypeList.Add(val.copyId);
+                        }
+                    }
+                }
+                else if(missionType == MissionType.MissionTypeEnum.CopyExtra && menuType == MissionType.MissionTypeEnum.CopyExtra)
+                {
+                    if (!typeList.Contains(tMission.type))
+                    {
+                        tSubdivisionMenuList.Add(tMission);
+                        typeList.Add(tMission.type);
+                    }
                 }
             }
             else if (tMission.type == menuID)
@@ -784,6 +827,7 @@ public partial class MissionMainViewController    {
         }
         return tSubdivisionMenuList;
     }
+    
     #endregion
 
     public Mission CurMission { get { return curMission; } }

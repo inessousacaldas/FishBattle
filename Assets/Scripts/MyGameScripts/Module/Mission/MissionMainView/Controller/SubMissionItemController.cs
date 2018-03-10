@@ -43,7 +43,7 @@ public partial class SubMissionItemController
     {
         
     }
-    public void UpdateView(Mission mis, IMissionTypeItemController ctrl, MisViewTab tab)
+    public void UpdateView(Mission mis, IMissionTypeItemController ctrl, MisViewTab tab,IMissionData data)
     {
         belongItem = ctrl.TypeItem;
         mission = mis;
@@ -51,9 +51,25 @@ public partial class SubMissionItemController
             View.lbltype_UILabel.text = mis.name;
         else
         {
-            if(mis.type >= (int)MissionType.MissionTypeEnum.Faction)
+            //可接任务不会存在主线，副本彩蛋
+            MissionType.MissionTypeEnum misType = (MissionType.MissionTypeEnum)mis.type;
+            if (misType >= MissionType.MissionTypeEnum.Faction && misType < MissionType.MissionTypeEnum.Copy)
             {
                 View.lbltype_UILabel.text = mis.missionType.name;
+            }
+            else if(misType == MissionType.MissionTypeEnum.Copy)
+            {
+                var copyMisConfigList = data.GetCopyMisConfig;
+                var copyMisList = data.GetCopyMisList;
+                var val1 = copyMisConfigList.Find(e => e.id == mis.id);
+                if (val1 != null)
+                {
+                    var val2 = copyMisList.Find(e => e.id == val1.copyId);
+                    if (val2 != null)
+                    {
+                        View.lbltype_UILabel.text = val2.name;
+                    }
+                }
             }
             else
             {

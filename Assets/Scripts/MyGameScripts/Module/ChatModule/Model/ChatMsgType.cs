@@ -28,9 +28,9 @@
     GuildBuildAccelerate = 11,
     //	打开创建队伍面板
     CreateTeam = 12,
-    //	打开帮派申请界面
+    //	打开公会申请界面
     AddGuild = 13,
-    //	申请加入帮派
+    //	申请加入公会
     JoinGuild = 14,
     //	打开竞技场界面
     OpenArena = 15,
@@ -66,16 +66,26 @@
     ZoneName = 30,
     //	决斗观战
     BattleWatch = 31,
-    //宣传单
+    //  宣传单
     PublicityShow = 32,
-    //内置网页
+    //  内置网页
     BuiltInWeb = 33,
-    // 赏月求助
+    //  赏月求助
     MoonEnjoy = 34,
-    //帮派篝火
+    //  帮派篝火
     GuildBonfire = 35,
-    //阵营
+    //  阵营
     CampBattle = 36,
-    //与好友打招呼
-    ChatFriend = 37
+    //  与好友打招呼
+    ChatFriend = 37,
+    //  拒绝某人加入公会
+    RefuseJoinGuild = 38,
+    //  同意某人加入公会
+    AcceptJoinGuild = 39,
+    //  公会管理员(邮件发送开除)
+    GuildManager = 40,
+    //  回到公会(公会强盗)
+    BackToGuild = 41,
+    //  申请加入队伍
+    JoinTeam = 42
 }

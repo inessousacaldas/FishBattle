@@ -18,9 +18,13 @@ public sealed partial class MainUIDataMgr
              WorldManager.WorkdModelStream
                  .Select(data => data == null ? string.Empty : data.SceneName)
                  .CombineLatest(WorldManager.OnHeroPosStreamChange,
-                     delegate (string sceneName,Vector2 pos)
+                     delegate (string sceneName,Vector3 pos)
                      {
-                         return string.Format("{0} {1}, {2}",sceneName,(int)pos.x * 10,(int)pos.y * 10);
+                         var x = (int)(pos.x * 10);
+                         var z = (int)(pos.z * 10);
+                         if (!Application.isEditor) return x + "," + z;
+                         var y = (int)(pos.y * 10);
+                         return string.Format("{0},{1},{2}", x, y, z);
                      })
                  .Subscribe(
                  str =>

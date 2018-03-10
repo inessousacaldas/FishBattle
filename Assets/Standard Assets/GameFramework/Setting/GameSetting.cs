@@ -498,7 +498,12 @@ public static class GameSetting
         }
     }
 
-    public static long GetLastRolePlayerId()
+	public static bool IsCyouChannel
+	{
+		get { return false; }
+	}
+
+	public static long GetLastRolePlayerId()
     {
         long roleId = 0;
         string roleIdStr = PlayerPrefs.GetString(LastRolePrefsName);

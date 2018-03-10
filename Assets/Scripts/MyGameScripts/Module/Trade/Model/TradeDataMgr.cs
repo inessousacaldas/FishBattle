@@ -4,6 +4,7 @@
 // Created  : 7/1/2017 10:17:33 AM
 // **********************************************************************
 
+using System.Collections.Generic;
 using AppDto;
 
 public sealed partial class TradeDataMgr
@@ -24,6 +25,7 @@ public sealed partial class TradeDataMgr
     private void HandlerTradeGoodsNotify(TradeGoodsListNotify tradeGoods)
     {
         _data.UpdatTradeGoods(tradeGoods.tradeGoodsDtos);
+        DataMgr._data.CmomerceGoodsId = 0;
         FireData();
     }
 
@@ -50,5 +52,10 @@ public sealed partial class TradeDataMgr
         }
         DataMgr._data.UpdateTradeData(notify.items);
         FireData();
+    }
+
+    public IEnumerable<TradeGoodsDto> GetTradeGoodsDto()
+    {
+        return _data.GetTradeGoodsDto;
     }
 }

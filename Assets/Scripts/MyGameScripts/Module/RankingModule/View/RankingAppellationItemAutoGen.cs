@@ -19,6 +19,7 @@ public sealed class RankingAppellationItem : BaseView
     public UISprite RankingMark_UISprite;
     public UILabel NameLabel_UILabel;
     public UISprite MagicIcon_UISprite;
+    public UIButton ClickBtn_UIButton;
 
 
     protected override void InitElementBinding ()
@@ -32,6 +33,7 @@ public sealed class RankingAppellationItem : BaseView
         RankingMark_UISprite = root.FindScript<UISprite>("RankingMark");
         NameLabel_UILabel = root.FindScript<UILabel>("NameLabel");
         MagicIcon_UISprite = root.FindScript<UISprite>("CareerIcon/MagicIcon");
+        ClickBtn_UIButton = root.FindScript<UIButton>("ClickBtn");
 
     }
     #endregion

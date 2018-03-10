@@ -6,9 +6,9 @@ namespace SceneTrigger
     {
         public class Param
         {
-            [Rename("高度"), Slider(0, 15)]
+            [Rename("高度"), Slider(-15, 15)]
             public float addHeight;
-            [Rename("半径"), Slider(0, 15)]
+            [Rename("半径"), Slider(-15, 15)]
             public float addRadius;
         }
 

@@ -92,7 +92,17 @@ public static class ChatHelper
             if (notify is ChatNotify)
             {
                 isVoiceMsg = IsVoiceMessage(notify.content);
-                playerName = string.Format("[E8E8E8]【{0}】[-]", (notify as ChatNotify).fromPlayer.nickname);
+                if(notify.channelId == (int)ChatChannelEnum.Guild)
+                {
+                    if(notify.fromPlayer == null)
+                    {
+                        //todo公会系统提示
+                    }
+                    else
+                        playerName = string.Format("[E8E8E8]【{0}】[-]", (notify as ChatNotify).fromPlayer.nickname);
+                }
+                else
+                    playerName = string.Format("[E8E8E8]【{0}】[-]", (notify as ChatNotify).fromPlayer.nickname);
             }
             else
             {
@@ -115,7 +125,7 @@ public static class ChatHelper
                     tContent = tContent.Replace("#", "#\b");
                 }
 
-                finalMsg = string.Format("{0}{1}{2}{3}", "帮派".WrapColor("2DC6F8"),
+                finalMsg = string.Format("{0}{1}{2}{3}", "公会".WrapColor("2DC6F8"),
                     playerName,
                     isVoiceMsg ? "#leftV" : "",
                     ChatInfoViewToChatBox1(tContent).WrapColor(ColorConstantV3.Color_Blue_Str));
@@ -205,6 +215,46 @@ public static class ChatHelper
                     PrivateMsgDataMgr.DataMgr.SetCurFriendDto(_infoDto);
                     ProxySociality.OpenChatMainView(ChatPageTab.PrivateMsg);
                 }
+                break;
+            case ChatMsgType.JoinGuild://加入公会
+                int guildId = -1;
+                int.TryParse(param[1], out guildId);
+                string guildName = param[2];
+                if (guildId != -1)
+                {
+                    GuildMainDataMgr.GuildMainNetMsg.ReqRequstGuild(guildId, guildName);
+                }
+                break;
+            case ChatMsgType.ZoneName://查看玩家个人空间信息
+                long.TryParse(param[1], out playerId);
+                if (playerId != ModelManager.Player.GetPlayerId())
+                {
+                    var win = FriendDetailViewController.Show<FriendDetailViewController>(FriendDetailView.NAME, UILayerType.ThreeModule, false, true);
+                    GuildMemberDto guildMemberDto = new GuildMemberDto() { id = playerId };
+                    win.UpdateGuildView(guildMemberDto);
+                }
+                break;
+            case ChatMsgType.RefuseJoinGuild://拒绝申请入会
+                string refuseUid = param[1];
+                GuildMainDataMgr.GuildMainViewLogic.OnRefuseRequester(refuseUid);
+                break;
+            case ChatMsgType.AcceptJoinGuild://同意申请入会
+                long acceptUid = -1;
+                long.TryParse(param[1], out acceptUid);
+                if (acceptUid != -1)
+                    GuildMainDataMgr.GuildMainViewLogic.OnAcceptRequester(acceptUid);
+                break;
+            case ChatMsgType.GuildManager:  //公会管理员
+                GuildMainDataMgr.DataMgr.FindToNpc();
+                break;
+            case ChatMsgType.BackToGuild:   //回到公会场景
+                GuildMainDataMgr.GuildMainViewLogic.backGuildBtn_UIButtonClick();
+                break;
+            case ChatMsgType.JoinTeam:      //加入队伍
+                long playerTeamId = 0;
+                long.TryParse(param[1], out playerTeamId);
+                if(playerTeamId!=0)
+                    TeamDataMgr.TeamNetMsg.JoinTeam(playerTeamId);
                 break;
             default:
                 TipManager.AddTip("没有相应的解析类型");
@@ -447,9 +497,12 @@ public static class ChatHelper
                 return false;
                 break;
             case ChatChannelEnum.Guild:
-                TipManager.AddTopTip("你还没有公会，不能在公会频道发言");
-                return false;
-                break;
+                if(GuildMainDataMgr.DataMgr.PlayerGuildInfo == null)
+                {
+                    TipManager.AddTopTip("你还没有公会，不能在公会频道发言");
+                    return false;
+                }
+                return true;
             default:
                 return true;
         }
@@ -457,6 +510,7 @@ public static class ChatHelper
     }
     public static string GetLabelName(LableTypeEnum lableTypeEnum)
     {
+        //默认用系统
         switch (lableTypeEnum)
         {
             case ChatChannel.LableTypeEnum.System:
@@ -466,8 +520,23 @@ public static class ChatHelper
             case ChatChannel.LableTypeEnum.Prompt:
                 return "ChanelBG_systems";
             default :
-                return string.Empty;
+                return "ChanelBG_systems";
                             
+        }
+    }
+    public static string GetTitleName(ChatChannelEnum channelId)
+    {
+        switch (channelId)
+        {
+            case ChatChannelEnum.Hearsay: return "";
+            case ChatChannelEnum.System: return "";
+            case ChatChannelEnum.Current: return "";
+            case ChatChannelEnum.Team: return "";
+            case ChatChannelEnum.Guild: return "ChanelBG_uion";
+            case ChatChannelEnum.Country: return "";
+            case ChatChannelEnum.Friend: return "";
+            case ChatChannelEnum.Horn: return "";
+            default: return string.Empty;
         }
     }
 

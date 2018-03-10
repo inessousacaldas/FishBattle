@@ -162,7 +162,9 @@ public enum PartnerTab{
     Info = 0,          //伙伴属性
     Skill = 1,         //伙伴技能
     Cultivate = 2,     //伙伴培养
-    Favorable = 3      //好感度
+    Fetter = 3,        //羁绊
+    Favorable = 4,      //好感度
+    
 }
 
 public enum CrewQuality

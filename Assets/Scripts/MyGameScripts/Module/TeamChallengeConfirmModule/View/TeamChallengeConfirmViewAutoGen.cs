@@ -16,6 +16,7 @@ public sealed class TeamChallengeConfirmView : BaseView
     public UIGrid Grid_UIGrid;
     public UILabel TitleLabel_UILabel;
     public UILabel TimerLabel_UILabel;
+    public UILabel ReadyLabel_UILabel;
 
 
     protected override void InitElementBinding ()
@@ -26,7 +27,7 @@ public sealed class TeamChallengeConfirmView : BaseView
         Grid_UIGrid = root.FindScript<UIGrid>("BG/TeamInfo/Grid");
         TitleLabel_UILabel = root.FindScript<UILabel>("BG/TitleLabel");
         TimerLabel_UILabel = root.FindScript<UILabel>("BG/TimerLabel");
-
+        ReadyLabel_UILabel = root.FindScript<UILabel>("ReadyLabel");
     }
     #endregion
 }

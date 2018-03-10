@@ -18,6 +18,9 @@ public class ProxyProgressBar
     {
         if(!pIsMoveClose)
         {
+            var heroView = WorldManager.Instance.GetHeroView();
+            //ModelManager.Player.GetPlayerId()
+            heroView.PlayAnimation(ModelHelper.AnimType.idle);
             JSTimer.Instance.CancelCd(_timeName);
             _onFinished = null;
             UIModuleManager.Instance.CloseModule(ProgressBarView.NAME);
@@ -43,9 +46,13 @@ public class ProxyProgressBar
         ModelManager.Player.StopAutoRun();
         controller.SetMissionUsePropsProgress(true,iconStr,labelStr,callback,pIsMoveClose);
         JSTimer.Instance.SetupCoolDown(_timeName,totalTime,
-            (remainTime) => { controller.SetMissionUsePropsProgress(1 - remainTime / totalTime); },
+            (remainTime) => {
+                controller.SetMissionUsePropsProgress(1 - remainTime / totalTime);
+            },
             () =>
             {
+                var heroView = WorldManager.Instance.GetHeroView();
+                heroView.PlayAnimation(ModelHelper.AnimType.idle);
                 UIModuleManager.Instance.CloseModule(ProgressBarView.NAME);
                 GameUtil.SafeRun(onFinished);
             },updateFrequence);

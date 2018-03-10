@@ -32,6 +32,15 @@ public class AnimatorTestController : MonoViewController<AnimatorPanel>
         AddTestAnimButton("交互动作2", ModelHelper.AnimType.mood2);
         AddTestAnimButton("交互动作3", ModelHelper.AnimType.mood3);
         AddTestAnimButton("交互动作4", ModelHelper.AnimType.mood4);
+        AddTestAnimButton("采集动画",ModelHelper.AnimType.gather);
+        
+        AddTestAnimButton("co1", ModelHelper.AnimType.co1);
+
+        AddTestAnimButton("co2", ModelHelper.AnimType.co2);
+        AddTestAnimButton("co3", ModelHelper.AnimType.co3);
+        AddTestAnimButton("co4", ModelHelper.AnimType.co4);
+        AddTestAnimButton("co5", ModelHelper.AnimType.co5);
+        AddTestAnimButton("co6",ModelHelper.AnimType.co6);
         View.grid_UIGrid.Reposition();
     }
 
@@ -52,7 +61,7 @@ public class AnimatorTestController : MonoViewController<AnimatorPanel>
         var uibutton = btn.GetMissingComponent<UIButton>();
         EventDelegate.Set(uibutton.onClick, delegate()
             {
-                WorldManager.Instance.GetHeroView().TextPlayAnimation(animTypeName);
+                WorldManager.Instance.GetHeroView().PlayAnimation(animTypeName);
             });
     }
 

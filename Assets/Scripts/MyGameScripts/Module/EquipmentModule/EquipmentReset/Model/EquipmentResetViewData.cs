@@ -28,6 +28,8 @@ public interface IEquipmentResetViewData
     /// 洗练需要的材料
     /// </summary>
     SmithItemVo CurSmithItemVo { get; }
+
+    EquipmentInfoDto CurrentEquipmentInfo { get; }
 }
 public sealed partial class EquipmentMainDataMgr
 {
@@ -35,7 +37,7 @@ public sealed partial class EquipmentMainDataMgr
     public class EquipmentResetViewData : IEquipmentResetViewData
     {
         public static int MinOpenGrade { private set; get; }
-
+        public EquipmentInfoDto CurrentEquipmentInfo { get { return DataMgr._data.CurrentEquipmentInfo; } }
 
         /// <summary>
         /// 设置默认值

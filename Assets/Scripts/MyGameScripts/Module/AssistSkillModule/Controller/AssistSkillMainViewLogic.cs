@@ -25,6 +25,11 @@ public sealed partial class AssistSkillMainDataMgr
 
         public static void Open()
         {
+            if(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_69))
+            {
+                AssistSkillMainNetMsg.ReqCrewShortInfo();
+                AssistSkillMainNetMsg.ReqDelegateMissionMsg();
+            }
         // open的参数根据需求自己调整
 	    var layer = UILayerType.DefaultModule;
             var ctrl = AssistSkillMainViewController.Show<AssistSkillMainViewController>(
@@ -56,11 +61,7 @@ public sealed partial class AssistSkillMainDataMgr
             
             ctrl.OnChildCtrlAdd += Ctrl_OnChildCtrlAdd;
             SetRightCurTab(RightViewTab.AssistSkillView);
-            if(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_69))
-            {
-                AssistSkillMainNetMsg.ReqCrewShortInfo();
-                AssistSkillMainNetMsg.ReqDelegateMissionMsg();
-            }
+            
             //未学习技能时 打开界面默认到初次选择界面
             if (DataMgr._data.SkillId <= 0)
                 DataMgr._data.CurTab = AssistViewTab.ChooseView;
@@ -444,9 +445,11 @@ public sealed partial class AssistSkillMainDataMgr
                     {
                         TipManager.AddTip(string.Format("{0}数量不足", name));
                         GainWayTipsViewController.OpenGainWayTip(100013, new UnityEngine.Vector3(18, 19));
+                        var itemDto = DataCache.getDtoByCls<GeneralItem>(100013);
+                        ProxyTips.OpenTipsWithGeneralItem(itemDto, new UnityEngine.Vector3(-420, 122, 0));
                     }
                     else
-                        AssistSkillMainNetMsg.ReqRefresh(100013);//刷新委托书
+                        AssistSkillMainNetMsg.ReqRefresh();//刷新委托书
 
                     return;
                 }               
@@ -458,9 +461,11 @@ public sealed partial class AssistSkillMainDataMgr
                     {
                         TipManager.AddTip(string.Format("{0}数量不足", name));
                         GainWayTipsViewController.OpenGainWayTip(100013, new UnityEngine.Vector3(18, 19));
+                        var itemDto = DataCache.getDtoByCls<GeneralItem>(100013);
+                        ProxyTips.OpenTipsWithGeneralItem(itemDto, new UnityEngine.Vector3(-420, 122, 0));
                     }
                     else
-                        AssistSkillMainNetMsg.ReqRefresh(100013);
+                        AssistSkillMainNetMsg.ReqRefresh();
                 }, null);
 
                 var contentCtrl = controller.InitView(tipData);
@@ -495,7 +500,7 @@ public sealed partial class AssistSkillMainDataMgr
                         GainWayTipsViewController.OpenGainWayTip(100014, new UnityEngine.Vector3(18, 19));
                     }
                     else
-                        AssistSkillMainNetMsg.ReqFastComplete(DataMgr._data.CurMissionId, 100014);
+                        AssistSkillMainNetMsg.ReqFastComplete(DataMgr._data.CurMissionId);
                 }, null);
 
                 controller.InitView(tipData);
@@ -514,7 +519,7 @@ public sealed partial class AssistSkillMainDataMgr
 
         private static bool IsCurMisStart()
         {
-            var curMisDto = DataMgr._data.MissionList.Find(x => x.id == DataMgr._data.CurMissionId);
+            var curMisDto = DataMgr._data._missionList.Find(x => x.id == DataMgr._data.CurMissionId);
             //已开始或已完成
             if (curMisDto != null && curMisDto.finishTime > 0) return true;
             return false;

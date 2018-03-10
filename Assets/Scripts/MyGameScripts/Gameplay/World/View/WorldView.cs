@@ -67,6 +67,7 @@ public class WorldView
     {
         if (AstarPath.active != null)
         {
+
             return AstarPath.active.GetNavmeshRandomPoin();
         }
         return Vector3.zero;
@@ -127,6 +128,10 @@ public class WorldView
         InitPlayers();
         InitNpc();
         _isInitFinish = true;
+        //  如果玩家使用宝图到达指定点后却不使用，跳转场景了需要把使用的关闭
+        MainUIDataMgr.MainUIViewLogic.OpenMissionProps(null,null,true);
+        //  如果玩家弹出彩蛋界面不使用，跳转场景了需要把使用的关闭
+        ProxySpecialCopy.Close();
         //  重新刷新任务面板
         GameDebuger.TODO(@"ModelManager.MissionView.GetSubMissionMenuListInMainUIExpand();
         //  如果玩家使用宝图到达指定点后却不使用，跳转场景了需要把使用的关闭
@@ -240,7 +245,7 @@ public class WorldView
 
         if (_playerViewDic.ContainsKey(playerDto.id))
         {
-            ResetPlayerViewPos(playerDto.id, playerDto.x, playerDto.z);
+            ResetPlayerViewPos(playerDto.id, playerDto.x, playerDto.y, playerDto.z);
         }
         else
         {
@@ -268,7 +273,7 @@ public class WorldView
         {
             playerDto.x = playerDto.walkPoint.x;
             playerDto.z = playerDto.walkPoint.z;
-            Vector3 walkPoint = SceneHelper.GetSceneStandPosition(new Vector3(playerDto.x, 0, playerDto.z), Vector3.zero);
+            Vector3 walkPoint = SceneHelper.GetPositionInScene(new Vector3(playerDto.x, 0, playerDto.z), Vector3.zero);
             newPlayerView.WalkToPoint(walkPoint);
         }");
     }
@@ -340,12 +345,12 @@ public class WorldView
         }
     }
 
-    private void ResetPlayerViewPos(long playerId, float x, float z)
+    private void ResetPlayerViewPos(long playerId, float x, float y, float z)
     {
         PlayerView playerView = null;
         if (_playerViewDic.TryGetValue(playerId, out playerView))
         {
-            Vector3 position = SceneHelper.GetSceneStandPosition(new Vector3(x, 0, z), Vector3.zero);
+            Vector3 position = SceneHelper.GetPositionInScene(x, y, z);
             playerView.ChangeToPoint(position);
         }
     }
@@ -376,22 +381,20 @@ public class WorldView
         }
     }
 
-    private void UpdatePlayerViewPos(long playerId, float x, float z)
+    private void UpdatePlayerViewPos(long playerId, float x, float y, float z)
     {
         PlayerView playerView = null;
-        if (_playerViewDic.TryGetValue(playerId, out playerView))
-        {
-            Vector3 position = SceneHelper.GetSceneStandPosition(new Vector3(x, 0, z), Vector3.zero);
-            playerView.WalkToPoint(position);
-        }
+        if (!_playerViewDic.TryGetValue(playerId, out playerView)) return;
+        var position = SceneHelper.GetPositionInScene(x, y, z);
+        playerView.WalkToPoint(position);
     }
 
-    private void ChangePlayerViewPos(long playerId, float x, float z)
+    private void ChangePlayerViewPos(long playerId, float x, float y, float z)
     {
         PlayerView playerView = null;
         if (_playerViewDic.TryGetValue(playerId, out playerView))
         {
-            Vector3 position = SceneHelper.GetSceneStandPosition(new Vector3(x, 0, z), Vector3.zero);
+            Vector3 position = SceneHelper.GetPositionInScene(x, y, z);
             playerView.ChangeToPoint(position);
         }
     }
@@ -459,12 +462,12 @@ public class WorldView
         }
     }
 
-    private void UpdateNpcViewPos(long npcId, float x, float z)
+    private void UpdateNpcViewPos(long npcId, float x, float y, float z)
     {
         BaseNpcUnit npcUnit = _npcViewManager.GetNpcUnit(npcId);
         if (npcUnit != null && (npcUnit is TriggerNpcUnit))
         {
-            Vector3 position = SceneHelper.GetSceneStandPosition(new Vector3(x, 0, z), Vector3.zero);
+            Vector3 position = SceneHelper.GetPositionInScene(x, y, z);
             (npcUnit as TriggerNpcUnit).WalkToPoint(position);
         }
     }

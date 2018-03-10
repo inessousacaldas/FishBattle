@@ -82,8 +82,8 @@ public partial class ShopItemViewController:IShopItemViewController
 
         var priceIconstr = ItemIconConst.GetIconConstByItemId((AppVirtualItem.VirtualItemEnum)vo.ExpendItemId);
 
-        View.price_UILabel.text = priceIconstr + vo.DiscountPrice;
-        View.price_raw_UILabel.text = priceIconstr + vo.Price;
+        View.price_UILabel.text = string.Format("{0} {1}", priceIconstr, vo.DiscountPrice);
+        View.price_raw_UILabel.text = string.Format("{0} {1}", priceIconstr, vo.Price);
 
         SetIconSprite(vo.Icon);
         View.name_Label_UILabel.text = vo.Name;

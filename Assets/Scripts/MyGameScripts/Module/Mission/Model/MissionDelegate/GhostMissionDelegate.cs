@@ -46,7 +46,7 @@ public class GhostMissionDelegate : BaseMissionDelegate,IMissionDelegate {
          && _model.GetLastFindMission().type == dto.mission.type)
          || _model.GetLastFindMission() == null)
         {
-            _model.FindToMissionNpc(dto.mission);
+            _model.WaitFindToMissionNpc(dto.mission);
         }
         //_model.WaitFindToMissionNpc(dto.mission);
     }
@@ -60,6 +60,7 @@ public class GhostMissionDelegate : BaseMissionDelegate,IMissionDelegate {
         if(tPlayerGhostMissionDto.mission.next == null)
         {
             MissionDataMgr.MissionData.mGhostRingCount--;
+            GameDebuger.LogError(MissionDataMgr.MissionData.mGhostRingCount +",环数");
             WorldManager.Instance.FlyToByNpc(tPlayerGhostMissionDto.mission.missionType.acceptNpc);
         }
         else
@@ -220,6 +221,11 @@ public class GhostMissionDelegate : BaseMissionDelegate,IMissionDelegate {
     {
         winTips = "确认是否放弃该任务";
         return true;
+    }
+
+    public void ReqEnterMission(Mission mission,SubmitDto submitDto)
+    {
+        
     }
     #endregion
 }

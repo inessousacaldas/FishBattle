@@ -57,7 +57,13 @@ namespace SceneTriggerEditor
                         EditorGUI.BeginChangeCheck();
                         GUILayout.BeginHorizontal();
                         GUILayout.Space(space);
-                        int longValue = EditorGUILayout.DelayedIntField(label, property.intValue);
+                        EnumMask enumMaskAttribute = GetEnumMaskAttribute(property);
+                        int longValue;
+                        if (enumMaskAttribute == null)
+                            longValue = EditorGUILayout.DelayedIntField(label, property.intValue);
+                        else
+                            longValue = EditorGUILayout.MaskField(label, property.intValue, Enum.GetNames(enumMaskAttribute.type));
+
                         GUILayout.EndHorizontal();
                         if (EditorGUI.EndChangeCheck())
                         {
@@ -242,6 +248,15 @@ namespace SceneTriggerEditor
             }
 
         }
+
+        private static EnumMask GetEnumMaskAttribute(Property property)
+        {
+            var attributeArray = property.fieldInfo.GetCustomAttributes(typeof(EnumMask), false);
+
+            var enumMaskAttribute = attributeArray.Length > 0 ? (EnumMask)attributeArray[0] : null;
+            return enumMaskAttribute;
+        }
+
         private static string GetFieldLabel(Property property)
         {
             string label;

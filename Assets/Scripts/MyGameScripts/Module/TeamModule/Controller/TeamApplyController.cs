@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using AppDto;
 
 public class TeamApplyController : MonolessViewController<CommonTipWin>
@@ -48,10 +48,26 @@ public class TeamApplyController : MonolessViewController<CommonTipWin>
     public void SetMainContent(TeamRequestNotify notify)
     {
         _requestNotify = notify;
-
+        bool isCopyExtr = false;
+        string str;
+        List<Mission> tMission = MissionDataMgr.DataMgr.GetExistSubMissionMenuList();
+        for(int i = 0;i < tMission.Count;i++)
+        {
+            if(tMission[i].type == (int)MissionType.MissionTypeEnum.CopyExtra)
+            {
+                isCopyExtr = true;
+                break;
+            }
+        }
+        if(isCopyExtr)
+        {
+            str = "接收新队员将放弃当前的彩蛋任务，是否继续接收队员？";
+        }
+        else {
+            str = string.Format("{0}({1}级)申请加入你的队伍",notify.playerNickname,notify.playerGrade);
+        }
         _view.TitleLb_UILabel.text = "申请入队";
         _view.OKLabel_UILabel.text = "同意";
-
-        _view.ContentLb_UILabel.text = string.Format("{0}{1}申请加入你的队伍", notify.playerNickname, notify.playerGrade);
+        _view.ContentLb_UILabel.text = str;
     }
 }

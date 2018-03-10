@@ -24,7 +24,7 @@ public sealed partial class BattleSkillPointView : BaseView
     public GameObject hp_ProgressBar;
     public GameObject ep_ProgressBar;
     public GameObject cp_ProgressBar;
-    public GameObject effgo;
+    public UIWidget effgo;
     
     protected override void InitElementBinding ()
     {
@@ -37,7 +37,7 @@ public sealed partial class BattleSkillPointView : BaseView
         LabelCurCP_UILabel = root.FindScript<UILabel>("CntrChanger/CntrLabel/cp/LabelCurCP");
         CntrNext_TweenPosition = root.FindScript<TweenPosition>("CntrChanger/CntrNext");
         LabelOptionStatus_UILabel = root.FindScript<UILabel>("CntrChanger/CntrLabel/LabelOptionStatus");
-        effgo = root.FindGameObject("CntrChanger/SpriteBG/effgo");
+        effgo = root.FindScript<UIWidget>("CntrChanger/SpriteBG/effgo");
         autoAtkBtn_UISprite = root.FindScript<UISprite>("CntrChanger/autoAtkBtn");
         hp_ProgressBar = root.FindGameObject("CntrChanger/CntrLabel/hp/hp_ProgressBar");
         ep_ProgressBar = root.FindGameObject("CntrChanger/CntrLabel/ep/ep_ProgressBar");

@@ -66,8 +66,15 @@ public sealed partial class EmailDataMgr :AbstractAsynInit
         if (notify != null)
         {
             //领取附件成功
-            if (notify.extractmailIds != null)
+            if (notify.extractmailIds != null && notify.extractmailIds.Count > 0)
             {
+                if(!notify.allExtra)
+                {
+                    TipManager.AddTip("包裹已满，领取邮件失败。");
+                }
+                else {
+                    TipManager.AddTip("领取成功");
+                }
                 notify.extractmailIds.ForEach<long>(id =>
                 {
                     var dto = _data.MailDtoList.Find(mail => mail.id == id);

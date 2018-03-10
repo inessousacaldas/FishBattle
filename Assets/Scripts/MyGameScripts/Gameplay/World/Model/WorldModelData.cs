@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using AppDto;
+using UniRx;
 
 public interface IWorldViewData
 {
@@ -10,7 +11,6 @@ public interface IWorldViewData
 public interface IWorldModelData
 {
     IWorldViewData WorldViewData { get; }
-    ScenePlayerDto PlayerSceneDto { get; }
 }
 
 public sealed partial class WorldModel
@@ -32,23 +32,7 @@ public sealed partial class WorldModel
         public IEnumerable<long > LatestPlayerChageTeamStatusSet {
             get { return latestPlayerChageTeamStatusSet; }
         }
-
-        //todo预留
-        public IEnumerable<ScenePlayerDto> PlayersDic { get { return _playersDic.Keys.Map(id=>_playersDic[id]); } }
-
-        public ScenePlayerDto PlayerSceneDto
-        {
-            get
-            {
-                ScenePlayerDto dto = null;
-                if(_playersDic.TryGetValue(ModelManager.Player.GetPlayerId(),out dto))
-                {
-
-                }
-                return dto;
-            }
-        }
-
+        
         public void UpdateWithSceneNotify(TeamSceneNotify noti)
         {
             if (noti == null || noti.teamId <= 0) return;
@@ -92,5 +76,7 @@ public sealed partial class WorldModel
             p.teamIndex = -1;
             GameEventCenter.SendEvent(GameEvent.SCENE_TEAM_NOTIFY, new List<long>(1){noti.playerId});
         }
+
+        
     }
 }

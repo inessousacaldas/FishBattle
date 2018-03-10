@@ -23,9 +23,12 @@ public partial class CrewInfoController:
     
     private int _maxCrewSkill = 4;    //未获得伙伴最多显示4个技能
     private int _detailInfoLevel = 3;   //3代表详细属性界面显示内容
-	
-    private List<AttrLabelController> _baseAttrList = new List<AttrLabelController>();
-    private List<AttrLabelController> _secondAttrList = new List<AttrLabelController>();
+
+    private int _curCrewId = 0;
+    private int _crewMaxLv = 79;        //暂时写死79级
+
+    private List<AttrLabelCellController> _baseAttrList = new List<AttrLabelCellController>();
+    private List<AttrLabelCellController> _secondAttrList = new List<AttrLabelCellController>();
     private List<ItemCellController> _skillList = new List<ItemCellController>(); 
     private CrewPropPointController _propPoint;
 
@@ -53,6 +56,7 @@ public partial class CrewInfoController:
 
         UpdateBaseAttr();
         UpdateSecondAttr();
+        UpdateExpSlider();
 
         _view.CharacterLb_UILabel.text = PersonalityType[data.personality];
     }
@@ -90,6 +94,21 @@ public partial class CrewInfoController:
             }
         });
     }
+
+    private void UpdateExpSlider()
+    {
+        if (_data == null) return;
+
+        var lv = _data.grade + 1;
+        if (lv > _crewMaxLv)
+            lv = _crewMaxLv;
+
+        ExpGrade grade = DataCache.getDtoByCls<ExpGrade>(lv);
+        float value = (float)_data.exp / (float)grade.petExp;
+        _view.ExpSlider_UISlider.value = value;
+        _view.PercentLb_UILabel.text = string.Format("{0}%", (int)(value*100));
+        _view.LvlLbl_UILabel.text = string.Format("Lv.{0}", _data.grade.ToString());
+    }
     
     protected override void AfterInitView()
     {
@@ -114,6 +133,7 @@ public partial class CrewInfoController:
         EventDelegate.Add(_view.pageSprite_1_UIButton.onClick, () => { OnChangePageClick(CrewBookTab.Quartz); });
         EventDelegate.Add(_view.BaseInfoBtn_UIButton.onClick, () => OnBaseInfoBtnClick());
         EventDelegate.Add(_view.SecondInfoBtn_UIButton.onClick, () => OnSecondInfoBtnClick());
+        EventDelegate.Add(_view.AddExpBtn_UIButton.onClick, OnAddExpBtnClick);
     }
 
     protected override void OnDispose()
@@ -138,7 +158,7 @@ public partial class CrewInfoController:
         });
         DictSort(list);
 
-        controller.SetPosition(new Vector3(-252, -32, 0));
+        controller.SetPosition(new Vector3(-138, -21, 0));
         controller.SetCrewDetailInfo(list, _data.properties);
     }
 
@@ -175,7 +195,7 @@ public partial class CrewInfoController:
         for (int i = 0; i < _view.BaseGrid_UIGrid.transform.childCount; i++)
         {
             var lb = _view.BaseGrid_UIGrid.transform.GetChild(i).gameObject;
-            var com = AddController<AttrLabelController, AttrLabel>(lb);
+            var com = AddController<AttrLabelCellController, AttrLabelCell>(lb);
             _baseAttrList.Add(com);
         }
     }
@@ -185,7 +205,7 @@ public partial class CrewInfoController:
         for (int i = 0; i < _view.SecondGrid_UIGrid.transform.childCount; i++)
         {
             var lb = _view.SecondGrid_UIGrid.transform.GetChild(i).gameObject;
-            var com = AddController<AttrLabelController, AttrLabel>(lb);
+            var com = AddController<AttrLabelCellController, AttrLabelCell>(lb);
             _secondAttrList.Add(com);
         }
     }
@@ -245,17 +265,17 @@ public partial class CrewInfoController:
         View.InfoTabLb_UILabel.fontSize = tab == CrewBookTab.Info ? 22 : 20;
         View.QuartzTabLb_UILabel.fontSize = tab == CrewBookTab.Quartz? 22 : 20;
         View.InfoTabLb_UILabel.text = tab == CrewBookTab.Info
-            ? "偏向".WrapColor(ColorConstantV3.Color_VerticalSelectColor_Str)
-            : "偏向".WrapColor(ColorConstantV3.Color_VerticalUnSelectColor2_Str);
+            ? "偏向".WrapColor("000000")
+            : "偏向".WrapColor("ffffff");
         View.QuartzTabLb_UILabel.text = tab == CrewBookTab.Quartz
-            ? "导力器".WrapColor(ColorConstantV3.Color_VerticalSelectColor_Str)
-            : "导力器".WrapColor(ColorConstantV3.Color_VerticalUnSelectColor2_Str);
+            ? "导力器".WrapColor("000000")
+            : "导力器".WrapColor("ffffff");
         View.pageSprite_UIButton.sprite.depth = tab == CrewBookTab.Info ? 9 : 8;
         View.pageSprite_1_UIButton.sprite.depth = tab == CrewBookTab.Quartz ? 9 : 8;
-        View.pageSprite_UIButton.sprite.spriteName = tab == CrewBookTab.Info ? "Tab_2_On" : "Tab_2_Off";
-        View.pageSprite_1_UIButton.sprite.spriteName = tab == CrewBookTab.Quartz ? "Tab_2_On" : "Tab_2_Off";
-        View.pageSprite_UIButton.normalSprite = tab == CrewBookTab.Info ? "Tab_2_On" : "Tab_2_Off";
-        View.pageSprite_1_UIButton.normalSprite = tab == CrewBookTab.Quartz ? "Tab_2_On" : "Tab_2_Off";
+        View.pageSprite_UIButton.sprite.spriteName = tab == CrewBookTab.Info ? "tab_2_On" : "tab_2_Off";
+        View.pageSprite_1_UIButton.sprite.spriteName = tab == CrewBookTab.Quartz ? "tab_2_On" : "tab_2_Off";
+        View.pageSprite_UIButton.normalSprite = tab == CrewBookTab.Info ? "tab_2_On" : "tab_2_Off";
+        View.pageSprite_1_UIButton.normalSprite = tab == CrewBookTab.Quartz ? "tab_2_On" : "tab_2_Off";
     }
 
     public void SetGoActive(bool b)
@@ -277,5 +297,10 @@ public partial class CrewInfoController:
         var ctrl = UIModuleManager.Instance.OpenFunModule<PropertyTipController>(PropertyTip.NAME, UILayerType.SubModule, true);
         ctrl.Init(PlayerPropertyTipType.FightType, GlobalAttr.SECOND_ATTRS_TIPS);
         ctrl.SetPostion(new Vector3(-229, -32, 0));
+    }
+
+    private void OnAddExpBtnClick()
+    {
+        CrewProxy.OpenCrewUpGradeView();
     }
 }

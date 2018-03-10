@@ -8,10 +8,20 @@
 
 using System;
 using AppDto;
+using UniRx;
 using UnityEngine;
+
+public partial interface IRankingAppellationItemController
+{
+    UniRx.IObservable<IRankItemData> OnClickHandler { get; }
+}
 
 public partial class RankingAppellationItemController
 {
+    private Subject<IRankItemData> _clickEvt = new Subject<IRankItemData>();
+    public UniRx.IObservable<IRankItemData> OnClickHandler { get { return _clickEvt; } }
+
+    private IRankItemData _itemdata;
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
@@ -21,7 +31,7 @@ public partial class RankingAppellationItemController
     // 客户端自定义事件
     protected override void RegistCustomEvent ()
     {
-
+        EventDelegate.Add(_view.ClickBtn_UIButton.onClick, () => { _clickEvt.OnNext(_itemdata);});
     }
 
     protected override void OnDispose()
@@ -35,7 +45,7 @@ public partial class RankingAppellationItemController
         
     }
 
-    public void SetItemInfo(RankItemDto dto, int index)
+    public void SetItemInfo(RankItemDto dto, int index, int rankId)
     {
         SetNullItem();
         _view.PlayerIcon_UISprite.gameObject.SetActive(dto != null);
@@ -43,6 +53,8 @@ public partial class RankingAppellationItemController
             return;
 
         var type = dto.GetType();
+        Rankings rankings = DataCache.getDtoByCls<Rankings>(rankId);
+        _itemdata = RankItemData.Create(dto.id, rankings);
         switch (type.ToString())
         {
             case "AppDto.RankCrewDto":

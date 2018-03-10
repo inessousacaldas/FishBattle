@@ -53,10 +53,10 @@ public class SystemTimeManager : MonoBehaviour
     {
         //--todo 明达
         //发送Update事件到NpcViewManager
-        if (npcMgr == null && WorldManager.Instance != null){
+        if(npcMgr == null && WorldManager.Instance != null)
+        {
             npcMgr = WorldManager.Instance.GetNpcViewManager();
         }
-//        var npcMgr = WorldManager.Instance.GetNpcViewManager();
         if (npcMgr != null)
         {
             npcMgr.Tick();
@@ -83,6 +83,7 @@ public class SystemTimeManager : MonoBehaviour
 
     public void Dispose()
     {
+        npcMgr = null;
         JSTimer.Instance.CancelCd("SystemCheckTimer");
     }
 

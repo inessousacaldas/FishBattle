@@ -50,6 +50,10 @@ public partial interface IGuildHasJoinViewController : ICloseView
     UniRx.IObservable<Unit> OnManifestoModificationBtn_UIButtonClick { get; }
     UniRx.IObservable<Unit> OnMoreMessageLabel_UIButtonClick { get; }
     #endregion
+    #region 福利
+    UniRx.IObservable<Unit> OnwelfareExplainBtn_UIButtonClick { get; }  
+    UniRx.IObservable<GuildBuildItemController> OnwelfareCheckBtn_UIButtonClick { get; }
+    #endregion
 }
 
 public partial class GuildHasJoinViewController:FRPBaseController<
@@ -245,5 +249,21 @@ public partial class GuildHasJoinViewController:FRPBaseController<
         get { return MoreMessageLabel_UIButtonEvt; }
     }
 
+    #endregion
+
+    #region 福利
+
+    private Subject<Unit> welfareExplainBtn_UIButtonEvt = new Subject<Unit>();
+    public UniRx.IObservable<Unit> OnwelfareExplainBtn_UIButtonClick
+    {
+        get { return welfareExplainBtn_UIButtonEvt; }
+    }
+
+    private Subject<GuildBuildItemController> welfareCheckBtn_UIButtonEvt = new Subject<GuildBuildItemController>();
+    public UniRx.IObservable<GuildBuildItemController> OnwelfareCheckBtn_UIButtonClick
+    {
+        get { return welfareCheckBtn_UIButtonEvt; }
+    }
+    
     #endregion
 }

@@ -32,6 +32,7 @@ public partial class RecommendTeamViewController
     private Dictionary<GameObject, TeamEasyGroupItemController> _teamApplicationItemsDic  = new Dictionary<GameObject, TeamEasyGroupItemController>();
     private Dictionary<GameObject, TeamApplicationUnitedItemController> _playerApplicationItemDic = new Dictionary<GameObject, TeamApplicationUnitedItemController>(); 
     private Dictionary<GameObject, TeamApplicationUnitedItemController> _friendApplicationItemDic = new Dictionary<GameObject, TeamApplicationUnitedItemController>(); 
+    private Dictionary<GameObject, TeamApplicationUnitedItemController> _guildPlayerItemDice = new Dictionary<GameObject, TeamApplicationUnitedItemController>();
 
     private static readonly ITabInfo[] TabName =
     {
@@ -52,6 +53,7 @@ public partial class RecommendTeamViewController
         InitTeamItems();
         InitPlayerItems();
         InitFriendItems();
+        InitGuildPlayerItems();
         TurnPageView(_curTab);
     }
 
@@ -61,6 +63,7 @@ public partial class RecommendTeamViewController
         _view.PlayerGrid_UIRecycledList.onUpdateItem = UpdatePlayerRecycledList;
         _view.TeamGrid_UIRecycledList.onUpdateItem = UpdateTeamRecycledList;
         _view.FriendGrid_UIRecycledList.onUpdateItem = UpdateFriendRecycledList;
+        _view.GuildGrid_UIRecycledList.onUpdateItem = UpdateGuildRecycledList;
 
         _disposable.Add(OnRefreshBtn_UIButtonClick.Subscribe(_ => OnRefreshPlayerOnHandler()));
         _disposable.Add(OnOneKeyInviteBtn_UIButtonClick.Subscribe(_ => OnOneKeyInviteBtnClickHandler())); 
@@ -128,6 +131,24 @@ public partial class RecommendTeamViewController
         }
     }
 
+    private void InitGuildPlayerItems()
+    {
+        for (int i = 0; i < TeamDataMgr.CreateTeamItemMax; ++i)
+        {
+            var ctrl = AddChild<TeamApplicationUnitedItemController, TeamApplicationUnitedItem>(
+                _view.GuildGrid_UIRecycledList.gameObject
+                , TeamApplicationUnitedItem.NAME
+                , "GuildPlayerItem" + i);
+
+            _guildPlayerItemDice.Add(ctrl.gameObject, ctrl);
+            _disposable.Add(ctrl.GetSubject.Subscribe(index =>
+            {
+                var dto = TeamDataMgr.DataMgr.GetGuildMemberDtos().TryGetValue(index);
+                OnGuildMemberItemClick(dto);
+            }));
+        }
+    }
+
     private void IniePageTabBtns()
     {
         var idx = TabName.FindElementIdx(
@@ -171,7 +192,7 @@ public partial class RecommendTeamViewController
                 TeamDataMgr.TeamNetMsg.RecommendPlayer();
                 break;
             case RecommendViewTab.GuildPlayer:
-                TeamDataMgr.TeamNetMsg.RecommendGuild();
+                TeamDataMgr.TeamNetMsg.GetGuildMember();
                 break;
             case RecommendViewTab.NearByPlayer:
                 TeamDataMgr.TeamNetMsg.RecommendTeam();
@@ -233,12 +254,37 @@ public partial class RecommendTeamViewController
     #region 帮派玩家
     private void UpdateGuildPlayerList(ITeamData data)
     {
-        _view.Texture_UISprite.gameObject.SetActive(true);
-        _view.DescLb_UILabel.gameObject.SetActive(true);
-        _view.DescLb_UILabel.text = "请先加入公会";
+        var b = data.GetGuildMembersDto.memberList.Any();
+        var guildstate = GuildMainDataMgr.DataMgr.GuildState;
+        if(guildstate == GuildState.NotJoin)
+            _view.DescLb_UILabel.text = "请先加入公会";
+        else
+            _view.DescLb_UILabel.text = "没有可邀请的公会成员";
+
+        _view.GuildGrid_UIRecycledList.gameObject.SetActive(b);
+        _view.GuildGrid_UIRecycledList.UpdateDataCount(data.GetGuildMembersDto.memberList.Count, true);
+        _view.Texture_UISprite.gameObject.SetActive(!b);
+        _view.DescLb_UILabel.gameObject.SetActive(!b);
+    }
+
+    private void UpdateGuildRecycledList(GameObject go, int itemIndex, int dataIndex)
+    {
+        if (_guildPlayerItemDice == null)
+            return;
+
+        TeamApplicationUnitedItemController item = null;
+        var datalist = TeamDataMgr.DataMgr.GetGuildMemberDtos();
+        if (datalist == null || !datalist.Any()) return;
+        if (_guildPlayerItemDice.TryGetValue(go, out item))
+        {
+            List<GuildMemberDto> list = new List<GuildMemberDto>();
+            list.Add(datalist.TryGetValue(dataIndex * _colNum));
+            list.Add(datalist.TryGetValue(dataIndex * _colNum + 1));
+            item.UpdateItemInfo(list, dataIndex);
+        }
     }
     #endregion
-    
+
     #region 附近玩家
     private void UpdateNeaybyPlayerList(ITeamData data)
     {
@@ -293,6 +339,7 @@ public partial class RecommendTeamViewController
         _view.PlayerGrid_UIRecycledList.gameObject.SetActive(false);
         _view.TeamGrid_UIRecycledList.gameObject.SetActive(false);
         _view.FriendGrid_UIRecycledList.gameObject.SetActive(false);
+        _view.GuildGrid_UIRecycledList.gameObject.SetActive(false);
     }
 
     private void OnTeamItemClickEvent(TeamDto dto)
@@ -305,8 +352,17 @@ public partial class RecommendTeamViewController
         ServiceRequestAction.requestServer(Services.Team_JoinTeam(dto.leaderPlayerId, ""), "InviteMember", (e) =>
         {
             TipManager.AddTip(string.Format("已申请加入{0}的队伍，请耐心等待回复", dto.leaderPlayerName.ToString()));
-            //JSTimer.Instance.SetupCoolDown(dto.id.ToString(), 10f, null, null);
         });
+    }
+
+    private void OnGuildMemberItemClick(GuildMemberDto dto)
+    {
+        ServiceRequestAction.requestServer(Services.Team_InvitePlayer(dto.id, _targetId, _minLv, _maxLv, ""),
+            "OnPlayerItemClickEvent",
+            e =>
+            {
+                TipManager.AddTip(string.Format("已邀请[2DC6F8]{0}[-]加入队伍，请耐心等待回复", dto.name));
+            });
     }
 
     private void OnPlayerItemClickEvent(TeamPlayerDto dto)
@@ -314,24 +370,49 @@ public partial class RecommendTeamViewController
         //四轮之塔不能组队
         if (TowerDataMgr.DataMgr.IsInTower())
             return;
-        TeamDto teamDto = TeamDataMgr.DataMgr.GetSelfTeamDto();
-        if (teamDto == null)
+        Action InvitePlayerAction = () =>
         {
-            ServiceRequestAction.requestServer(Services.Team_InvitePlayer(dto.id, _targetId, 
+            TeamDto teamDto = TeamDataMgr.DataMgr.GetSelfTeamDto();
+            if (teamDto == null)
+            {
+                ServiceRequestAction.requestServer(Services.Team_InvitePlayer(dto.id, _targetId,
                 _minLv, _maxLv, ""), "OnPlayerItemClickEvent", (e) =>
+                {
+                    TipManager.AddTip(string.Format("已邀请[2DC6F8]{0}[-]加入队伍，请耐心等待回复", dto.nickname));
+                });
+                return;
+            }
+
+            ServiceRequestAction.requestServer(Services.Team_InvitePlayer(dto.id, teamDto.formationId,
+            teamDto.minGrade, teamDto.maxGrade, ""), "OnPlayerItemClickEvent", (e) =>
             {
                 TipManager.AddTip(string.Format("已邀请[2DC6F8]{0}[-]加入队伍，请耐心等待回复", dto.nickname));
                 //JSTimer.Instance.SetupCoolDown(dto.id.ToString(), 10f, null, null);
             });
-            return;
-        }
-
-        ServiceRequestAction.requestServer(Services.Team_InvitePlayer(dto.id, teamDto.formationId, 
-            teamDto.minGrade, teamDto.maxGrade, ""), "OnPlayerItemClickEvent", (e) =>
+        };
+        bool isCopyExtr = false;
+        List<Mission> tMission = MissionDataMgr.DataMgr.GetExistSubMissionMenuList();
+        for(int i = 0;i < tMission.Count;i++)
         {
-            TipManager.AddTip(string.Format("已邀请[2DC6F8]{0}[-]加入队伍，请耐心等待回复", dto.nickname));
-            //JSTimer.Instance.SetupCoolDown(dto.id.ToString(), 10f, null, null);
-        });
+            if(tMission[i].type == (int)MissionType.MissionTypeEnum.CopyExtra)
+            {
+                isCopyExtr = true;
+                break;
+            }
+        }
+        if(isCopyExtr)
+        {
+            var ctrl = ProxyBaseWinModule.Open();
+            BaseTipData data = BaseTipData.Create("副本任务","开启自动匹配将放弃当前的彩蛋任务，是否继续自动匹配队员？", 0, delegate
+            {
+                InvitePlayerAction();
+            }, null);
+            ctrl.InitView(data);
+        }
+        else
+        {
+            InvitePlayerAction();
+        }
     }
     
     private void OnRefreshPlayerOnHandler()
@@ -360,13 +441,39 @@ public partial class RecommendTeamViewController
         //四轮之塔不能组队
         if (TowerDataMgr.DataMgr.IsInTower())
             return;
-        string list = GetPlayerIdList();
-        if (list == "")
+        Action InvitePlayerAction = () =>
         {
-            TipManager.AddTip("=====附近没有玩家=====");
-            return;
+            string list = GetPlayerIdList();
+            if (list == "")
+            {
+                TipManager.AddTip("=====附近没有玩家=====");
+                return;
+            }
+            TeamDataMgr.TeamNetMsg.OnkeyInvitation(list, "");
+        };
+        bool isCopyExtr = false;
+        List<Mission> tMission = MissionDataMgr.DataMgr.GetExistSubMissionMenuList();
+        for(int i = 0;i < tMission.Count;i++)
+        {
+            if(tMission[i].type == (int)MissionType.MissionTypeEnum.CopyExtra)
+            {
+                isCopyExtr = true;
+                break;
+            }
         }
-        TeamDataMgr.TeamNetMsg.OnkeyInvitation(list, "");
+        if(isCopyExtr)
+        {
+            var ctrl = ProxyBaseWinModule.Open();
+            BaseTipData data = BaseTipData.Create("副本任务","加入新队员将放弃当前的彩蛋任务，是否继续邀请队员？", 0, delegate
+            {
+                InvitePlayerAction();
+            }, null);
+            ctrl.InitView(data);
+        }
+        else
+        {
+            InvitePlayerAction();
+        }
     }
 
     //一键申请

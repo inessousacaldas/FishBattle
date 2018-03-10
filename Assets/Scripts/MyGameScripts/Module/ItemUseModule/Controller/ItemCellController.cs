@@ -15,6 +15,7 @@ using AssetPipeline;
 
 public partial class ItemCell
 {
+    public const string Prefab_EquipItemCell = "EquipItemCell";
     public const string Prefab_BagItemCell = "BagItemCell";
     public const string Prefab_ItemCell = "ItemCell";
     public const string Prefab_ItemUseCell = "ItemUseCell";
@@ -619,7 +620,6 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
     public void UpdateView(BagItemDto dto, bool isLock)
     {
         _dto = dto;
-        _generalItem = dto.item;
 
         GameDebuger.TODO(@"OnlyUsedInCSPK = ItemHelper.IsOnlyInCSPK(_dto);");
         OnlyUsedInCSPK = false;
@@ -627,6 +627,7 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
 
         if (_dto != null)
         {
+            _generalItem = dto.item;
             _itemType = dto.item.itemType;
             ItemCount = _dto.count;
             View.IconSprite_UISprite.enabled = true;
@@ -681,6 +682,16 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
         {
             UpdateViewWithNull();
         }
+    }
+
+    /// <summary>
+    /// 公会捐献
+    /// </summary>
+    /// <param name="dto"></param>
+    public void UpdateGuildDonateView(BagItemDto dto)
+    {
+        _isShowTipsOnClick = false;
+        UpdateView(dto, false);
     }
 
     /// <summary>
@@ -758,7 +769,8 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
         View.LockSprite_UISprite.enabled = isLock;
     }
 
-    public void UpdateViewInCrewSkill(GeneralItem dto, int count = 0, int needCound = 0)
+
+    public void UpdateViewInCrewSkill(GeneralItem dto, int count = 0, int needCound = 0, UIFont font=null)
     {
         _isShowTipsOnClick = true;
         _generalItem = dto;
@@ -766,7 +778,8 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
         {
             ItemCount = count;
             View.IconSprite_UISprite.enabled = true;
-            View.BorderSprite_UISprite.enabled = true;
+
+            View.BorderSprite_UISprite.enabled = false;
             UIHelper.SetItemIcon(View.IconSprite_UISprite, dto.icon);
             string color = "[ffffff]";
             if (dto is AppItem)
@@ -785,7 +798,11 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
                 SetQuality(vDto.quality);
                 View.IconSprite_UISprite.MakePixelPerfect();
             }
-            View.CountLabel_UILabel.text = string.Format("{2}{0}[-]/{1}", count, needCound, color);
+
+            View.CountLabel_UILabel.text = string.Format("{0}{1}[-]", color, needCound);
+                //string.Format("{2}{0}[-]/{1}", count, needCound, color);
+            if (font != null)
+                View.CountLabel_UILabel.bitmapFont = font;
         }
         else
         {
@@ -855,6 +872,7 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
         _itemType = dto.item.itemType;
     }
 
+
     private void OnClickItemCell()
     {
         if (_onClickCallBack != null)
@@ -862,6 +880,7 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
 
         if(_isShowTipsOnClick && _generalItem != null)
         {
+            GameDebuger.Log("_itemtype====" + _itemType);
             switch(_itemType)
             {
                 case (int)AppItem.ItemTypeEnum.MissionItem:
@@ -957,6 +976,8 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
     private void SetTipsBtnDetail()
     {
         if (_itemType == 0 || _generalItem == null) return;
+        var dto = _dto;
+        
         if (BackpackView.NAME == UIModuleManager.Instance.TopModule)
         {
             if(BackpackDataMgr.DataMgr.GetBackpackViewTab() == BackpackViewTab.Backpack)
@@ -1006,46 +1027,64 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
                     //    _tipsCtrl.ReSetAllPos(btnCtrl);
                     //    break;
                     case (int)AppItem.ItemTypeEnum.Props:
-                        //logicid 8 9 10 13 14 都是礼包 
-                        if (_dto == null) return;
-                        var props = _dto.item as Props;
-                        if (props == null) return;
-                        if (props.logicId >= 8 && props.logicId < 11 || props.logicId == 13 
-                            || props.logicId == 14 || props.logicId == 20)
+                        if (dto == null) return;
+                        var p = dto.item as Props;
+                        if (p.smartGuideId <= 0 && p.logicId <= 0) return;  //没有按钮
+
+                        //理论上是smartGuildeId > 0 就是开界面
+                        //当smartGuideId == 0 && logicId > 0的时候就是直接使用
+                        //否则检查导表是否配错
+                        if (p.smartGuideId > 0)
                         {
-                            _tipsCtrl.SetBtnPressClose(false);
-                            btnCtrl = _tipsCtrl.SetBtnView("使用", "", () =>
+                            btnCtrl = _tipsCtrl.SetBtnView(GetPropsBtnList(), "使用", rightClick: () =>
                             {
-                                BackpackDataMgr.BackPackNetMsg.BackpackApply(_dto.index, 1, callback: () =>
-                                {
-                                    if(_dto == null || _generalItem == null)
-                                        _tipsCtrl.Close();
-                                });
-                            });
-                            _tipsCtrl.ReSetAllPos(btnCtrl);
-                        }
-                        else if(props.logicId == 16) //鲜花
-                        {
-                            btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => 
-                            {
-                                ProxyFlowerMainView.Open(null, _dto.itemId);
+                                SmartGuideHelper.GuideTo(p.smartGuideId);
                                 UIModuleManager.Instance.CloseModule(BackpackView.NAME);
                             });
-                            _tipsCtrl.ReSetAllPos(btnCtrl);
                         }
+                        else
+                        {
+                            btnCtrl = _tipsCtrl.SetBtnView(GetPropsBtnList(), "使用", rightClick: () =>
+                            {
+                                var idx = dto.index;
+                                BackpackDataMgr.BackPackNetMsg.BackpackApply(idx, 1);
+                                UIModuleManager.Instance.CloseModule(BackpackView.NAME);
+                            });
+                        }
+                        _tipsCtrl.ReSetAllPos(btnCtrl);
                         break;
-                    //case (int)AppItem.ItemTypeEnum.Embed:
-                    //    btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { TipManager.AddTip("对应的操作 "); });
-                    //    _tipsCtrl.ReSetAllPos(btnCtrl);
-                    //    break;
+                    case (int)AppItem.ItemTypeEnum.Embed:
+                        if (dto == null) return;
+                        var embed = dto.item as Props;
+                        if (embed.smartGuideId <= 0)
+                        {
+                            GameDebuger.Log(string.Format("{0}的smartGuideId有问题,检查导表", dto.itemId));
+                            return;
+                        }
+                        btnCtrl = _tipsCtrl.SetBtnView(GetPropsBtnList(), "使用", () =>
+                        {
+                            ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentEmbed);
+                        });
+                        _tipsCtrl.ReSetAllPos(btnCtrl);
+                        break;
                     //case (int)AppItem.ItemTypeEnum.Medallion:
                     //    btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { TipManager.AddTip("对应的操作 "); });
                     //    _tipsCtrl.ReSetAllPos(btnCtrl);
                     //    break;
-                    //case (int)AppItem.ItemTypeEnum.Engrave:
-                    //    btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { TipManager.AddTip("对应的操作 "); });
-                    //    _tipsCtrl.ReSetAllPos(btnCtrl);
-                    //    break;
+                    case (int)AppItem.ItemTypeEnum.Engrave:
+                        if (dto == null) return;
+                        var engrave = dto.item as Props;
+                        if (engrave.smartGuideId <= 0)
+                        {
+                            GameDebuger.Log(string.Format("{0}的smartGuideId有问题,检查导表", dto.itemId));
+                            return;
+                        }
+                        btnCtrl = _tipsCtrl.SetBtnView(GetPropsBtnList(), "使用", () =>
+                        {
+                            ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentMedallion);
+                        });
+                        _tipsCtrl.ReSetAllPos(btnCtrl);
+                        break;
                     //case (int)AppItem.ItemTypeEnum.SkillBook:
                     //    btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { TipManager.AddTip("对应的操作 "); });
                     //    _tipsCtrl.ReSetAllPos(btnCtrl);
@@ -1055,46 +1094,53 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
                     //    _tipsCtrl.ReSetAllPos(btnCtrl);
                     //    break;
                     case (int)AppItem.ItemTypeEnum.GrailCook:
-                        if (_dto == null) return;
-                        btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { BackpackDataMgr.BackPackNetMsg.BackpackApply(_dto.index, 1); });
+                        if (dto == null) return;
+                        var index = dto.index;
+                        btnCtrl = _tipsCtrl.SetBtnView("", "使用", rightClick: () =>
+                        {
+                            BackpackDataMgr.BackPackNetMsg.BackpackApply(index, 1);
+                        });
                         _tipsCtrl.ReSetAllPos(btnCtrl);
                         break;
                     case (int)AppItem.ItemTypeEnum.Equipment:
                         if (_equipmentDto == null) return;
                         var isEquip = EquipmentMainDataMgr.DataMgr.IsEquipmentEquip(_equipmentDto);
+                        var equipmentdto = _equipmentDto;
                         //装备在身上
                         if (isEquip)
                         {
-                            btnCtrl = _tipsCtrl.SetBtnView("卸下", "", () => { EquipmentMainDataMgr.EquipmentMainNetMsg.ReqTakeOffEquipment(_equipmentDto); });
+                            btnCtrl = _tipsCtrl.SetBtnView(GetEquipBtnList(_equipmentDto.equipId), "卸下",
+                                () => { EquipmentMainDataMgr.EquipmentMainNetMsg.ReqTakeOffEquipment(equipmentdto); });
                             _tipsCtrl.ReSetAllPos(btnCtrl);
                         }
                         else
                         {
-                            btnCtrl = _tipsCtrl.SetBtnView("装备", "分解", () => { EquipmentMainDataMgr.EquipmentMainNetMsg.ReqEquip_Wear(_equipmentDto); },
-                                () => { BackpackDataMgr.BackPackNetMsg.ResolveEquipment(_equipmentDto.equipUid.ToString()); });
+                            btnCtrl = _tipsCtrl.SetBtnView(GetEquipBtnList(_equipmentDto.equipId), "装备",
+                                () => { EquipmentMainDataMgr.EquipmentMainNetMsg.ReqEquip_Wear(equipmentdto); });
                             _tipsCtrl.ReSetAllPos(btnCtrl);
                         }
                         break;
                     case (int)AppItem.ItemTypeEnum.Quartz:
-                        if (_dto == null) return;
-                        btnCtrl = _tipsCtrl.SetBtnView("分解", "", () => { BackpackDataMgr.BackPackNetMsg.ResolveQuartz(_dto.uniqueId.ToString()); });
+                        if (dto == null) return;
+                        btnCtrl = _tipsCtrl.SetBtnView("", "分解", rightClick: () => { BackpackDataMgr.BackPackNetMsg.ResolveQuartz(dto.uniqueId.ToString()); });
                         _tipsCtrl.ReSetAllPos(btnCtrl);
                         break;
                     case (int)AppItem.ItemTypeEnum.TreasureMap:
-                        if (_dto == null || _dto.item as Props == null) return;
-                        var propsDto = _dto.item as Props;
-                        if (propsDto.logicId == 17 && _dto.extra as PropsExtraDto_17 != null)
+                        if (dto == null || dto.item as Props == null) return;
+                        var propsDto = dto.item as Props;
+                        if (propsDto.logicId == 17 && dto.extra as PropsExtraDto_17 != null)
                         {
-                            btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => 
+                            var pDto = dto;
+                            btnCtrl = _tipsCtrl.SetBtnView("", "使用", rightClick: () => 
                             {
-                                MissionDataMgr.DataMgr.TreasureMission(_dto);
+                                MissionDataMgr.DataMgr.TreasureMission(pDto);
                                 UIModuleManager.Instance.CloseModule(BackpackView.NAME);
                             });
                             _tipsCtrl.ReSetAllPos(btnCtrl);
                         }
                         else if(propsDto.logicId == 18)
                         {
-                            btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { ProxyTreasureMission.Open(); });
+                            btnCtrl = _tipsCtrl.SetBtnView("", "使用", rightClick: () => { ProxyTreasureMission.Open(); });
                             _tipsCtrl.ReSetAllPos(btnCtrl);
                         }
                         break;
@@ -1103,13 +1149,29 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
                     case (int)AppItem.ItemTypeEnum.Horn:
                         break;
                     case (int)AppItem.ItemTypeEnum.GiftPackage:
-                        if (_dto == null) return;
-                        btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { BackpackDataMgr.BackPackNetMsg.BackpackApply(_dto.index, 1); });
-                        _tipsCtrl.ReSetAllPos(btnCtrl);
+                        if (dto == null) return;
+                        var props = dto.item as Props;
+                        if (props == null) return;
+                        switch (props.logicId)
+                        {
+                            //特殊处理
+                            case 11:
+                                GameDebuger.LogError("开界面选择物品,特殊处理的物品");
+                                break;
+                            default:
+                                _tipsCtrl.SetBtnPressClose(false);
+                                var idx = dto.index;
+                                btnCtrl = _tipsCtrl.SetBtnView("", "使用", rightClick: () =>
+                                {
+                                    BackpackDataMgr.BackPackNetMsg.BackpackApply(idx, 1);
+                                });
+                                _tipsCtrl.ReSetAllPos(btnCtrl);
+                                break;
+                        }
                         break;
                     case (int)AppItem.ItemTypeEnum.ContestInvitation:
-                        if(_dto == null) return;
-                        btnCtrl = _tipsCtrl.SetBtnView("使用", "", () => { ProxyContest.Open(_dto); });
+                        if(dto == null) return;
+                        btnCtrl = _tipsCtrl.SetBtnView("", "使用", rightClick:() => { ProxyContest.Open(dto); });
                         _tipsCtrl.ReSetAllPos(btnCtrl);
                         break;
                     case (int)AppItem.ItemTypeEnum.FormationBook:
@@ -1120,14 +1182,14 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
                 break;
             case ItemCellTipsBtnType.Ware:
                 cellDoubleClickEvent.Subscribe(_ => { CloseTips(); });
-                if (_dto.bagId == (int)AppItem.BagEnum.Backpack)
+                if (dto.bagId == (int)AppItem.BagEnum.Backpack)
                 {
-                    btnCtrl = _tipsCtrl.SetBtnView("存入", "", () => { BackpackDataMgr.BackPackNetMsg.ReqMoveItemToWareHouse(_dto.index, BackpackDataMgr.DataMgr.CurWareHousePage); });
+                    btnCtrl = _tipsCtrl.SetBtnView("存入", "", () => { BackpackDataMgr.BackPackNetMsg.ReqMoveItemToWareHouse(dto.index, BackpackDataMgr.DataMgr.CurWareHousePage); });
                     _tipsCtrl.SetTipsPosition(new Vector3(-284, 168, 0));
                 }
-                else if (_dto.bagId == (int)AppItem.BagEnum.Warehouse)
+                else if (dto.bagId == (int)AppItem.BagEnum.Warehouse)
                 {
-                    btnCtrl = _tipsCtrl.SetBtnView("取出", "", () => { BackpackDataMgr.BackPackNetMsg.ReqMoveItemToBackPack(_dto.index); });
+                    btnCtrl = _tipsCtrl.SetBtnView("取出", "", () => { BackpackDataMgr.BackPackNetMsg.ReqMoveItemToBackPack(dto.index); });
                     _tipsCtrl.SetTipsPosition(new Vector3(-63, 168, 0));
                 } 
                 _tipsCtrl.ReSetAllPos(btnCtrl);
@@ -1135,11 +1197,68 @@ public partial class ItemCellController : MonolessViewController<ItemCell>, IIte
                 break;
             case ItemCellTipsBtnType.Temppack:
                 cellDoubleClickEvent.Subscribe(_ => { CloseTips(); });
-                if (_dto.bagId == (int)AppItem.BagEnum.Temppack)
-                    btnCtrl = _tipsCtrl.SetBtnView("转移", "", () => { BackpackDataMgr.BackPackNetMsg.TransItemFromTempBagToBack(_dto.index); });
+                if (dto.bagId == (int)AppItem.BagEnum.Temppack)
+                    btnCtrl = _tipsCtrl.SetBtnView("转移", "", () => { BackpackDataMgr.BackPackNetMsg.TransItemFromTempBagToBack(dto.index); });
                 _tipsCtrl.ReSetAllPos(btnCtrl);
                 break;
         }
+    }
+
+    //获取appItem按钮列表
+    private Dictionary<string, Action> GetAppItemBtnList(
+        Dictionary<string, Action> dict, 
+        AppItem item)
+    {
+        if (item == null) return null;
+        
+        if (item.mixable)
+            dict.Add("合成", () => {
+                if(_dto != null)
+                    ProxyBackpack.OpenComposite(CompositeTabType.Composite, _dto);
+            });
+        if (item.resolveable)
+            dict.Add("分解", () =>
+            {
+                if (_dto != null)
+                    ProxyBackpack.OpenComposite(CompositeTabType.DeComposite, _dto);
+            });
+        if (item.tradable)
+            dict.Add("出售", () => { ProxyTrade.OpenCmomerceSellView(_dto);});
+        return dict;
+    }
+
+    //获取道具的按钮列表
+    private Dictionary<string, Action> GetPropsBtnList()
+    {
+        Dictionary<string, Action> dict = new Dictionary<string, Action>();
+        dict = GetAppItemBtnList(dict, _dto.item);
+        var prop = _dto.item as Props;
+        if (prop != null && prop.stallable)
+            dict.Add("摆摊", () => { ProxyTrade.OpenTradeView(TradeTab.Pitch, prop.id); });
+        return dict;
+    }
+
+    //获取装备的按钮列表
+    private Dictionary<string, Action> GetEquipBtnList(int id)
+    {
+        Dictionary<string, Action> dict = new Dictionary<string, Action>();
+        var equipment = DataCache.getDtoByCls<GeneralItem>(id) as Equipment;
+        if (equipment == null)
+        {
+            GameDebuger.LogError(string.Format("Equipment找不到{0},请检查", id));
+            return null;
+        }
+        dict = GetAppItemBtnList(dict, equipment);
+        if (equipment != null)
+        {
+            if (equipment.resetSilver > 0)
+                dict.Add("洗炼", () => { ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentReset); });
+            if (ModelManager.Player.GetPlayerLevel() >= 40)   //暂时写死
+                dict.Add("宝石", () => { ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentEmbed); });
+            if (equipment.grade >= 50)   //暂时写死
+                dict.Add("纹章", () => { ProxyEquipmentMain.Open(EquipmentViewTab.EquipmentMedallion); });
+        }
+        return dict;
     }
     #endregion
 

@@ -4,6 +4,7 @@
 // Created  : 07/04/2017 20:21:34
 // **********************************************************************
 
+using AppDto;
 using UniRx;
 
 public sealed partial class WorldMapDataMgr
@@ -58,8 +59,19 @@ public sealed partial class WorldMapDataMgr
 
         private static void MapBtnClickHandler(int mapID)
         {
+            var scene = DataCache.getDtoByCls<SceneMap>(mapID);
             if (TowerDataMgr.DataMgr.IsInTowerAndCheckLeave(delegate { EnterMap(mapID); }))
                 return;
+            if (MartialDataMgr.DataMgr.IsInMartialScene())
+            {
+                TipManager.AddTip(string.Format("{0}场景禁止飞入", scene.name));
+                return;
+            }
+            if (!TeamDataMgr.DataMgr.IsCanFlyScene())
+            {
+                TipManager.AddTip("正在组队跟随状态中，不能进行此操作!");
+                return;
+            }
             EnterMap(mapID);
         }
 

@@ -13,15 +13,15 @@ public class SceneLocalGoLoader : BaseCommand {
 	{
 		base.Execute ();
         string configName = "sg_" + sceneName;
-        ProfileHelper.SystimeBegin(configName);
+        //ProfileHelper.SystimeBegin(configName);
         AssetPipeline.ResourcePoolManager.Instance.LoadStreamSceneConfig(configName, this.OnGetSceneData, this.OnGetSceneDataError);
 	}
 
 	AllSceneGoInfo allSceneInfo;
 	void OnGetSceneData (Object asset)
 	{
-        string configName = "sg_" + sceneName;
-        ProfileHelper.SystimeEnd(configName);
+        //string configName = "sg_" + sceneName;
+        //ProfileHelper.SystimeEnd(configName);
         allSceneInfo = asset as AllSceneGoInfo;
         this.StartLoadSceneGo ();
 	}
@@ -33,7 +33,7 @@ public class SceneLocalGoLoader : BaseCommand {
     }
 	void OnPreloadFinish ()
 	{
-        ProfileHelper.SystimeEnd("Preload");
+        //ProfileHelper.SystimeEnd("Preload");
         this.OnFinish ();
 	}
 
@@ -41,8 +41,8 @@ public class SceneLocalGoLoader : BaseCommand {
 	{
         sceneGoManager.SetupConfig (allSceneInfo);
         string configName = "sg_" + sceneName;
-        ProfileHelper.SystimeEnd(configName);
-        ProfileHelper.SystimeBegin("Preload");
+        //ProfileHelper.SystimeEnd(configName);
+        //ProfileHelper.SystimeBegin("Preload");
         sceneGoManager.Preload (this.OnPreloadFinish);
 	}
 }

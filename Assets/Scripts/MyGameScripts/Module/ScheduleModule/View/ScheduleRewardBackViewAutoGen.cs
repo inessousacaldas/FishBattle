@@ -17,7 +17,12 @@ public sealed class ScheduleRewardBackView : BaseView
     public UIButton PushBtn_UIButton;
     public UIButton OneKeyBackBtn_UIButton;
     public UIButton PrefectBackBtn_UIButton;
-
+    public UISprite OneKeyNormmalBack_UISprite;
+    public UISprite OneKeyPerfectBack_UISprite;
+    public UISprite normal_UISprite;
+    public UISprite perfect_UISprite;
+    public BoxCollider normal_BoxCollider;
+    public BoxCollider perfect_BoxCollider;
 
     protected override void InitElementBinding ()
     {
@@ -28,6 +33,12 @@ public sealed class ScheduleRewardBackView : BaseView
         PushBtn_UIButton = root.FindScript<UIButton>("PushBtn");
         OneKeyBackBtn_UIButton = root.FindScript<UIButton>("OneKeyBackBtn");
         PrefectBackBtn_UIButton = root.FindScript<UIButton>("PrefectBackBtn");
+        OneKeyNormmalBack_UISprite = root.FindScript<UISprite>("OneKeyBackBtn/Sprite");
+        OneKeyPerfectBack_UISprite = root.FindScript<UISprite>("PrefectBackBtn/Sprite");
+        normal_UISprite = root.FindScript<UISprite>("OneKeyBackBtn");
+        perfect_UISprite = root.FindScript<UISprite>("PrefectBackBtn");
+        normal_BoxCollider = root.FindScript<BoxCollider>("OneKeyBackBtn");
+        perfect_BoxCollider = root.FindScript<BoxCollider>("PrefectBackBtn");
 
     }
     #endregion

@@ -13,7 +13,7 @@ public sealed partial class ScheduleMainViewDataMgr
     public static partial class ScheduleMainViewLogic
     {
         private static CompositeDisposable _disposable;
-
+        public const string ScheduleRewardBackItemStr = "ScheduleRewardBackItem_";
         public static void Open()
         {
 
@@ -47,7 +47,11 @@ public sealed partial class ScheduleMainViewDataMgr
                 DataMgr._data.CurRightTab = (ScheduleRightViewTab)i;
                 FireData();
             }));
-
+            _disposable.Add(ctrl.ScheduleRewardBackItemDisapear.Subscribe(e =>
+            {
+                if (e._RegainInfoDto == null) return;
+                 OnRewardBackIsFinshed(e._RegainInfoDto.regainId);
+            }));
             ctrl.OnChildCtrlAdd += Ctrl_OnChildCtrlAdd;
 
             ScheduleMainViewNetMsg.ReqScheduleInfo();
@@ -65,7 +69,12 @@ public sealed partial class ScheduleMainViewDataMgr
         // 如果有自定义的内容需要清理，在此实现
         private static void OnDispose()
         {
-            
+            var list = DataMgr._data.RewardBackList;
+            list.ForEach(e =>
+            {
+                if (!e.receive)
+                    JSTimer.Instance.CancelCd(ScheduleRewardBackItemStr + e.regainId);
+            });
         }
         private static void CloseBtn_UIButtonClick()
         {
@@ -92,6 +101,12 @@ public sealed partial class ScheduleMainViewDataMgr
                 DataMgr._data.CurTypeBtn = (ScheduleActivity.ControlTypeEnum)i;
                 FireData();
             }));
+        }
+        //奖励到期无法找回
+        private static void OnRewardBackIsFinshed(long id)
+        {
+            DataMgr._data.UpdateRewardBack(id);
+            FireData();
         }
     }
 }

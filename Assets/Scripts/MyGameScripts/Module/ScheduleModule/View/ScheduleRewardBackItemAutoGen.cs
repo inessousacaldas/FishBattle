@@ -17,6 +17,9 @@ public sealed class ScheduleRewardBackItem : BaseView
     public UILabel TimeNum_UILabel;
     public UIButton PrefectBackBtn_UIButton;
     public UIButton NormalBackBtn_UIButton;
+    public UIButton finishedBtn_UIButton;
+    public UISprite PerfectCost_UISprite;
+    public UISprite NormalCost_UISprite;
     public UILabel PrefectCost_UILabel;
     public UILabel NormalCost_UILabel;
     public UIGrid Grid_UIGrid;
@@ -31,8 +34,11 @@ public sealed class ScheduleRewardBackItem : BaseView
         TimeNum_UILabel = root.FindScript<UILabel>("Time/TimeNum");
         PrefectBackBtn_UIButton = root.FindScript<UIButton>("PrefectBackBtn");
         NormalBackBtn_UIButton = root.FindScript<UIButton>("NormalBackBtn");
-        PrefectCost_UILabel = root.FindScript<UILabel>("PrefectBackBtn/PrefectCost");
-        NormalCost_UILabel = root.FindScript<UILabel>("NormalBackBtn/NormalCost");
+        finishedBtn_UIButton = root.FindScript<UIButton>("finished");
+        PerfectCost_UISprite = root.FindScript<UISprite>("PrefectBackBtn/Sprite");
+        NormalCost_UISprite = root.FindScript<UISprite>("NormalBackBtn/Sprite");
+        PrefectCost_UILabel = root.FindScript<UILabel>("PrefectBackBtn/Cost");
+        NormalCost_UILabel = root.FindScript<UILabel>("NormalBackBtn/Cost");
         Grid_UIGrid = root.FindScript<UIGrid>("Grid");
 
     }

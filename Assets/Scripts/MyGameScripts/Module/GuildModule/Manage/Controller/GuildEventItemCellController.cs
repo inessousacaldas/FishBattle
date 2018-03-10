@@ -6,6 +6,7 @@
 // Porpuse  : 
 // **********************************************************************
 
+using AppDto;
 using System;
 
 public partial class GuildEventItemCellController
@@ -33,10 +34,24 @@ public partial class GuildEventItemCellController
         
     }
 
-    public void SetData(messageInfoDto message)
+    public void SetData(GuildEventDto message)
     {
-        View.MessageLabel_UILabel.text = message.msg;
-        View.TimeLabel_UILabel.text = message.time;
+        var time = GetTimer(message.time);
+        View.TimeLabel_UILabel.text = string.Format("{0}  {1}", time, message.content);
     }
 
+    private string GetTimer(long ms)
+    {
+        var time = DateUtil.UnixTimeStampToDateTime(ms);
+        int year = time.Year;
+        int m = time.Month;
+        string month = m < 10 ? "0" + m : m.ToString();
+        int d= time.Day;
+        string day = d < 10 ? "0" + d : d.ToString();
+        int h = time.Hour;
+        string hour = h < 10 ? "0" + h : h.ToString();
+        int mn = time.Minute;
+        string minute = mn < 10 ? "0" + mn : mn.ToString();
+        return string.Format("{0}.{1}.{2} {3}:{4}", year, month, day, hour, minute);
+    }
 }

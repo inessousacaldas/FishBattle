@@ -176,13 +176,14 @@ public class ColorConstantV3
     public static Color Color_WhiteLabelEffColor = ColorExt.HexStrToColor(Color_WhiteLabelEffColor_Str);
 
     //侧边tab选中颜色
-    public const string Color_VerticalSelectColor_Str = "3f3007";
+    //public const string Color_VerticalSelectColor_Str = "3f3007";
+    public const string Color_VerticalSelectColor_Str = "ffffff";
     public static Color Color_VerticalSelectColor = ColorExt.HexStrToColor(Color_VerticalSelectColor_Str);
 
     //侧边tab非选中颜色
-    public const string Color_VerticalUnSelectColor_Str = "5b5b5b";
+    public const string Color_VerticalUnSelectColor_Str = "94D5F9";
     public static Color Color_VerticalUnSelectColor = ColorExt.HexStrToColor(Color_VerticalUnSelectColor_Str);
-
+ 
     public const string Color_VerticalUnSelectColor2_Str = "bdbdbd";
     public static Color Color_VerticalUnSelectColor2 = ColorExt.HexStrToColor(Color_VerticalUnSelectColor2_Str);
 

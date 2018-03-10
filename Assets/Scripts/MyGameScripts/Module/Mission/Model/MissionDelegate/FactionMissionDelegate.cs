@@ -47,4 +47,9 @@ public class FactionMissionDelegate :BaseMissionDelegate,IMissionDelegate
         winTips = "确认是否放弃该任务";
         return true;
     }
+
+    public void ReqEnterMission(Mission mission,SubmitDto submitDto)
+    {
+        
+    }
 }

@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UniRx;
 using ChatChannelEnum = AppDto.ChatChannel.ChatChannelEnum;
-using EmailNetMsg = EmailDataMgr.EmailNetMsg;
-using System;
 using UnityEngine;
 
 public sealed partial class SocialityDataMgr
@@ -19,6 +17,7 @@ public sealed partial class SocialityDataMgr
     public static partial class SocialityViewLogic
     {
         private static CompositeDisposable _disposable;
+        private static List<ChatPageTab> pageList = new List<ChatPageTab>();   //用于初始化判断
         public static void Open(ChatPageTab tab, ChatChannelEnum channel)
         {
             DataMgr._data.CurPageTab = tab;
@@ -38,13 +37,14 @@ public sealed partial class SocialityDataMgr
         {
             _disposable = _disposable.CloseOnceNull();
             ChatDataMgr.ChatPageViewLogic.Dispose();
+            PrivateMsgDataMgr.PrivateMsgViewLogic.Dispose();
             OnDispose();
         }
 
         // 如果有自定义的内容需要清理，在此实现
         private static void OnDispose()
         {
-
+            pageList.Clear();
         }
         private static void InitReactiveEvents(ISocialityViewController ctrl)
         {
@@ -62,25 +62,48 @@ public sealed partial class SocialityDataMgr
                 DataMgr._data.CurPageTab = (ChatPageTab)i;
                 //邮件刷新机制 只有进入界面才会排序邮件
                 EmailDataMgr.DataMgr.SetSortEmail();
-
+                InitData(ctrl);
                 FireData();
             }));
             //隐藏按钮
             _disposable.Add(ctrl.OnHideBtn_UIButtonClick.Subscribe(_ => { ProxySociality.CloseChatInfoView(); }));
-
-            ChatDataMgr.ChatPageViewLogic.InitReactiveEvents(ctrl);
-            FriendDataMgr.FriendViewLogic.InitReactiveEvents(ctrl);
-            PrivateMsgDataMgr.PrivateMsgViewLogic.InitReactiveEvents(ctrl);
-            EmailDataMgr.EmailContentViewLogic.InitReactiveEvents(ctrl);
-
+            
             _disposable.Add(ctrl.FriendCtrl.OnFriendChatStream.Subscribe(infoDto =>
             {
                 ctrl.PageTabMgr.SetTabBtn((int)ChatPageTab.PrivateMsg);
                 DataMgr._data.CurPageTab = ChatPageTab.PrivateMsg;
+                InitData(ctrl);
                 PrivateMsgDataMgr.DataMgr.SetCurFriendDto(infoDto);
-
                 FireData();
             }));
+            InitData(ctrl);
+            FireData();
+        }
+
+        private static void InitData(ISocialityViewController ctrl)
+        {
+            var tab = DataMgr._data.CurPageTab;
+            switch (tab)
+            {
+                case ChatPageTab.Chat:
+                    if (pageList.Contains(ChatPageTab.Chat)) return;
+                    ChatDataMgr.ChatPageViewLogic.InitReactiveEvents(ctrl);
+                    break;
+                case ChatPageTab.Friend:
+                    if (pageList.Contains(ChatPageTab.Friend)) return;
+                    FriendDataMgr.FriendViewLogic.InitReactiveEvents(ctrl);
+                    break;
+                case ChatPageTab.PrivateMsg:
+                    if (pageList.Contains(ChatPageTab.PrivateMsg)) return;
+                    PrivateMsgDataMgr.PrivateMsgViewLogic.InitReactiveEvents(ctrl);
+                    break;
+                case ChatPageTab.Email:
+                    if (pageList.Contains(ChatPageTab.Email)) return;
+                    EmailDataMgr.EmailContentViewLogic.InitReactiveEvents(ctrl);
+                    break;
+            }
+            if (!pageList.Contains(tab))
+                pageList.Add(tab);
         }
     }
 }
@@ -103,8 +126,7 @@ public sealed partial class ChatDataMgr
             }
 
             _ctrl = ctrl;
-
-
+            
             var chatData = DataMgr._data;
             //隐藏按钮
             _disposable.Add(ctrl.OnHideBtnClick.Subscribe(_ =>
@@ -112,16 +134,7 @@ public sealed partial class ChatDataMgr
                 chatData.LockState = true;
                 ProxySociality.CloseChatInfoView();
             }));
-
-            //_disposable.Add(ctrl.ChatViewCtrl.OnUnReadBtn_UIButtonClick.Subscribe(_ =>
-            //{
-            //    GameDebuger.Log("XASDFASDFSDAF");
-            //    chatData.LockState = true;
-            //    chatData.NewMsgCnt[chatData.CurChannelId] = 0;
-            //    _ctrl.ChatViewCtrl.UpdateChatList(DataMgr._data.GetChannelNotifyQueue(DataMgr._data.CurChannelId));
-            //    FireData();
-            //}));
-
+            
             _disposable.Add(ctrl.OnRedPacketRemind_UIButtonClick.Subscribe(_ => { }));
             //隐藏按钮
             _disposable.Add(ctrl.OnHideBtn_UIButtonClick.Subscribe(_ => { ProxySociality.CloseChatInfoView(); }));
@@ -129,20 +142,20 @@ public sealed partial class ChatDataMgr
             //=======================聊天部分===================
             UpdateChatList();
             InitVoiceEvent();
+            SetInputDeafaultText(chatData.chatViewData, chatData.CurChannelId, ctrl);
             //聊天频道Tab按钮
             _disposable.Add(ctrl.ChannelTabMgr.Stream.Subscribe(i =>
             {
                 ctrl.ChatViewCtrl.InputFiledText = string.Empty;
                 JSTimer.Instance.CancelTimer(ChatHornInput);
                 chatData.CurChannelId = (ChatChannelEnum)ChatData.ShowChannelBtnNames[i].EnumValue;
-                SetInputDeafaultText(chatData.chatViewData, chatData.CurChannelId);
+                SetInputDeafaultText(chatData.chatViewData, chatData.CurChannelId,ctrl);
                 UpdateChatList();
                 if (chatData.CurChannelId == ChatChannelEnum.Current || chatData.CurChannelId == ChatChannelEnum.Horn)
                 {
                     chatData.chatViewData._speechMode = false;
                 }
                 FireData();
-                ctrl.OnChannelTabChange(chatData);
             }));
 
             //发送按钮
@@ -289,8 +302,8 @@ public sealed partial class ChatDataMgr
         }
         private static void OnChatMsgNotify(ChatNotify notify)
         {
-            //如果是锁屏，同时等于当前频道，则更新
-            if((DataMgr._data.LockState && notify.channelId == (int)DataMgr._data.CurChannelId) || notify.fromPlayer.id == ModelManager.Player.GetPlayerId())
+            //如果是锁屏，同时等于当前频道，则更新(公会系统消息会存在fromplayer为空的情况)
+            if((DataMgr._data.LockState && notify.channelId == (int)DataMgr._data.CurChannelId) || (notify.fromPlayer != null && notify.fromPlayer.id == ModelManager.Player.GetPlayerId()))
             {
                 UpdateChatList();
             }
@@ -300,7 +313,7 @@ public sealed partial class ChatDataMgr
             var chatData = DataMgr._data;
             chatData.LockState = true;
             chatData.NewMsgCnt[chatData.CurChannelId] = 0;
-            _ctrl.ChatViewCtrl.UpdateChatList(DataMgr._data.GetChannelNotifyQueue(DataMgr._data.CurChannelId),needDelay);
+            _ctrl.ChatViewCtrl.UpdateChatList(DataMgr._data,needDelay);
         }
         private static void SendChatMessage(ISocialityViewController chatInfoCtrl)
         {
@@ -308,10 +321,7 @@ public sealed partial class ChatDataMgr
             var chatViewData = DataMgr._data.chatViewData;
             string inputStr = chatCtrl.InputFiledText;
             string _urlMsg = chatViewData._urlMsg;
-            //DataMgr._data.isMoveUpFaceContent = false;
-            //chatInfoCtrl.TweenMoveDown();
             AppStringHelper.FilterEmoji(inputStr);
-            //string inputStr = _view.Input_UIInput.value;
             if (string.IsNullOrEmpty(inputStr) && string.IsNullOrEmpty(_urlMsg))
             {
                 TipManager.AddTip("不能发送空消息");
@@ -370,6 +380,7 @@ public sealed partial class ChatDataMgr
                                     else
                                     {
                                         ctrl.InputFiledText = string.Empty;
+                                        JSTimer.Instance.CancelTimer(ChatHornInput);
                                         FireData();
                                     }
                                 }
@@ -417,6 +428,7 @@ public sealed partial class ChatDataMgr
                         chatViewData._urlMsg = string.Empty;
                         chatCtrl.InputFiledText = string.Empty;
                         DataMgr._data.SetUpChatTimer(ChatChannelEnum.Horn);
+                        CheckChannelCanChat(DataMgr._data.CurChannelId, chatCtrl);
                         FireData();
                     });
         }
@@ -457,7 +469,7 @@ public sealed partial class ChatDataMgr
         /// </summary>
         /// <param name="data"></param>
         /// <param name="channelId"></param>
-        private static void SetInputDeafaultText(ChatViewData data, ChatChannelEnum channelId)
+        private static void SetInputDeafaultText(ChatViewData data, ChatChannelEnum channelId, ISocialityViewController ctrl)
         {
             switch (channelId)
             {
@@ -465,6 +477,10 @@ public sealed partial class ChatDataMgr
                 case ChatChannelEnum.Hearsay:
                     data.isEnable = false;
                     data._defalutInputText = "该频道为系统频道，不可以发言";
+                    break;
+                case ChatChannelEnum.Horn:
+                    data.isEnable = true;
+                    CheckChannelCanChat(channelId, ctrl.ChatViewCtrl);
                     break;
                 default:
                     data.isEnable = true;
@@ -531,12 +547,11 @@ public sealed partial class ChatDataMgr
             GameEventCenter.RemoveListener<ChatNotify>(GameEvent.CHAT_MSG_NOTIFY, OnChatMsgNotify);
             JSTimer.Instance.CancelTimer(ChatHornInput);
             //OnClose UI
-            _ctrl.ChatViewCtrl.OnSpeechBtnPressEvt -= OnSpeechBtnPress;
+            if (_ctrl != null) 
+                _ctrl.ChatViewCtrl.OnSpeechBtnPressEvt -= OnSpeechBtnPress;
             var chatData = DataMgr._data;
             chatData.isMoveUpFaceContent = false;
             ClearVoiceEvent();
-
-
             _ctrl = null;
         }
 
@@ -721,8 +736,9 @@ public sealed partial class PrivateMsgDataMgr
             _disposable.Add(ctrl.ChatViewCtrl.FaceCtrl.SelectStream.Subscribe(x => OnSelectByFacePanel(x, ctrl)));
         }
 
-        private static void Dispose()
+        public static void Dispose()
         {
+            DataMgr._data.isMoveUpContent = false;
             _disposable = _disposable.CloseOnceNull();
         }
 

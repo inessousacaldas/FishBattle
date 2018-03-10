@@ -36,7 +36,7 @@ public interface IQuartzStrengthData
 
 public interface IQuartzForgeData
 {
-    
+    OrbmentDto GetOrbmentDto { get; }
 }
 
 public sealed partial class QuartzDataMgr

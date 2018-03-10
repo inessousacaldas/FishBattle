@@ -42,6 +42,7 @@ internal class ProxyBattleSkillEditor
     public static void UpdateSkillConfigInfo(SkillConfigInfo pSkillConfigInfo)
     {
         BattleConfigManager.Instance.UpdateSkillConfigInfo(pSkillConfigInfo);
+        BattleConfigManager.Instance.UpdateCorrectSkillConfigInfo(pSkillConfigInfo);
     }
 
     public static void OpenPreview(int pEnemyCount,int pEnemyFormation)

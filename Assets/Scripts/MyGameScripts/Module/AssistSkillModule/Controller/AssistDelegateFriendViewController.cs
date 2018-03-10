@@ -115,6 +115,11 @@ public partial class AssistDelegateFriendViewController    {
                     {
                         AssistSkillMainDataMgr.DataMgr.SetChoseFriendId(friendId);
                         Close();
+                     
+                        if (_helpedFriendList.Contains(friendId))
+                        {
+                            TipManager.AddTip("该玩家今天已协助过你了");
+                        }
                     }));
                 });
                 break;

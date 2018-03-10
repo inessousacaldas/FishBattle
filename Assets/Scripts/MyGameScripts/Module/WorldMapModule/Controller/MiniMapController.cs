@@ -107,7 +107,7 @@ public class MiniMapController : MonoViewController<MiniMapView>
         y *= factor;
 
         var dest = new Vector3(-1 * (_mapOffX - x) / _scale, 0, -1 * (y - _mapOffY) / _scale);
-        dest = SceneHelper.GetSceneStandPosition(new Vector3(dest.x, 0f, dest.z), Vector3.zero);
+        dest = SceneHelper.GetPositionInScene(dest.x, dest.y, dest.z);
         GameDebuger.Log("walkTo=" + dest);
         _heroView.WalkToPoint(dest);
         GameDebuger.TODO(@"MissionDataModel.Instance.HeroCharacterControllerEnable(true, 0);");

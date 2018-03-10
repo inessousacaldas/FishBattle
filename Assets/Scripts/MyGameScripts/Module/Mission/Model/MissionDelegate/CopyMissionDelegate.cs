@@ -16,11 +16,32 @@ public class CopyMissionDelegate:BaseMissionDelegate, IMissionDelegate
 
     public void AcceptMissionFinish(PlayerMissionDto dto)
     {
-        if(dto.mission.quickFindWay && (_model.GetLastFindMission() != null
-        && _model.GetLastFindMission().type == dto.mission.type)
-        || _model.GetLastFindMission() == null)
+        if(dto.mission.type == (int)MissionType.MissionTypeEnum.Copy)
         {
-            _model.WaitFindToMissionNpc(dto.mission);
+            PlayerCopyMissionDto tPlayerMissionDto = dto as PlayerCopyMissionDto;
+            Npc acceptNpc = _model.GetMissionNpc(dto.mission);
+            if(tPlayerMissionDto != null && tPlayerMissionDto.changeScene && TeamDataMgr.DataMgr.IsLeader())
+            {
+                WorldManager.Instance.EnterCopyScene(tPlayerMissionDto.sceneId,acceptNpc);
+            }
+            else
+            {
+                if(dto.mission.quickFindWay && (_model.GetLastFindMission() != null
+              && _model.GetLastFindMission().type == dto.mission.type)
+              || _model.GetLastFindMission() == null)
+                {
+                    _model.WaitFindToMissionNpc(dto.mission);
+                }
+            }
+        }
+        else
+        {
+            if(dto.mission.quickFindWay && (_model.GetLastFindMission() != null
+              && _model.GetLastFindMission().type == dto.mission.type)
+              || _model.GetLastFindMission() == null)
+            {
+                _model.WaitFindToMissionNpc(dto.mission);
+            }
         }
     }
 
@@ -51,6 +72,11 @@ public class CopyMissionDelegate:BaseMissionDelegate, IMissionDelegate
         if(mPlayerCopyMissionDto != null && mPlayerCopyMissionDto.finish) {
             TipManager.AddTip("已经获得过该关卡奖励");
         }
+    }
+
+    public void ReqEnterMission(Mission mission,SubmitDto submitDto)
+    {
+        
     }
 
     public void UpdateSubmitDtoByStateNotify(MissionSubmitStateNotify notify,SubmitDto submitDto)

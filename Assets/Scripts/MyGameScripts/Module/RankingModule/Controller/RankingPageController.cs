@@ -13,9 +13,34 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 
+public interface IRankItemData
+{
+    long Getuid { get; }
+
+    Rankings GetRankings { get; }
+}
+
+public class RankItemData: IRankItemData
+{
+    private long _uid;
+    private Rankings _rankings;
+
+    public long Getuid { get { return _uid; } }
+    public Rankings GetRankings { get { return _rankings; } }
+
+    public static RankItemData Create(long uid, Rankings rankings)
+    {
+        RankItemData data = new RankItemData();
+        data._uid = uid;
+        data._rankings = rankings;
+        return data;
+    }
+}
+
 public partial interface IRankingPageController
 {
     UniRx.IObservable<int> OnMenuClickHandler { get; }
+    UniRx.IObservable<IRankItemData> OnPlayerClickHandler { get; }
 }
 
 public partial class RankingPageController
@@ -44,6 +69,7 @@ public partial class RankingPageController
 
     #region
     private delegate void RankCellClick(RankingItemCellController btn);
+    private delegate void RankAppellationClick(RankingAppellationItemController btn);
 
     private RankingTitleUIController _rankTitleCtr;
     private RankingInfoCellController _rankInfoCtr;
@@ -59,6 +85,8 @@ public partial class RankingPageController
     #region Subject
     private Subject<int> _onMenuClickEvt = new Subject<int>();
     public UniRx.IObservable<int> OnMenuClickHandler { get { return _onMenuClickEvt; } } 
+    private Subject<IRankItemData> _onPlayerClickEvt = new Subject<IRankItemData>();
+    public UniRx.IObservable<IRankItemData> OnPlayerClickHandler { get { return _onPlayerClickEvt; } }  
     #endregion
     public enum RankStyle
     {
@@ -150,7 +178,7 @@ public partial class RankingPageController
         var data = _data.GetRankInfoByRank(_secondCurMenu.id);
         _appellationItems.ForEachI((item, idx) =>
         {
-            item.SetItemInfo(data.list.TryGetValue(idx), idx + 1);
+            item.SetItemInfo(data.list.TryGetValue(idx), idx + 1, _secondCurMenu.id);
         });
     }
 
@@ -158,11 +186,9 @@ public partial class RankingPageController
     {
         RankCellClick func = btn =>
         {
-            _disposable.Add(btn.ClickHandler.Subscribe(_ =>
+            _disposable.Add(btn.ClickHandler.Subscribe(data =>
             {
-
-                GameDebuger.LogError("click");
-
+                _onPlayerClickEvt.OnNext(data);
             }));
         };
 
@@ -180,9 +206,9 @@ public partial class RankingPageController
     {
         RankCellClick func = btn =>
         {
-            _disposable.Add(btn.ClickHandler.Subscribe(_ =>
+            _disposable.Add(btn.ClickHandler.Subscribe(data =>
             {
-                GameDebuger.LogError("click");
+                _onPlayerClickEvt.OnNext(data);
             }));
         };
 
@@ -195,12 +221,20 @@ public partial class RankingPageController
             func(option);
         }
 
+        RankAppellationClick _func = btn =>
+        {
+            _disposable.Add(btn.OnClickHandler.Subscribe(data =>
+            {
+                _onPlayerClickEvt.OnNext(data);
+            }));
+        };
         for (int i = 0; i < Third; i++)
         {
             var option = AddChild<RankingAppellationItemController, RankingAppellationItem>(
                     _appellationAnchor[i].gameObject,
                     RankingAppellationItem.NAME);
             _appellationItems.Add(option);
+            _func(option);
         }
     }
 
@@ -223,7 +257,6 @@ public partial class RankingPageController
                 InitSecondMenu(data, btn);
             }));
         };
-        GameDebuger.Log(_firstMenuDataList);
         _firstMenuDataList.ForEachI((data, idx) =>
         {
             var option = AddChild<RankingOptionBtnController, RankingOptionBtn>(

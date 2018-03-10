@@ -157,7 +157,7 @@ public partial class EmailViewController
     //提取附件回调
     private void OnExtractSuccess()
     {
-        TipManager.AddTip("领取成功");
+        //TipManager.AddTip("领取成功");
         SetBtnEnable(true);         //使Btn可以点击
 
         if (_mailDto.mailType.readDelete)

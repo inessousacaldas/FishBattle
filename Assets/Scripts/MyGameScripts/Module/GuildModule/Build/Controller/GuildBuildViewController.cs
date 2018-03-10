@@ -8,20 +8,27 @@
 
 using System.Collections.Generic;
 using UniRx;
+using AppDto;
 
 public partial interface IGuildBuildViewController
 {
+    #region 建筑
     void UpdateView(IGuildMainData data);
     void OnClickCheckBtn(IGuildMainData data, GuildBuildItemController ctrl);
     GuildBuildItemController SelCtrl { get; }
+    #endregion
 }
 
 public partial class GuildBuildViewController
 {
     private CompositeDisposable _disposable;
+    #region 建筑
     private List<GuildBuildItemController> itemList = new List<GuildBuildItemController>();
     private GuildBuildItemController selCtrl = null;
     public GuildBuildItemController SelCtrl { get { return selCtrl; } }
+    #endregion
+    
+
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
@@ -53,7 +60,7 @@ public partial class GuildBuildViewController
     {
         
     }
-
+    #region 建筑
     public void UpdateView(IGuildMainData data)
     {
         UpdateTopView(data);
@@ -108,23 +115,33 @@ public partial class GuildBuildViewController
             View.desItem_Transform.position = pos;
             var localPos = View.desItem_Transform.localPosition;
             View.desItem_Transform.localPosition = new UnityEngine.Vector3(localPos.x, localPos.y + 50, localPos.z);
-
-            int idx = detail.Idx;
-            var serverTime = SystemTimeManager.Instance.GetUTCTimeStamp();  //取服务器时间
-            var finishTime = data.BuildUpTimeList.TryGetValue(idx);
-            long value = finishTime - serverTime;
-            if (value <= 0)
+            SpringPanel.Begin(View.effPabel, new UnityEngine.Vector3(0.2f, -46.4f, 0f), 8f);
+            var isMaxLv = IsMaxLvState(data, detail);
+            if (isMaxLv)
             {
-                View.upgradeBtn_BoxCollider.enabled = true;
-                View.upgradeBtnLabel_UILabel.spacingX = 11;
-                View.upgradeBtnLabel_UILabel.text = "升级";
+                View.upgradeBtn_BoxCollider.enabled = false;
+                View.upgradeBtnLabel_UILabel.spacingX = 0;
+                View.upgradeBtnLabel_UILabel.text = "最高等级";
             }
             else
             {
-                View.upgradeBtn_BoxCollider.enabled = false;
-                var left = SetDate(value);
-                View.upgradeBtnLabel_UILabel.spacingX = 0;
-                View.upgradeBtnLabel_UILabel.text = "升级中 剩余" + left;
+                int idx = detail.Idx;
+                var serverTime = SystemTimeManager.Instance.GetUTCTimeStamp();  //取服务器时间
+                var finishTime = data.BuildUpTimeList.TryGetValue(idx);
+                long value = finishTime - serverTime;
+                if (value <= 0)
+                {
+                    View.upgradeBtn_BoxCollider.enabled = true;
+                    View.upgradeBtnLabel_UILabel.spacingX = 11;
+                    View.upgradeBtnLabel_UILabel.text = "升级";
+                }
+                else
+                {
+                    View.upgradeBtn_BoxCollider.enabled = false;
+                    var left = SetDate(value);
+                    View.upgradeBtnLabel_UILabel.spacingX = 0;
+                    View.upgradeBtnLabel_UILabel.text = "升级中 剩余" + left;
+                }
             }
             var box = View.effLabel_UILabel.GetComponent<UnityEngine.BoxCollider>();
             int width = View.effLabel_UILabel.width;
@@ -160,10 +177,10 @@ public partial class GuildBuildViewController
                         str += bar.memberAmount + "人";
                         var posList = data.GuildPosition;
                         var posAmount = bar.posAmount;
-                        var posAmountAry = posAmount.Split('/');
+                        var posAmountAry = posAmount.Split(',');
                         posAmountAry.ForEach(e =>
                         {
-                            var ary = e.Split('_');
+                            var ary = e.Split('/');
                             int posIndx = StringHelper.ToInt(ary[0]);
                             var posVal = posList.Find(f => f.id == posIndx);
                             if (posVal != null)
@@ -185,6 +202,9 @@ public partial class GuildBuildViewController
                     var trea = treasury as AppDto.GuildTreasury;
                     Des = string.Format(des, trea == null ? 0 : trea.guildAssetLimit);
                 }
+                break;
+            default:
+                Des = des;
                 break;
         }
 
@@ -214,4 +234,70 @@ public partial class GuildBuildViewController
         }
         return "小于一小时";
     }
+
+    //建筑是否达到最高等级
+    private bool IsMaxLvState(IGuildMainData data, BuildDetailMsg detail)
+    {
+        GuildBuilding.GuildBuildingType idx = (GuildBuilding.GuildBuildingType)detail.Idx;
+        var list = data.GuildBuildList;
+        List<GuildBuilding> tmpList = new List<GuildBuilding>();
+        GuildBuilding val = null;
+        int count = 0;
+        switch (idx)
+        {
+            case GuildBuilding.GuildBuildingType.Grade://规模
+                var gradeList = list.Filter(e => e is GuildGrade);
+                tmpList = gradeList.ToList();
+                count = tmpList.Count - 1;
+                val = tmpList[count];
+                if (val != null)
+                {
+                    return val.grade == data.GuildBaseInfo.grade;
+                }
+                break;
+            case GuildBuilding.GuildBuildingType.BarPub://酒馆
+                var barpubList = list.Filter(e => e is GuildBarPub);
+                tmpList = barpubList.ToList();
+                count = tmpList.Count - 1;
+                val = tmpList[count];
+                if (val != null)
+                {
+                    return val.grade == data.GuildDetailInfo.buildingInfo.barpubGrade;
+                }
+                break;
+            case GuildBuilding.GuildBuildingType.Treasury://金库
+                var treasuryList = list.Filter(e => e is GuildTreasury);
+                tmpList = treasuryList.ToList();
+                count = tmpList.Count - 1;
+                val = tmpList[count];
+                if (val != null)
+                {
+                    return val.grade == data.GuildDetailInfo.buildingInfo.treasuryGrade;
+                }
+                break;
+            case GuildBuilding.GuildBuildingType.GuardTower://哨塔
+                var towerList = list.Filter(e => e is GuildGuardTower);
+                tmpList = towerList.ToList();
+                count = tmpList.Count - 1;
+                val = tmpList[count];
+                if (val != null)
+                {
+                    return val.grade == data.GuildDetailInfo.buildingInfo.guardTowerGrade;
+                }
+                break;
+            case GuildBuilding.GuildBuildingType.Workshop://工坊
+                var workshopList = list.Filter(e => e is GuildWorkshop);
+                tmpList = workshopList.ToList();
+                count = tmpList.Count - 1;
+                val = tmpList[count];
+                if (val != null)
+                {
+                    return val.grade == data.GuildDetailInfo.buildingInfo.workshopGrade;
+                }
+                break;
+        }
+        return false;
+    }
+    #endregion
+    
 }

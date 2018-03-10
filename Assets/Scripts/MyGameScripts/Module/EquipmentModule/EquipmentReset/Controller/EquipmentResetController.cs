@@ -69,7 +69,7 @@ public partial class EquipmentResetController
     {
         _data = data;
 
-
+        View.TimesLb_UILabel.text = string.Format("今日剩余洗练次数:{0}", data.CurrentEquipmentInfo.curResetCount);
         UpdateChoiceList(data);
         UpdateInfo(data);
     }

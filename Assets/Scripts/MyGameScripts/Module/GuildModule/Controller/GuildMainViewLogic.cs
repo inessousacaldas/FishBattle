@@ -14,6 +14,7 @@ public sealed partial class GuildMainDataMgr
     {
         private static CompositeDisposable _noGuildDisposable;
         private static CompositeDisposable _hasGuildDisposable;
+        private static CompositeDisposable _backGuildMapDisposable; //专门用来释放从队伍那边Notify来的回到公会
 
         public static void Open(GuildTab tab)
         {
@@ -232,11 +233,10 @@ public sealed partial class GuildMainDataMgr
         //申请加入
         private static void ApplyGuildHandler(int showId, GuildItemController ctrl)
         {
-            if (!CanRequstGuild(showId)) return;
             GuildMainNetMsg.ReqRequstGuild(showId, ctrl.ItemInfoDto.name);
         }
         //是否可以申请加入公会
-        private static bool CanRequstGuild(int showId)
+        public static bool CanRequstGuild(int showId)
         {
             var data = DataMgr._data;
             if (data.GuildState == GuildState.HasJoin)
@@ -267,6 +267,12 @@ public sealed partial class GuildMainDataMgr
             else
             {
                 _hasGuildDisposable.Clear();
+            }
+            if (_backGuildMapDisposable == null)
+                _backGuildMapDisposable = new CompositeDisposable();
+            else
+            {
+                _backGuildMapDisposable.Clear();
             }
 
             _hasGuildDisposable.Add(ctrl.CloseEvt.Subscribe(_ => HasGuildDispose()));
@@ -328,17 +334,71 @@ public sealed partial class GuildMainDataMgr
             #endregion
 
             #region 管理
-
             _hasGuildDisposable.Add(ctrl.OnNoticeModificationBtn_UIButtonClick.Subscribe(e => OnNoticeModificationClick()));
             _hasGuildDisposable.Add(ctrl.OnManifestoModificationBtn_UIButtonClick.Subscribe(e => OnManifestoModificationClick()));
-            _hasGuildDisposable.Add(ctrl.OnMoreMessageLabel_UIButtonClick.Subscribe(e => { }));
+            _hasGuildDisposable.Add(ctrl.OnMoreMessageLabel_UIButtonClick.Subscribe(e => OnMoreMessageLabelClick()));
+            #endregion
 
+            #region 福利
+            _hasGuildDisposable.Add(ctrl.OnwelfareCheckBtn_UIButtonClick.Subscribe(e => OnwelfareCheckBtnClick(e,ctrl)));
+            _hasGuildDisposable.Add(ctrl.OnwelfareExplainBtn_UIButtonClick.Subscribe(e => OnwelfareExplainBtnClick()));
             #endregion
 
             ctrl.OnTabClick(GuildTab.InfoView);
             guildInfoBtn_UIButtonClick(ctrl);
             OnTabClick(GuildTab.InfoView, ctrl);
         }
+
+        #region 福利
+        //点击查看
+        private static void OnwelfareCheckBtnClick(GuildBuildItemController ctrl, IGuildHasJoinViewController ICtrl)
+        {
+            if (ctrl == null) return;
+            var dto = ctrl.guildWelfare;
+            if (dto == null) return;
+            GuildWelfare.GuildWelfareType type = (GuildWelfare.GuildWelfareType)dto.id;
+            switch (type)
+            {
+                case GuildWelfare.GuildWelfareType.Salary:
+                    GuildMainNetMsg.ReqGainSalary();
+                    break;
+                case GuildWelfare.GuildWelfareType.TreasuryBox:
+                    if(!CheckTreasuryBox()) return;
+                    GuildBoxViewLogic.Open();
+                    GuildMainNetMsg.ReqTreasureBox();
+                    break;
+                case GuildWelfare.GuildWelfareType.HongBao:
+                    //ProxyRedPack.OpenRedPackMainView(RedPackChannelType.Guild);
+                    break;
+                case GuildWelfare.GuildWelfareType.Shop:
+                    ProxyShop.OpenShopByType(108);
+                    break;
+                case GuildWelfare.GuildWelfareType.Donation:
+                    GuildDonateViewLogic.Open();
+                    FireData();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static bool CheckTreasuryBox()
+        {
+            var data = DataMgr._data.GuildDetailInfo;
+            if (data == null) return false;
+            if (data.buildingInfo.treasuryGrade == 0)
+            {
+                TipManager.AddTip("当前公会没有金库，无法开启公会宝箱");
+                return false;
+            }
+            return true;
+        }
+
+        private static void OnwelfareExplainBtnClick()
+        {
+            ProxyTips.OpenTextTips(28, new UnityEngine.Vector3(260, 115), true);
+        }
+        #endregion
 
         #region 管理
 
@@ -355,8 +415,8 @@ public sealed partial class GuildMainDataMgr
         }
         private static void OnMoreMessageLabelClick()
         {
-            //GuildEventViewController _guildMessageCtr = UIModuleManager.Instance.OpenFunModule<GuildEventViewController>(GuildEventView.NAME, UILayerType.SubModule, true);
-            //_guildMessageCtr.UpdateMessageItem(_messageInfoList);
+            GuildEventViewController _guildMessageCtr = UIModuleManager.Instance.OpenFunModule<GuildEventViewController>(GuildEventView.NAME, UILayerType.SubModule, true);
+            _guildMessageCtr.UpdateMessageItem(DataMgr._data.GuildDetailInfo.magEvents.events);
         }
 
         private static void CloseNoticeView()
@@ -378,6 +438,14 @@ public sealed partial class GuildMainDataMgr
         //升级
         private static void OnClickUpgradeBtn(GuildBuildItemController item)
         {
+            var selfInfo = DataMgr._data.PlayerGuildInfo;
+            if (selfInfo == null) return;
+            var selfPos = DataMgr._data.GuildPosition.Find(e => e.id == selfInfo.positionId);
+            if (!selfPos.upgradeBuilding)
+            {
+                TipManager.AddTip("你没有权限升级建筑");
+                return;
+            }
             var data = DataMgr._data;
             int idx = item.buildDetailMsg.Idx;
             if(item == null)
@@ -385,72 +453,73 @@ public sealed partial class GuildMainDataMgr
                 GameDebuger.Log("数据出错");
                 return;
             }
-            
-            int guildLv = data.GuildBaseInfo.grade;
-            var buildInfo = data.GuildDetailInfo.buildingInfo;
-            int pub = buildInfo.barpubGrade;
-            int treasury = buildInfo.treasuryGrade;
-            int tower = buildInfo.guardTowerGrade;
-            int workshop = buildInfo.workshopGrade;
-            if (idx == (int)GuildBuilding.GuildBuildingType.Grade)
-            {
-                if(guildLv != pub)
-                {
-                    TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.BarPub) + "等级不满足");
-                    return;
-                }
-                else if(guildLv != treasury)
-                {
-                    TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Treasury) + "等级不满足");
-                    return;
-                }
-                else if(guildLv != tower)
-                {
-                    TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.GuardTower) + "等级不满足");
-                    return;
-                }
-                else if(guildLv != workshop)
-                {
-                    TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Workshop) + "等级不满足");
-                    return;
-                }
-                else
-                {
-                    //
-                }
-            }
-            else if(idx == (int)GuildBuilding.GuildBuildingType.BarPub)
-            {
-                if(guildLv == pub)
-                {
-                    TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
-                    return;
-                }
-            }
-            else if(idx == (int)GuildBuilding.GuildBuildingType.Treasury)
-            {
-                if (guildLv == treasury)
-                {
-                    TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
-                    return;
-                }
-            }
-            else if (idx == (int)GuildBuilding.GuildBuildingType.GuardTower)
-            {
-                if (guildLv == tower)
-                {
-                    TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
-                    return;
-                }
-            }
-            else if (idx == (int)GuildBuilding.GuildBuildingType.Workshop)
-            {
-                if (guildLv == pub)
-                {
-                    TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
-                    return;
-                }
-            }
+            #region 去掉客户端判断
+            //int guildLv = data.GuildBaseInfo.grade;
+            //var buildInfo = data.GuildDetailInfo.buildingInfo;
+            //int pub = buildInfo.barpubGrade;
+            //int treasury = buildInfo.treasuryGrade;
+            //int tower = buildInfo.guardTowerGrade;
+            //int workshop = buildInfo.workshopGrade;
+            //if (idx == (int)GuildBuilding.GuildBuildingType.Grade)
+            //{
+            //    if(guildLv != pub)
+            //    {
+            //        TipManager.AddTip("请先提升公会"+DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.BarPub) + "再进行升级");
+            //        return;
+            //    }
+            //    else if(guildLv != treasury)
+            //    {
+            //        TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Treasury) + "等级不满足");
+            //        return;
+            //    }
+            //    else if(guildLv != tower)
+            //    {
+            //        TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.GuardTower) + "等级不满足");
+            //        return;
+            //    }
+            //    else if(guildLv != workshop)
+            //    {
+            //        TipManager.AddTip(DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Workshop) + "等级不满足");
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        //
+            //    }
+            //}
+            //else if(idx == (int)GuildBuilding.GuildBuildingType.BarPub)
+            //{
+            //    if(guildLv == pub)
+            //    {
+            //        TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
+            //        return;
+            //    }
+            //}
+            //else if(idx == (int)GuildBuilding.GuildBuildingType.Treasury)
+            //{
+            //    if (guildLv == treasury)
+            //    {
+            //        TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
+            //        return;
+            //    }
+            //}
+            //else if (idx == (int)GuildBuilding.GuildBuildingType.GuardTower)
+            //{
+            //    if (guildLv == tower)
+            //    {
+            //        TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
+            //        return;
+            //    }
+            //}
+            //else if (idx == (int)GuildBuilding.GuildBuildingType.Workshop)
+            //{
+            //    if (guildLv == workshop)
+            //    {
+            //        TipManager.AddTip("请先升级" + DataMgr._data.BuildList.TryGetValue((int)GuildBuilding.GuildBuildingType.Grade));
+            //        return;
+            //    }
+            //}
+            #endregion
             GuildMainNetMsg.ReqUpgradeBuilding(item.buildDetailMsg.Idx);
         }
         #endregion
@@ -469,6 +538,7 @@ public sealed partial class GuildMainDataMgr
                     break;
                 case GuildTab.WelfareView:
                     ReqGuildDetailInfo();
+                    GuildMainNetMsg.ReqGuildWelfareDto();
                     break;
                 case GuildTab.ActivityView:
                     ReqGuildDetailInfo();
@@ -482,12 +552,7 @@ public sealed partial class GuildMainDataMgr
         //公会详细数据，只有当数据为空才请求，其余情况看刷新（可能后面也是请求）
         private static void ReqGuildDetailInfo()
         {
-            if (DataMgr._data.GuildDetailInfo == null)
-            {
-                GuildMainNetMsg.ReqGuildInfo(DataMgr._data.PlayerGuildInfo.guildShowId, true);
-            }
-            else
-                FireData();
+            GuildMainNetMsg.ReqGuildInfo(DataMgr._data.PlayerGuildInfo.guildShowId, true);
         }
 
         #region 信息逻辑
@@ -498,10 +563,33 @@ public sealed partial class GuildMainDataMgr
                 //todo
             }
         }
+        public static void OnRefuseRequester(string applyerId)
+        {
+            if(CheckRefusePower())
+                GuildMainNetMsg.ReqRefuse(applyerId);
+        }
+        private static bool CheckRefusePower()
+        {
+            var selfInfo = DataMgr._data.PlayerGuildInfo;
+            if (selfInfo == null) return false;
+            var selfPos = DataMgr._data.GuildPosition.Find(e => e.id == selfInfo.positionId);
+            if (!selfPos.clearList)
+            {
+                TipManager.AddTip("你没有权限拒绝成员");
+                return false;
+            }
+            return true;
+        }
+        //接手成员，聊天超链接使用
+        public static void OnAcceptRequester(long applyerId)
+        {
+            if(CheckAcceptRequester2())
+                GuildMainNetMsg.ReqApproval(applyerId);
+        }
         //接收成员
         private static void OnAcceptRequester(IGuildRequesterController ctrl)
         {
-            if(CheckAcceptRequester())
+            if (CheckAcceptRequester())
                 GuildMainNetMsg.ReqApproval(ctrl.GuildApprovalDto.applyerId);
         }
         private static bool CheckAcceptRequester()
@@ -512,7 +600,12 @@ public sealed partial class GuildMainDataMgr
                 TipManager.AddTip("当前没有玩家申请进入公会");
                 return false;
             }
+            return CheckAcceptRequester2();
+        }
+        private static bool CheckAcceptRequester2()
+        {
             var selfInfo = DataMgr._data.PlayerGuildInfo;
+            if (selfInfo == null) return false;
             var selfPos = DataMgr._data.GuildPosition.Find(e => e.id == selfInfo.positionId);
             if (!selfPos.approval)
             {
@@ -525,6 +618,7 @@ public sealed partial class GuildMainDataMgr
         private static void OnrClearAllApprovalList()
         {
             var selfInfo = DataMgr._data.PlayerGuildInfo;
+            if (selfInfo == null) return;
             var selfPos = DataMgr._data.GuildPosition.Find(e => e.id == selfInfo.positionId);
             if (!selfPos.clearList)
             {
@@ -539,6 +633,7 @@ public sealed partial class GuildMainDataMgr
         private static void OnrCloseBtn_UIButtonClick(IGuildHasJoinViewController ctrl)
         {
             ctrl.GuildInfoViewCtrl.ShowRequestList(false);
+            DataMgr._data.ClearApprovalList();
             //string str = DataMgr._data.applyIdStr;
             //if (!string.IsNullOrEmpty(str))
             //{
@@ -716,7 +811,7 @@ public sealed partial class GuildMainDataMgr
                 var selCtrl = ctrl.GuildInfoViewCtrl.LastSelItemCtrl;
                 if (selCtrl == null) return;
                 string name = selCtrl.MemberDto.name;
-                string des = "是否开除公会成员【" + name + "】";
+                string des = "是否开除公会成员【" + name.WrapColor(ColorConstantV3.Color_Green) + "】";
                 string title = "";
                 var window = ProxyBaseWinModule.Open();
                 BaseTipData data = BaseTipData.Create(title, des, 0, delegate
@@ -732,6 +827,7 @@ public sealed partial class GuildMainDataMgr
             var otherCtrl = ctrl.GuildInfoViewCtrl.LastSelItemCtrl;
             if (otherCtrl == null) return false;
             var selfInfo = DataMgr._data.PlayerGuildInfo;
+            if (selfInfo == null) return false;
             var selfPosInfo = DataMgr._data.GuildPosition.Find(e => selfInfo.positionId == e.id);
             var otherInfo = otherCtrl.MemberDto;//所选人的信息
             if (selfPosInfo != null)
@@ -777,7 +873,7 @@ public sealed partial class GuildMainDataMgr
             ctrl.GuildInfoViewCtrl.ShowRequestList(true);
             GuildMainNetMsg.ReqRequestList(1, ReqRequestListCount);
         }
-        private static void backGuildBtn_UIButtonClick()
+        public static void backGuildBtn_UIButtonClick()
         {
             var scene = DataMgr._data.GuildScene;
             if (scene != null)
@@ -790,8 +886,78 @@ public sealed partial class GuildMainDataMgr
                         return;
                     }
                 }
-                GuildMainNetMsg.ReqEnterGuildMap(scene.id,scene.name);
+                var teamData = TeamDataMgr.DataMgr;
+                if (teamData.HasTeam())
+                {
+                    int memeberCount = 0;
+                    var memberList = TeamDataMgr.DataMgr.GetSelfTeamDto().members;
+                    memeberCount = memberList.Count;
+                    var id = ModelManager.Player.GetPlayerId();
+                    var memberStatus = teamData.TeamState(id);
+                    if(memeberCount == 1)
+                    {
+                        ReqEnterGuildMap(scene.id, scene.name);
+                        return;
+                    }
+                    if (teamData.IsLeader())
+                    {
+                        string des = "是否请离队伍中其他公会的玩家并回到公会？";
+                        string title = "";
+                        var ctrl = ProxyBaseWinModule.Open();
+                        BaseTipData data = BaseTipData.Create(title, des, 0, delegate
+                        {
+                            int count = 0;
+                            _backGuildMapDisposable.Add(teamData.BackGuild.Subscribe(e => { ReqEnterGuildMap(scene.id, scene.name); }));
+                            memberList.ForEach(e =>
+                            {
+                                //只对跟随状态的队员进行请离
+                                if (e.memberStatus == (int)TeamMemberDto.TeamMemberStatus.Member) 
+                                {
+                                    var scenePlayer = WorldManager.Instance.GetModel().GetPlayerDto(e.id);
+                                    if (scenePlayer != null)
+                                    {
+                                        var guildData = scenePlayer.guildInfoDto;
+                                        var playerGuildInfo = DataMgr._data.PlayerGuildInfo;
+                                        if (playerGuildInfo != null)
+                                        {
+                                            if (guildData == null || (guildData != null && guildData.guildId != playerGuildInfo.guildId))
+                                            {
+                                                count++;
+                                                TeamDataMgr.TeamNetMsg.KickOutMember(e);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            if(count == 0) ReqEnterGuildMap(scene.id, scene.name);  //count == 0 代表该队伍所有成员都是公会成员，直接进入底图
+                        }, null);
+                        ctrl.InitView(data);
+                    }
+                    else if (memberStatus == (int) TeamMemberDto.TeamMemberStatus.Member)
+                    {
+                        string des = "是否暂离队伍并回到公会？";
+                        string title = "";
+                        var ctrl = ProxyBaseWinModule.Open();
+                        BaseTipData data = BaseTipData.Create(title, des, 0, delegate
+                        {
+                            _backGuildMapDisposable.Add(
+                                teamData.BackGuild.Subscribe(e => { ReqEnterGuildMap(scene.id, scene.name); }));
+                            TeamDataMgr.TeamNetMsg.AwayTeam();
+                        }, null);
+                        ctrl.InitView(data);
+                    }
+                    else
+                        ReqEnterGuildMap(scene.id, scene.name);
+                }
+                else
+                    ReqEnterGuildMap(scene.id, scene.name);
             }
+        }
+
+        private static void ReqEnterGuildMap(int id,string name)
+        {
+            _backGuildMapDisposable = _backGuildMapDisposable.CloseOnceNull();
+            GuildMainNetMsg.ReqEnterGuildMap(id, name);
         }
         
         #endregion
@@ -804,6 +970,7 @@ public sealed partial class GuildMainDataMgr
         private static void HasGuildDispose()
         {
             _hasGuildDisposable = _hasGuildDisposable.CloseOnceNull();
+            _backGuildMapDisposable = _backGuildMapDisposable.CloseOnceNull();
             OnHasGuildDispose();
         }
         // 两个预制件共用Logic层，所以OnDispose进行改名区分

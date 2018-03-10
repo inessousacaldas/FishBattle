@@ -23,6 +23,7 @@ public static class BattleNetworkHandler
         }
         _fix_disposable.Add(NotifyListenerRegister.RegistListener<Video>(BattleNetworkManager.OnEnterBattleSuccess));
         _fix_disposable.Add(NotifyListenerRegister.RegistListener<DemoVideo>(BattleNetworkManager.OnEnterBattleSuccess));
+        _fix_disposable.Add(NotifyListenerRegister.RegistListener<BattleWatchDto>(BattleNetworkManager.OnEnterBattleSuccess));
     }
 
     public static void Setup()

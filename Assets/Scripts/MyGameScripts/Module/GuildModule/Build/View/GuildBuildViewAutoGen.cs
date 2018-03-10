@@ -28,6 +28,7 @@ public sealed class GuildBuildView : BaseView
     public UIButton upgradeBtn_UIButton;
     public UILabel upgradeBtnLabel_UILabel;
     public BoxCollider upgradeBtn_BoxCollider;
+    public GameObject effPabel;
 
 
     protected override void InitElementBinding ()
@@ -50,6 +51,7 @@ public sealed class GuildBuildView : BaseView
         upgradeBtn_UIButton = root.FindScript<UIButton>("Bottom/DesPanel/desItem/upgradeBtn");
         upgradeBtnLabel_UILabel = root.FindScript<UILabel>("Bottom/DesPanel/desItem/upgradeBtn/Label");
         upgradeBtn_BoxCollider = root.FindScript<BoxCollider>("Bottom/DesPanel/desItem/upgradeBtn");
+        effPabel = root.FindGameObject("Bottom/DesPanel/desItem/effPabel");
 
     }
     #endregion

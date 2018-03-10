@@ -31,9 +31,8 @@ public sealed partial class MartialDataMgr
                     return;
                 }
                 DataMgr._data.KungFuInfo = dto;
-                DataMgr._data.RankInfo = dto.rankInfoDto;
-                DataMgr._data.UpdatePlayerList(dto.rankInfoDto.list);
-
+                DataMgr._data.WinRankInfo = dto.winRankInfoDto;
+                DataMgr._data.LoserRankInfo = dto.loseRankInfoDto;
                 if (callback != null)
                     callback();
             });

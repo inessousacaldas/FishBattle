@@ -29,7 +29,7 @@ public class SceneFadeEffectController : MonoViewController<SceneFadeEffectPrefa
         {
             if (ModelManager.Player.GetPlayerId() == objDto.id)
             {
-                mainPlayerPos = new Vector3(objDto.x, 0, objDto.z);
+                mainPlayerPos = new Vector3(objDto.x, objDto.y, objDto.z);
             }
         }
         Show(sceneDto.sceneMap.resId, false, sceneDto.id, false, onFinishMap, onFinishFadeOut);

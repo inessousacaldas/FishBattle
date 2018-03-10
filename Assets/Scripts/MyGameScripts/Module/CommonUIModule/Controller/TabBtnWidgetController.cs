@@ -45,6 +45,7 @@ public static class TabBtnHelper
     private static Dictionary<TabbtnPrefabPath, string> ImageDic
         = new Dictionary<TabbtnPrefabPath, string>(new GenericEnumComparer<TabbtnPrefabPath>())
         {
+            //TabBtnWidget_H3_SHORT
             {TabbtnPrefabPath.TabBtnWidget_H3_SHORT, "button-001-selected"}
         };
 
@@ -64,9 +65,9 @@ public partial class TabBtnWidgetController : ITabBtnController
     private string unselectImage = string.Empty;
 
     //---设置默认值  xush
-    private int selectSize = 22;
+    private int selectSize = 26;
     private Color selectColor = ColorConstantV3.Color_VerticalSelectColor;
-    private int normalSize = 20;
+    private int normalSize = 26;
     private Color normalColor = ColorConstantV3.Color_VerticalUnSelectColor;
 
     private bool isSelcet = false;
@@ -78,12 +79,10 @@ public partial class TabBtnWidgetController : ITabBtnController
             View.redFlag.SetActive(false);
         UIHelper.AddButtonClickSound(this.gameObject, "sound_UI_tab_click");
 
-        unselectImage = View.TabBtnWidget_UISprite.spriteName;
-        selectImage = unselectImage.Replace("_Off", "_On");
-        //        selectSize = _view.btnLbl_UILabel.fontSize;
-        //        normalSize = _view.btnLbl_UILabel.fontSize;
-        //        selectColor = _view.btnLbl_UILabel.color;
-        //        normalColor = _view.btnLbl_UILabel.color;
+        //unselectImage = View.TabBtnWidget_UISprite.spriteName;
+        //selectImage = unselectImage.Replace("_Off", "_On");
+        selectImage = View.TabBtnWidget_UISprite.spriteName;
+        unselectImage = selectImage.Replace("_On", "_Off");
     }
 
     // 客户端自定义事件
@@ -103,11 +102,16 @@ public partial class TabBtnWidgetController : ITabBtnController
 
     }
 
+    //public void SetBtnLblFont(
+    //    int selectSize = 22,
+    //    string selectColor = ColorConstantV3.Color_VerticalSelectColor_Str,
+    //    int normalSize = 20,
+    //    string normalColor = ColorConstantV3.Color_VerticalUnSelectColor_Str)
     public void SetBtnLblFont(
-        int selectSize = 22,
-        string selectColor = ColorConstantV3.Color_VerticalSelectColor_Str,
-        int normalSize = 20,
-        string normalColor = ColorConstantV3.Color_VerticalUnSelectColor_Str)
+        int selectSize = 22, 
+        string selectColor = ColorConstantV3.Color_VerticalSelectColor_Str, 
+        int normalSize = 20, 
+        string normalColor =ColorConstantV3.Color_VerticalUnSelectColor_Str)
     {
         this.normalColor = NGUIText.ParseColor24(normalColor, 0);
         this.selectColor = NGUIText.ParseColor24(selectColor, 0);
@@ -124,12 +128,6 @@ public partial class TabBtnWidgetController : ITabBtnController
     public void SetBtnLbl(string name)
     {
         _view.btnLbl_UILabel.text = name;
-    }
-
-    public void SetBtnLblSpac(int x = 0, int y = 0)
-    {
-        _view.btnLbl_UILabel.spacingX = x;
-        _view.btnLbl_UILabel.spacingY = y;
     }
 
     public void SetSelected(bool _selected)
@@ -152,15 +150,6 @@ public partial class TabBtnWidgetController : ITabBtnController
     public void SetBtnDepth(int depth)
     {
         _view.TabBtnWidget_UISprite.depth = depth;
-    }
-
-    public void InitBtnImages(TabbtnPrefabPath widgetName)
-    {
-        var name = TabBtnHelper.GetBtnImages(widgetName);
-        if (!string.IsNullOrEmpty(name))
-        {
-            selectImage = name;
-        }
     }
 
     public void SetBtnImages(string normal = "", string select = "")

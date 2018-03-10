@@ -95,7 +95,6 @@ public sealed class MainUIView : BaseView
     public UIButton Button_quartz_UIButton;
     public UIButton Button_Friend_UIButton;
     public UISprite BottomRightAnchorSprite_UISprite;
-    public UIButton Button_Question_UIButton;
     public UIButton QuizariumBtn_UIButton;
     public GameObject ActivityPoll_GO;
     public UISprite ActivityIcon_UISprite;
@@ -109,6 +108,7 @@ public sealed class MainUIView : BaseView
     public UIButton Button_Recruit_UIButton;
     public UIButton Button_guild_UIButton;
     public UIButton Button_ChargeTest_UIButton;
+
 
     protected override void InitElementBinding ()
     {
@@ -197,7 +197,6 @@ public sealed class MainUIView : BaseView
         Button_quartz_UIButton = root.FindScript<UIButton>("BottomRightAnchor/BR_DownRoll/BottomGroup/ButtonGrid/Button_quartz");
         Button_Friend_UIButton = root.FindScript<UIButton>("BottomLeftAnchor/BL_DownRoll/ChatInfoPanel/ChatBox/SpeakBtnGrid/Button_Friend");
         BottomRightAnchorSprite_UISprite = root.FindScript<UISprite>("BottomRightAnchor/BR_DownRoll/Sprite");
-        Button_Question_UIButton = root.FindScript<UIButton>("TopRightAnchor/SceneBtnGroup/TL_UpScrollView/TL_UpRoll/TopBtnGrid/Button_Question");
         QuizariumBtn_UIButton = root.FindScript<UIButton>("BottomLeftAnchor/BL_DownRoll/ChatInfoPanel/ChatBox/QuizariumBtn");
         ActivityPoll_GO = root.FindGameObject("TopLeftAnchor/TL_UpRoll_V2/ActivityPoll");
         ActivityIcon_UISprite = root.FindScript<UISprite>("TopLeftAnchor/TL_UpRoll_V2/ActivityPoll/Icon");
@@ -211,6 +210,7 @@ public sealed class MainUIView : BaseView
         Button_Recruit_UIButton = root.FindScript<UIButton>("TopRightAnchor/SceneBtnGroup/TL_UpScrollView/TL_UpRoll/TopBtnGrid/Button_Recruit");
         Button_guild_UIButton = root.FindScript<UIButton>("BottomRightAnchor/BR_DownRoll/BottomGroup/ButtonGrid/Button_guild");
         Button_ChargeTest_UIButton = root.FindScript<UIButton>("Button_ChargeTest");
+
     }
     #endregion
 }

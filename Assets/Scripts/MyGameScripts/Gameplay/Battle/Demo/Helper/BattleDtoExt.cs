@@ -24,6 +24,22 @@ namespace MyGameScripts.Gameplay.Battle.Demo.Helper
 
         #region VideoSoldier
 
+        public static string PlayerHeadTex(this VideoSoldier soldier)
+        {
+            if (soldier == null || soldier.charactor == null)
+            {
+                GameDebuger.Log("soldier为空,请检查");
+                return "";
+            }
+
+            if (soldier.charactor is MainCharactor) //代表主角
+                return string.Format("head_{0}", (soldier.charactor as MainCharactor).texture);
+            if (soldier.charactor is Crew) //代表伙伴
+                return (soldier.charactor as Crew).icon;
+
+            return "";
+        }
+        
         public static int GetNormallAtkSkillID(this VideoSoldier soldier)
         {
             if (soldier == null) return 0;

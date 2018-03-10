@@ -46,6 +46,7 @@ public partial interface ICmomerceViewController
     UniRx.IObservable<ICmomerItemData> GetSellHandler { get; }
 
     void UpdateDataAndView(ITradeData data);
+    void ChoiseGoods(int goodsId);
 }
 
 public partial class CmomerceViewController
@@ -259,15 +260,11 @@ public partial class CmomerceViewController
     #region 我要购买
     private void InitOptionBtn()
     {
-        MenuBtnClick func = (btn, data, idx) =>
+        MenuBtnClick func = (btn, menu, idx) =>
         {
             _disposable.Add(btn.GetClickHandler.Subscribe(_ =>
             {
-                _curItemId = 0;
-                _optionList.ForEach(button => button.IsSelect(btn == button));
-                InitSecondMenu(data, btn);
-                IsSelectItem(false);
-                _view.BuyItemScrollView_UIScrollView.ResetPosition();
+                OnFirstOptionClick(btn, menu);
             }));
         };
 
@@ -283,6 +280,15 @@ public partial class CmomerceViewController
 
         _view.OptionTable_UITable.Reposition();
         _optionList[0].IsSelect(true);
+    }
+
+    private void OnFirstOptionClick(TradeOptionBtnController btn, TradeMenu menu)
+    {
+        _curItemId = 0;
+        _optionList.ForEach(button => button.IsSelect(btn == button));
+        InitSecondMenu(menu, btn);
+        IsSelectItem(false);
+        _view.BuyItemScrollView_UIScrollView.ResetPosition();
     }
 
     private void InitSecondMenu(TradeMenu menu, TradeOptionBtnController parent)
@@ -303,42 +309,8 @@ public partial class CmomerceViewController
             InitItemList(menu);
         else
         {
-            MenuBtnClick func = (btn, data, idx) =>
-            {
-                _disposable.Add(btn.GetClickHandler.Subscribe(_ =>
-                {
-                    _curItemNum = 0;
-                    _curItemId = 0;
-                    InitItemList(idx);
-                    UpdateBuyInfo();
-                    _secondOptionList.ForEach(button => button.IsSelect(btn == button));
-                    IsSelectItem(false);
-                    _view.BuyItemScrollView_UIScrollView.ResetPosition();
-                }));
-            };
-
             _secondOptionList.ForEach(item => item.gameObject.SetActive(false));
-            _secondMenuList.ForEachI((data, idx) =>
-            {
-                if (idx >= _view.SecondTable_UITable.transform.childCount)
-                {
-                    var option = AddChild<TradeOptionBtnController, TradeOptionBtn>(
-                        _view.SecondTable_UITable.gameObject,
-                        TradeOptionBtn.NAME);
-                    option.SetTradeMenuBtn(data, true);
-                    _secondOptionList.Add(option);
-                    func(option, data, idx);
-                }
-                else
-                {
-                    var item = _secondOptionList.TryGetValue(idx);
-                    if (item != null)
-                    {
-                        item.SetTradeMenuBtn(data, true);
-                        item.gameObject.SetActive(true);
-                    }
-                }
-            });
+            InitSecondOption();
             _secondOptionList.ForEachI((go, idx) =>
             {
                 if (idx == 0)
@@ -355,6 +327,49 @@ public partial class CmomerceViewController
         }
         _view.OptionTable_UITable.Reposition();
         _view.BuyScollView_UIScrollView.ResetPosition();
+    }
+
+    private void InitSecondOption()
+    {
+        MenuBtnClick func = (btn, data, idx) =>
+        {
+            _disposable.Add(btn.GetClickHandler.Subscribe(_ =>
+            {
+                OnSceondOptionClick(btn, idx);
+            }));
+        };
+        _secondMenuList.ForEachI((data, idx) =>
+        {
+            if (idx >= _view.SecondTable_UITable.transform.childCount)
+            {
+                var option = AddChild<TradeOptionBtnController, TradeOptionBtn>(
+                    _view.SecondTable_UITable.gameObject,
+                    TradeOptionBtn.NAME);
+                option.SetTradeMenuBtn(data, true);
+                _secondOptionList.Add(option);
+                func(option, data, idx);
+            }
+            else
+            {
+                var item = _secondOptionList.TryGetValue(idx);
+                if (item != null)
+                {
+                    item.SetTradeMenuBtn(data, true);
+                    item.gameObject.SetActive(true);
+                }
+            }
+        });
+    }
+
+    private void OnSceondOptionClick(TradeOptionBtnController btn, int idx)
+    {
+        _curItemNum = 0;
+        _curItemId = 0;
+        InitItemList(idx);
+        UpdateBuyInfo();
+        _secondOptionList.ForEach(button => button.IsSelect(btn == button));
+        IsSelectItem(false);
+        _view.BuyItemScrollView_UIScrollView.ResetPosition();
     }
 
     private void InitItemList(int menuIdx)
@@ -378,9 +393,7 @@ public partial class CmomerceViewController
         {
             _disposable.Add(item.GetItemClick.Subscribe(_ =>
             {
-                _itemCountMax = 200;
-                ShowSelectItemInfo(idx);
-                _tradeItemList.ForEachI((go, index) => { go.IsSelect(index == idx);});
+                SelectTradeItem(idx);
             }));
         };
 
@@ -409,6 +422,13 @@ public partial class CmomerceViewController
     }
 
     //选中某个商品
+    private void SelectTradeItem(int idx)
+    {
+        _itemCountMax = 200;
+        ShowSelectItemInfo(idx);
+        _tradeItemList.ForEachI((go, index) => { go.IsSelect(index == idx); });
+    }
+
     private void ShowSelectItemInfo(int idx)
     {
         var list = _data.CmomerceCtrl.GetTradeGoodsDto.Filter(d => d.item.tradeMenuId == _secondCurMenu.id);
@@ -583,5 +603,34 @@ public partial class CmomerceViewController
                 //UpdateSellItemList();
             }
         }
+    }
+
+    public void ChoiseGoods(int goodsId)
+    {
+        var goods = DataCache.getDtoByCls<TradeGoods>(goodsId);
+        if (goods == null)
+        {
+            GameDebuger.LogError(string.Format("tradegoods找不到{0},请检查", goodsId));
+            return;
+        }
+        var secondMenu = DataCache.getDtoByCls<TradeMenu>(goods.tradeMenuId);
+        var firstMenu = DataCache.getDtoByCls<TradeMenu>(secondMenu.parentId);
+        var idx = _firstMenuList.FindElementIdx(f => f == firstMenu);
+        if (idx < 0)
+        {
+            idx = _firstMenuList.FindElementIdx(d => d == secondMenu);
+            OnFirstOptionClick(_optionList[idx], secondMenu);
+        }
+        else
+        {
+            InitSecondMenu(firstMenu, _optionList[idx]);
+            idx = _secondMenuList.FindElementIdx(d => d == secondMenu);
+            OnSceondOptionClick(_secondOptionList[idx], idx);
+        }
+        var list = _data.CmomerceCtrl.GetTradeGoodsDto.Filter(d => d.item.tradeMenuId == secondMenu.id);
+        idx = list.FindElementIdx(d => d.itemId == goodsId);
+        SelectTradeItem(idx);
+        IsSelectItem(true);
+        UpdateCashLb();
     }
 }

@@ -97,7 +97,7 @@ public partial class MainUIViewController
     private RightExpandBtnGroupController _expandBtnGroupController;
     private IMainUIExpandContentViewController expandCtrl;
     private ChatBoxController _chatBoxCtrl;
-    RedPointController _assistSkillRedPointCtrl;
+//    RedPointController _assistSkillRedPointCtrl;
 
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView()
@@ -113,16 +113,16 @@ public partial class MainUIViewController
         InitRightBtnGroup();
         SetCrewInfo(ModelManager.Player.GetCrewInfoDto());
 
-        var pos = WorldManager.OnHeroPosStreamChange == null ? Vector2.zero : WorldManager.OnHeroPosStreamChange.LastValue;
+        var pos = WorldManager.OnHeroPosStreamChange == null ? Vector3.zero : WorldManager.OnHeroPosStreamChange.LastValue;
         var s = DataCache.getDtoByCls<SceneMap>(ModelManager.IPlayer.SceneID);
         var sceneName = s == null ? string.Empty : s.name;
-        _view.SceneName_UILabel.text = string.Format("{0} {1}, {2}",sceneName, (int) pos.x * 10, (int) pos.y * 10);
+        _view.SceneName_UILabel.text = string.Format("{0} {1}, {2}",sceneName, (int) pos.x * 10, (int) pos.z * 10);
 
         SetFuncOpen();
 
         //红点测试xjd
-        _assistSkillRedPointCtrl = AddCachedChild<RedPointController, RedPointView>(View.Button_lifeskill_UIButton.gameObject, RedPointView.NAME);
-        _assistSkillRedPointCtrl.InitView(1, 9);
+//        _assistSkillRedPointCtrl = AddCachedChild<RedPointController, RedPointView>(View.Button_lifeskill_UIButton.gameObject, RedPointView.NAME);
+//        _assistSkillRedPointCtrl.InitView(1, 9);
     }
 
     private void SetFuncOpen()
@@ -137,7 +137,6 @@ public partial class MainUIViewController
         View.Button_lifeskill_UIButton.gameObject.SetActive(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_42));
         View.Button_Crew_UIButton.gameObject.SetActive(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_10));
         View.Button_Recruit_UIButton.gameObject.SetActive(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_44));
-        View.Button_Question_UIButton.gameObject.SetActive(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_47));
         View.Button_Friend_UIButton.gameObject.SetActive(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_8));
         View.Button_Ranking_UIButton.gameObject.SetActive(FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_32));
         View.Button_Trade_UIButton.gameObject.SetActive(
@@ -214,10 +213,10 @@ public partial class MainUIViewController
         _disposable.Add(RedPointDataMgr.Stream.Subscribe(e =>
         {
             //生产按钮红点
-            if (e.PushSingleData.redPointType == 1)
-            {
-                _assistSkillRedPointCtrl.SetShow(e.PushSingleData.isShow, e.PushSingleData.num);
-            }
+//            if (e.PushSingleData.redPointType == 1)
+//            {
+//                _assistSkillRedPointCtrl.SetShow(e.PushSingleData.isShow, e.PushSingleData.num);
+//            }
         }));
         
         EventDelegate.Set(_view.Button_ChargeTest_UIButton.onClick, () =>

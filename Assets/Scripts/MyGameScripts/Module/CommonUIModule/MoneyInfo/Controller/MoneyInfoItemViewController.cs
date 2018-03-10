@@ -23,8 +23,8 @@ public partial class MoneyInfoItemViewController
         {
             if(_id == AppVirtualItem.VirtualItemEnum.SILVER || _id == AppVirtualItem.VirtualItemEnum.GOLD)
                 ProxyExChangeMain.OpenExChangeMain(_id);
-            //else
-                //打开充值界面
+            else
+                TipManager.AddTip("打开充值界面");
         });
 
         ShopBtn_UIButtonEvt.Subscribe(_ =>
@@ -48,12 +48,10 @@ public partial class MoneyInfoItemViewController
     public void UpdateView(AppVirtualItem.VirtualItemEnum curId, long moneyCount)
     {
         _id = curId;
-        View.AddBtn_UIButton.gameObject.SetActive(true);
         if (curId == AppVirtualItem.VirtualItemEnum.DIAMOND)
         {
             //打开充值界面 todo xjd
-            View.AddBtn_UIButton.gameObject.SetActive(false);
-            View.CountLbl_UILabel.transform.localPosition = new UnityEngine.Vector3(72, View.CountLbl_UILabel.transform.localPosition.y);
+            //View.CountLbl_UILabel.transform.localPosition = new UnityEngine.Vector3(54, View.CountLbl_UILabel.transform.localPosition.y);
         } 
 
         //生活积分

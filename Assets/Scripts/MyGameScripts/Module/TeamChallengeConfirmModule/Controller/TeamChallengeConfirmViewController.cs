@@ -30,6 +30,7 @@ public partial class TeamChallengeConfirmViewController {
         {
             View.SurelBtn_UIButton.gameObject.SetActive(false);
             View.CanelBtn_UIButton.gameObject.SetActive(false);
+            View.ReadyLabel_UILabel.text = "等待队友确定";
         }
         timer = 32;
         JSTimer.Instance.CancelTimer(timeName);
@@ -102,10 +103,10 @@ public partial class TeamChallengeConfirmViewController {
         for(int i = 0;i < MissionCellData.Count;i++) {
             TeamMemberDto tTeamMemberDto = tTeamDto.members.Find(e => e.id == MissionCellData[i]);
             TeamConfirmHeadController _cell = AddCachedChild<TeamConfirmHeadController,TeamConfirmHeadView>(_view.Grid_UIGrid.gameObject,TeamConfirmHeadView.NAME);
-            _cell.Init(tTeamMemberDto.playerDressInfo.charactor.texture.ToString(),tTeamMemberDto.nickname);
+            _cell.Init(tTeamMemberDto);
             //队长默认要显示钩钩
             if(tTeamDto.leaderPlayerId == tTeamMemberDto.id)
-                _cell.SetStaue("Anser_Right");
+                _cell.SetStaue();
             tTeamConfirmHeadControllerDic.Add(tTeamMemberDto.id,_cell);
         }
         _view.Grid_UIGrid.enabled = true;
@@ -115,15 +116,13 @@ public partial class TeamChallengeConfirmViewController {
         int isClose = 0;
         Tremmembers.ForEach(e => {
             if(tTeamConfirmHeadControllerDic.ContainsKey(e.Key)) {
-                string iconName="";
                 if(e.Value == 1)
                 {
-                    iconName = "Anser_Right";
+                    tTeamConfirmHeadControllerDic[e.Key].SetStaue();
                     isClose++;
                 }
                 else if(e.Value == 2)
                 {
-                    iconName = "Anser_wrong";
                     TipManager.AddTip(string.Format("{0}拒绝进入副本",tTeamConfirmHeadControllerDic[e.Key].GetName()));
                     JSTimer.Instance.CancelCd("CloseTeamChallengeUITimr");
                     JSTimer.Instance.SetupCoolDown("CloseTeamChallengeUITimr",1,null,() => { ProxyTremChallengeConfirm.Close(); });
@@ -131,7 +130,6 @@ public partial class TeamChallengeConfirmViewController {
                 else {
 
                 }
-                tTeamConfirmHeadControllerDic[e.Key].SetStaue(iconName);
             }
         });
         if(ModelManager.Player.GetPlayerId() == playerID)
@@ -139,6 +137,10 @@ public partial class TeamChallengeConfirmViewController {
             isSendServer = false;
             View.SurelBtn_UIButton.gameObject.SetActive(false);
             View.CanelBtn_UIButton.gameObject.SetActive(false);
+            if(Tremmembers[playerID] == 1)
+                View.ReadyLabel_UILabel.text = "等待队友确定";
+            else
+                View.ReadyLabel_UILabel.text = "";
         }
         if(isClose >= tTeamConfirmHeadControllerDic.Count) {
             ProxyTremChallengeConfirm.Close();

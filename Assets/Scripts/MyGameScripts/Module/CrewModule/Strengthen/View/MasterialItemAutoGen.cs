@@ -41,10 +41,8 @@ public partial class MasterialItemController : MonolessViewController<MasterialI
         if (item != null)
         {
             UIHelper.SetItemIcon(_view.MasterialIcon_UISprite, item.icon);
-            UIHelper.SetItemQualityIcon(_view.MasterialItem_UISprite, item.quality);
         }
         var _chiCount = chipCount < consumeCount ? chipCount.ToString().WrapColor(ColorConstantV3.Color_Red_Str) : chipCount.ToString();
-
         _view.CountLabel_UILabel.text = string.Format(_chiCount.ToString() + "/" + consumeCount.ToString());
         _view.AddSprite_UISprite.gameObject.SetActive(chipCount < consumeCount);
     }
@@ -59,7 +57,6 @@ public partial class MasterialItemController : MonolessViewController<MasterialI
         }
         var _realcount = ModelManager.Player.GetPlayerWealthSilver();
         UIHelper.SetItemIcon(_view.MasterialIcon_UISprite, silver.icon.ToString());
-        UIHelper.SetItemQualityIcon(_view.MasterialItem_UISprite, silver.quality);
         _view.CountLabel_UILabel.text = count.ToString();
         _view.AddSprite_UISprite.gameObject.SetActive((int)_realcount < count);
         _view.MasterialIcon_UISprite.isGrey = (int)_realcount < count;
@@ -81,7 +78,6 @@ public partial class MasterialItemController : MonolessViewController<MasterialI
         _view.CountLabel_UILabel.text = string.Format(_showCount+"/" + consumeCount.ToString());
         _view.AddSprite_UISprite.gameObject.SetActive(count < consumeCount);
         _view.MasterialIcon_UISprite.isGrey = count < consumeCount;
-        UIHelper.SetItemQualityIcon(_view.MasterialItem_UISprite, props.quality);
     }
  
 }

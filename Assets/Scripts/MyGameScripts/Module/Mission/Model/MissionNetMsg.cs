@@ -40,6 +40,14 @@ public sealed partial class MissionDataMgr
             GameUtil.GeneralReq<PlayerMissionDto>(Services.Mission_Accept(missionId), RespAcceptMisstion);
         }
 
+        #region 接受公会任务
+        public static void AcceptMissionGuild()
+        {
+            GameUtil.GeneralReq(Services.Mission_AcceptGuild());
+        }
+        #endregion
+
+
         private static void RespAcceptMisstion(PlayerMissionDto dto)
         {
             DataMgr._data.AcceptMission(dto);
@@ -197,7 +205,7 @@ public sealed partial class MissionDataMgr
                 },
                 (e) =>
                 {
-                    TipManager.AddTip(e.message);
+                    //TipManager.AddTip(e.message);
                 });
             }
             else
@@ -313,6 +321,12 @@ public sealed partial class MissionDataMgr
         public static void AccepGhostMisson()
         {
             GameUtil.GeneralReq(Services.Mission_AcceptGhost(),delegate{});
+        }
+        #endregion
+
+        #region 副本切换场景
+        public static void ChangeCopyScene() {
+            GameUtil.GeneralReq(Services.Copy_ChangeScene());
         }
         #endregion
     }

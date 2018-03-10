@@ -65,17 +65,18 @@ public sealed partial class TeamDataMgr
         var member = _data.teamDto.members.Find(d => d.id == memberDto.id);
         member.grade = memberDto.grade;
         _data.teamDto.members.ReplaceOrAdd(d => d.id == member.id, member);
+        stream.OnNext(_data);
     }
 
     private void RefuseTeamRequest(RefuseTeamRequestNotify notify)
     {
-        TipManager.AddTip(string.Format("很遗憾,{0}拒绝了你入队申请",
+        TipManager.AddTip(string.Format("很遗憾,{0}拒绝了你的入队申请",
             notify.refusePlayerName.WrapColor(ColorConstantV3.Color_Green_Str)));
     }
 
     private void RefuseTeamInvitation(RefuseTeamInvitationNotify notify)
     {
-        TipManager.AddTip(string.Format("很遗憾,{0}拒绝了你入队邀请", 
+        TipManager.AddTip(string.Format("很遗憾,{0}拒绝了你的入队邀请", 
             notify.refusePlayerName.WrapColor(ColorConstantV3.Color_Green_Str)));
     }
 
@@ -115,6 +116,7 @@ public sealed partial class TeamDataMgr
         temp.ForEach<TeamMemberDto>(s=>_data.RemoveMember(s));
         
         stream.OnNext(_data);
+        backGuild.OnNext(new Unit());   //特别用于队伍状态的回公会场景
     }
 
     private void ShowTips(TeamStatusNotify notify)
@@ -147,6 +149,17 @@ public sealed partial class TeamDataMgr
                         break;
                     case TeamMemberDto.TeamMemberStatus.Member:
                         TipManager.AddTip(isSelf ? "你已回归队伍" : string.Format("{0}已回归队伍", dto.memberName.WrapColor(ColorConstantV3.Color_Green_Str)));
+                        break;
+                }
+            }
+            else if (dto.status == (int) TeamMemberDto.TeamMemberStatus.Away)
+            {
+                var isSelf = d.id == ModelManager.Player.GetPlayer().id;
+                switch ((TeamMemberStatusDto.AwayReason)dto.awayReason)
+                {
+                    case TeamMemberStatusDto.AwayReason.REASON_SCENEMAP:
+                        if (isSelf)
+                            TipManager.AddTip("队长所在场景不能自动归队");
                         break;
                 }
             }
@@ -294,6 +307,7 @@ public sealed partial class TeamDataMgr
             case LeaveTeamNotify.LeaveTeamReason.REASON_KICKOUT:
                 if (notify.playerId != ModelManager.Player.GetPlayerId())
                 {
+                    SendBackGuildScene(teamDto);
                     if (isShowTip)
                         TipManager.AddTip(string.Format("{0}已退出队伍", notify.playerName.WrapColor(ColorConstantV3.Color_Green_Str)));
                 }
@@ -301,10 +315,32 @@ public sealed partial class TeamDataMgr
                     TipManager.AddTip("你已被队长请离队伍");
                 break;
             case LeaveTeamNotify.LeaveTeamReason.REASON_DISMISS:
-                TipManager.AddTip("队伍已解散");
+                if(isShowTip)
+                    TipManager.AddTip("队伍已解散");
                 break;
         }
         stream.OnNext(_data);
+    }
+
+    private void SendBackGuildScene(TeamDto dto)
+    {
+        int count = 0;
+        var playerGuildInfo = GuildMainDataMgr.DataMgr.PlayerGuildInfo;
+        if (playerGuildInfo != null)
+        {
+            dto.members.ForEach(e =>
+            {
+                var scenePlayer = WorldManager.Instance.GetModel().GetPlayerDto(e.id);
+                if (scenePlayer != null)
+                {
+                    var guildInfo = scenePlayer.guildInfoDto;
+                    if (guildInfo != null && guildInfo.guildId == playerGuildInfo.guildId)
+                        count++;
+                }
+            });
+        }
+        if (count == 0)
+            backGuild.OnNext(new Unit());
     }
 
     #region Handle Resp
@@ -327,6 +363,18 @@ public sealed partial class TeamDataMgr
     #endregion
     public bool HasTeam(){
         return _data != null && _data.teamDto != null && _data.teamDto.id > 0;
+    }
+
+    //是否可以点击小地图切换场景
+    public bool IsCanFlyScene()
+    {
+        if (!HasTeam())
+            return true;
+
+        var id = ModelManager.Player.GetPlayerId();
+        var memberStatus = TeamState(id);
+
+        return memberStatus != (int)TeamMemberDto.TeamMemberStatus.Member;
     }
 
 
@@ -387,6 +435,11 @@ public sealed partial class TeamDataMgr
         return _data.GetTwoNearByPlayerDto(idx);
     }
 
+    public IEnumerable<GuildMemberDto> GetGuildMemberDtos()
+    {
+        return _data.GetGuildMembersDto.memberList == null ? null : _data.GetGuildMembersDto.memberList;
+    } 
+
     public List<TeamPlayerDto> GetPlayerDtoList()
     {
         return _data.RecommendFriendList;
@@ -432,4 +485,7 @@ public sealed partial class TeamDataMgr
     {
         return _data.CreateTeamsData;
     }
+
+    private Subject<Unit> backGuild = new Subject<Unit>();
+    public UniRx.IObservable<Unit> BackGuild { get { return backGuild; } }
 }

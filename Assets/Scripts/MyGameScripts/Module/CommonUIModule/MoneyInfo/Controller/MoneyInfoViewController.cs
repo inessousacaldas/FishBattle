@@ -57,7 +57,7 @@ public partial class MoneyInfoViewController
         });
 
         //积分商店
-        SetShowIntegralShop(index);
+        //SetShowIntegralShop(index);
         View.Anchor_UIGrid.Reposition();
     }
 

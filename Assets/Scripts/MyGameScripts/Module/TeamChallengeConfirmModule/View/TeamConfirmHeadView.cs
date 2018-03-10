@@ -7,14 +7,18 @@ public class TeamConfirmHeadView:BaseView
     #region Element Bindings
     public UISprite Head_UISprite;
     public UILabel Name_UILabel;
-    public UISprite Stats_UISprite;
+    public UISprite OccupationBG_UISprite;
+    public UISprite OccupationIcon_UISprite;
+    public UILabel LevelLabel_UILabel;
     #endregion
 
     protected override void InitElementBinding()
     {
         var root = this.gameObject;
         Head_UISprite = root.FindScript<UISprite>("Head");
-        Stats_UISprite = root.FindScript<UISprite>("stats");
         Name_UILabel = root.FindScript<UILabel>("Name");
+        LevelLabel_UILabel = root.FindScript<UILabel>("LevelLabel");
+        OccupationBG_UISprite = root.FindScript<UISprite>("OccupationBG");
+        OccupationIcon_UISprite = root.FindScript<UISprite>("OccupationBG/OccupationIcon");
     }
 }

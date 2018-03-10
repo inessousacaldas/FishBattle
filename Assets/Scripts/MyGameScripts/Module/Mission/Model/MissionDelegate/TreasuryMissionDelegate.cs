@@ -43,6 +43,11 @@ public class TreasuryMissionDelegate : BaseMissionDelegate,IMissionDelegate {
             TipManager.AddTip(string.Format("今天已获得{0}张藏宝图，无法继续宝图任务",TreasureMaxCount));
     }
 
+    public void ReqEnterMission(Mission mission,SubmitDto submitDto)
+    {
+        
+    }
+
     public void UpdateSubmitDtoByStateNotify(MissionSubmitStateNotify notify,SubmitDto submitDto)
     {
         

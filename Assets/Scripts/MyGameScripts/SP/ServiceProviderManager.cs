@@ -126,8 +126,10 @@ public class ServiceProviderManager
         hash.Add("deviceModel", WWW.EscapeURL(SystemInfo.deviceModel));  //设备模型
         hash.Add("os", WWW.EscapeURL(SystemInfo.operatingSystem));  //具体操作系统
 
-
-        hash.Add("p2", SPSDK.cmbiChannelId());  //畅游推过渠道码
+//        if (GameSetting.IsCyouChannel)
+//        {
+//            hash.Add("p2", SPSDK.cmbiChannelId());  //畅游推过渠道码
+//        }
 
         string url = GameSetting.SSO_SERVER +
             "/gssoc/account/login.json?" + GetRequestParms(hash);
@@ -176,9 +178,9 @@ public class ServiceProviderManager
         string getStr = "";
         foreach (var item in hash)
         {
+            if (item.Key == null || item.Value ==  null) continue;//等于NULL是账号处于封停状态
             if (getStr != "")
             {
-
                 getStr += "&";
             }
             getStr += item.Key + "=" +item.Value.ToString();

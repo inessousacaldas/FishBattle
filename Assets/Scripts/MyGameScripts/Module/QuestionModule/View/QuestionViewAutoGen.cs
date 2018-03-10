@@ -32,7 +32,7 @@ public sealed class QuestionView : BaseView
     protected override void InitElementBinding ()
     {
 	    var root = this.gameObject;
-        CloseBtn_UIButton = root.FindScript<UIButton>("BaseWindow/CloseBtn");
+        CloseBtn_UIButton = root.FindScript<UIButton>("BaseMainWindow/CloseBtn");
         PrecisionLb_UILabel = root.FindScript<UILabel>("MainContent/LeftGroup/PrecisionLb");
         ExpLb_UILabel = root.FindScript<UILabel>("MainContent/LeftGroup/ExpLb");
         MenoyLb_UILabel = root.FindScript<UILabel>("MainContent/LeftGroup/MenoyLb");

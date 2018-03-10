@@ -365,6 +365,10 @@ public class PlayerModel : IModuleModel, IPlayerModel
         //GameDebuger.Log("玩家升级:?" + noti.upgarded);
         if (noti.level > _playerPropertyInfo.playerDto.level)
         {
+            if (GameSetting.Channel == AgencyPlatform.Channel_cyou)
+            {
+                SPSdkManager.Instance.CYRoleUpgrade(noti.level);
+            }
             _playerPropertyInfo.playerDto.level = noti.level;
             lvUpStream.OnNext(noti.level);
         }

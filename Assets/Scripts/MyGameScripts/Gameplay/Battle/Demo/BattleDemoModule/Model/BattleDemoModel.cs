@@ -24,7 +24,6 @@ public interface IMainBattleView
     BattleSceneStat battleState { get; }
     BattleSceneStat lastBattleState { get; }
     bool CanChangeSkill();
-    string PlayerHeadTex(VideoSoldier soldier);
     bool isAIManagement { get; }
     bool IsDead { get; }
     int CurRoundCnt { get; }
@@ -56,7 +55,6 @@ public interface IBattleDemoModel
     BattleSceneStat battleState { get; }
     BattleSceneStat lastBattleState { get; }
     int ItemUsedCount { get; }
-    bool AutoChangeRoleEnable { get; }
     bool ShowTip { get; set; }
     Dictionary<long,VideoSoldier> AllVideoSoldierList { get;}
     
@@ -64,20 +62,13 @@ public interface IBattleDemoModel
     IEnumerable<BattleOrderInfo> getMyOrderList();
     IEnumerable<BattleOrderInfo> getEnemyOrderList();
     void modifyOrderItemData(int orderType, int index, string orderName, bool add = false);
-    VideoSoldier GetVideoSoldier(long pFighterUID);
     string GetUIEffectForBuff(SkillBuff pSkillBuff);
-    bool IsPlayerMyHeroOrPet(long pUID = -1);
     bool IsSameBattle(long battleId);
     long HasBuff(VideoSkillAction tVideoSkillAction);
-    void ResetData();
-    void Dispose();
     BattleResult Result { get; set; }
-    bool IsNoMapBattle();
     IMainBattleView MainBattleView { get; }
-    long WinId { get; }
 
     MonsterController CurActMonsterController { get; }
-    VideoSoldier GetMainRoleSoldier { get; }
     bool IsCurActMonsterCanbeOpt { get;}
 }
 
@@ -354,22 +345,6 @@ public sealed partial class BattleDataManager
             }
         }
 
-        public string PlayerHeadTex(VideoSoldier soldier)
-        {
-            if (soldier == null || soldier.charactor == null)
-            {
-                GameDebuger.Log("soldier为空,请检查");
-                return "";
-            }
-
-            if (soldier.charactor is MainCharactor) //代表主角
-                return string.Format("head_{0}", (soldier.charactor as MainCharactor).texture);
-            if (soldier.charactor is Crew) //代表伙伴
-                return (soldier.charactor as Crew).icon;
-
-            return "";
-        }
-
         //当前队列中的所有行动列表，不论是否正在走进度条的，都在里边
         //    private Dictionary<long,ActionQueueAddNotifyDto> mAllActionQueueDic = new Dictionary<long, ActionQueueAddNotifyDto>();
 
@@ -521,379 +496,6 @@ public sealed partial class BattleDataManager
 
         #endregion
 
-        #region 执行队列
-
-        //队列中是否有正在跑进度的
-        //    public bool HasShowingInActionQueue
-        //    {
-        //        get
-        //        {
-        //            return null != CurShowingActionQueueDic && CurShowingActionQueueDic.Count > 0;
-        //        }
-        //    }
-
-        //    private bool IsInAllActionQueueDic(long pPlayerUID)
-        //    {
-        //        return null != AllActionQueueDic && AllActionQueueDic.ContainsKey(pPlayerUID);
-        //    }
-
-        //获取队列中最后一个行动的播放时间点+持续时间
-        //    public long GetLastActionPlayedTime()
-        //    {
-        //        if (null == AllActionQueueDic || AllActionQueueDic.Count <= 0)
-        //            return SystemTimeManager.Instance.GetUTCTimeStamp();
-        //        List<ActionQueueAddNotifyDto> tActionQueueAddNotifyDtoList = AllActionQueueDic.Values.ToList();
-        //        tActionQueueAddNotifyDtoList.Sort(SortByTimeDes);
-        //        ActionQueueAddNotifyDto tActionQueueAddNotifyDto = tActionQueueAddNotifyDtoList[tActionQueueAddNotifyDtoList.Count - 1];
-        //        return tActionQueueAddNotifyDto.time + tActionQueueAddNotifyDto.durationTime;
-        //    }
-
-        //    public ActionQueueAddNotifyDto AddToActionQueue(ActionQueueAddNotifyDto pActionQueueAddNotifyDto)
-        //    {
-        //        GameDebuger.LogBattleInfo(string.Format("AddToActionQueue id:{0}", pActionQueueAddNotifyDto.id));
-        //        if (null == pActionQueueAddNotifyDto || !ModelManager.BattleDemo.IsSameBattle(pActionQueueAddNotifyDto.battleId))
-        //            return null;
-        //        pActionQueueAddNotifyDto.time = SystemTimeManager.Instance.GetDelaylessTime(pActionQueueAddNotifyDto.time);//不考虑服务端延迟
-        //
-        //        string tTipString = string.Empty;
-        //        if (ModelManager.BattleDemo.ShowTip)
-        //        {
-        //            tTipString = string.Format("收到添加到队列的通知， 玩家id:{0}，名字：{1}，预期时间：{2}，客户端的服务器时间：{3}",
-        //                pActionQueueAddNotifyDto.id.ToString(), pActionQueueAddNotifyDto.name, DateUtil.UnixTimeStampToDateTime(pActionQueueAddNotifyDto.time).ToString("o"),
-        //                SystemTimeManager.Instance.GetServerTime().ToString("o"));
-        //            GameDebuger.LogBattleInfo(tTipString);
-        ////            TipManager.AddTip(tString);    
-        //            MonsterController tMonsterController = MonsterManager.Instance.GetMonsterFromSoldierID(pActionQueueAddNotifyDto.id);
-        //            if (tMonsterController.IndexBuffByType(ModelManager.BattleDemo.SealBuffID) > 0)
-        //            {
-        //                tTipString = string.Format("错误，目标已被封印尚未解除，却收到了把它添加到队列的通知！id:{0},name:{1}", pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name);
-        //                GameDebuger.LogBattleInfo(tTipString);
-        //            }
-        //        }
-        //
-        //        bool tRemoved = RemoveFromActionQueue(pActionQueueAddNotifyDto.id);
-        //        if (tRemoved)
-        //        {
-        ////            tTipString = string.Format("数据有误，行动本来就在队列中，却尝试再加入队列！请服务端检查是否服务端中间有移除却没有通知客户端？，id:{0}", pActionQueueAddNotifyDto.id);
-        //            tTipString = string.Format("数据有误，行动本来就在队列中尚未播放完毕，却尝试再加入队列！id:{0}", pActionQueueAddNotifyDto.id);
-        //            GameDebuger.LogError(tTipString);
-        //            TipManager.AddTip(tTipString);
-        //        }
-        //        //仅添加到等待队列数据中
-        //        if (AllActionQueueDic.ContainsKey(pActionQueueAddNotifyDto.id))
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("AddToActionQueue failed , mAllActionQueueDic.ContainsKey({0})", pActionQueueAddNotifyDto.id));
-        //            return null;
-        //        }
-        //        GameDebuger.LogBattleInfo(string.Format("add to AllActionQueueDic success  , id:{0},name:{1}", pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name));
-        //        AllActionQueueDic.Add(pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto);
-        //        SetupActionQueueTimer(pActionQueueAddNotifyDto);
-        //        return pActionQueueAddNotifyDto;
-        //    }
-
-        //从队列中强制移除一个行动者，其后行动的所有人的播放时间都要缩减
-        //    public void RemoveFromActionQueueForcibly(long pPlayerUID)
-        //    {
-        //        UpdateActionQueueForOneRemovedForcibly(pPlayerUID);
-        //        RemoveFromActionQueue(pPlayerUID);
-        //        ResetOptionStateForInterruptted(pPlayerUID);
-        //    }
-
-        //    private bool RemoveFromActionQueue(long pPlayerUID)
-        //    {
-        //        GameDebuger.Log(string.Format("RemoveFromActionQueue pPlayerUID:{0}", pPlayerUID));
-        //        if (pPlayerUID <= 0)
-        //            return false;
-        //        if (!AllActionQueueDic.ContainsKey(pPlayerUID))
-        //        {
-        //            GameDebuger.Log(string.Format("RemoveFromActionQueue  failed , !AllActionQueueDic.ContainsKey(pPlayerUID),  pPlayerUID:{0}", pPlayerUID));
-        //            return false;
-        //        }
-        //        //从数据和UI中都立即移除。
-        //
-        //        ActionQueueAddNotifyDto tActionQueueAddNotifyDto = AllActionQueueDic[pPlayerUID];
-        //        GameDebuger.LogBattleInfo(string.Format("RemoveFromActionQueue success ! pPlayerUID:{0},TargetTime:{1},name:{2},curTime:{3}", 
-        //                pPlayerUID, DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDto.time).ToString("o"), tActionQueueAddNotifyDto.name, SystemTimeManager.Instance.GetServerTime().ToString("o")));
-        //        AllActionQueueDic.Remove(pPlayerUID);
-        //        //从数据和UI中都立即移除。
-        //        RemoveActionQueueTimer(pPlayerUID);
-        //        RemoveFromCurShowingActionQueueDic(pPlayerUID, tActionQueueAddNotifyDto.name);
-        //        return true;
-        //    }
-
-        //    private ActionQueueAddNotifyDto AddToCurShowingActionQueueDic(ActionQueueAddNotifyDto pActionQueueAddNotifyDto)
-        //    {
-        //        if (null == pActionQueueAddNotifyDto || pActionQueueAddNotifyDto.id <= 0)
-        //            return null;
-        //        RemoveFromCurShowingActionQueueDic(pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name);
-        //        if (null == CurShowingActionQueueDic)
-        //            CurShowingActionQueueDic = new Dictionary<long, ActionQueueAddNotifyDto>();
-        //        //添加到正在播放的UI队列中，发送事件通知执行
-        //        GameDebuger.LogBattleInfo(string.Format("AddToCurShowingActionQueueDic success ! id:{0},name:{1}", pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name));
-        //        CurShowingActionQueueDic.Add(pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto);
-        //        GameEventCenter.SendEvent(GameEvent.BATTLE_FIGHT_ADD_TO_QUEUE_UI, pActionQueueAddNotifyDto);
-        //        return pActionQueueAddNotifyDto;
-        //    }
-
-        //    private void RemoveFromCurShowingActionQueueDic(long pPlayerUID, string pName)
-        //    {
-        //        GameDebuger.LogBattleInfo(string.Format("RemoveFromCurShowingActionQueueDic pPlayerUID:{0}", pPlayerUID));
-        //        if (pPlayerUID <= 0)
-        //            return;
-        //        if (null == CurShowingActionQueueDic)
-        //            return;
-        //        if (!IsInShowingQueue(pPlayerUID))
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("RemoveFromCurShowingActionQueueDic failed , pPlayerUID:{0} not in list !", pPlayerUID));
-        //            return;
-        //        }
-        //        GameDebuger.LogBattleInfo(string.Format("RemoveFromCurShowingActionQueueDic true pPlayerUID:{0}", pPlayerUID));
-        //        CurShowingActionQueueDic.Remove(pPlayerUID);
-        //        GameEventCenter.SendEvent(GameEvent.BATTLE_FIGHT_REMOVE_FROM_QUEUE_UI, pPlayerUID, pName);
-        //    }
-
-        //    private bool IsInShowingQueue(long pPlayerUID)
-        //    {
-        //        if (null != CurShowingActionQueueDic && CurShowingActionQueueDic.ContainsKey(pPlayerUID))
-        //            return true;
-        //        return false;
-        //    }
-
-        //    private void UpdateActionQueueForOneRemovedForcibly(long pPlayerUIDToRemove)
-        //    {
-        //        if (pPlayerUIDToRemove <= 0)
-        //        {
-        //            GameDebuger.LogError("UpdateActionQueueForOneRemovedForcibly failed for pPlayerUIDToRemove is less than zero !");
-        //            return;
-        //        }
-        //        ActionQueueAddNotifyDto tActionQueueAddNotifyDtoTarget = null;
-        //        #region 限制还没有行动的人，是可以的。
-        //        if (AllActionQueueDic.Count <= 0)
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("UpdateActionQueueForOneRemovedForcibly failed , mAllActionQueueDic:{0} or its length is not invalid ", AllActionQueueDic));
-        //            return;
-        //        }
-        //        if (!AllActionQueueDic.TryGetValue(pPlayerUIDToRemove, out tActionQueueAddNotifyDtoTarget))
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("UpdateActionQueueForOneRemovedForcibly failed , pPlayerUIDToRemove is not in mAllActionQueueDic ! pPlayerUIDToRemove：{0},当前时间：{1}", pPlayerUIDToRemove, SystemTimeManager.Instance.GetServerTime().ToString("o")));
-        //            return;
-        //        }
-        //        #endregion
-        //        List<ActionQueueAddNotifyDto> tActionQueueAddNotifyDtoList = AllActionQueueDic.Values.ToList();
-        //        tActionQueueAddNotifyDtoList.Sort(SortByTimeDes);
-        //        ActionQueueAddNotifyDto tActionQueueAddNotifyDto = null;
-        //        int tTargetActionPlayDuration = 0;
-        //        string tTempTip = string.Empty;
-        //        for (int tCounter = 0; tCounter < tActionQueueAddNotifyDtoList.Count; tCounter++)
-        //        {
-        //            tActionQueueAddNotifyDto = tActionQueueAddNotifyDtoList[tCounter];
-        //            if (null == tActionQueueAddNotifyDto || tActionQueueAddNotifyDto.time < tActionQueueAddNotifyDtoTarget.time)//播放时间比要移除者早的忽略不计。
-        //                continue;
-        //            if (tActionQueueAddNotifyDto.id == pPlayerUIDToRemove)//刚好是要移除者，获取其播放时间，以便获取其播放持续时间
-        //            {
-        //                tTargetActionPlayDuration = tActionQueueAddNotifyDto.durationTime;
-        //            }
-        //            else
-        //            {
-        //                if (tTargetActionPlayDuration <= 0)
-        //                {
-        //                    tTempTip = string.Format("强制更新时间失败，顺序错了，被删者ID：{0}，被删者播放时间点：{1}，被删者播放持续时间：{2}，待修改者ID：{3}，待修改者旧播放时间点：{4}",
-        //                        pPlayerUIDToRemove, DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDtoTarget.time).ToString("o"), tTargetActionPlayDuration, tActionQueueAddNotifyDto.id,
-        //                        DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDto.time).ToString("o"));
-        //                    GameDebuger.LogError(tTempTip);
-        //                    if (ModelManager.BattleDemo.ShowTip)
-        //                        TipManager.AddTip(tTempTip);
-        //                    continue;
-        //                }
-        //                tActionQueueAddNotifyDto.time -= tTargetActionPlayDuration;//要移除者之后的所有人的播放时间缩减，缩减值为要移除者的播放持续时间。浅拷贝，本处修改即处处修改
-        //                string tTimerName = string.Format(PREFIX_ACTION_QUEUE_TIMER, tActionQueueAddNotifyDto.id, tActionQueueAddNotifyDto.name);
-        //                JSTimer.CdTask tCdTask = JSTimer.Instance.GetCdTask(tTimerName);
-        //                if (null == tCdTask)
-        //                {
-        //                    tTempTip = string.Format("强制更新时间失败，计时器不存在，被删者ID：{0}，被删者播放时间点：{1}，被删者播放持续时间：{2}，待修改者ID：{3}，待修改者旧播放时间点：{4}",
-        //                        pPlayerUIDToRemove, DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDtoTarget.time).ToString("o"), tTargetActionPlayDuration, tActionQueueAddNotifyDto.id,
-        //                        DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDto.time).ToString("o"));
-        //                    GameDebuger.LogError(tTempTip);
-        //                    if (ModelManager.BattleDemo.ShowTip)
-        //                        TipManager.AddTip(tTempTip);
-        //                    continue;
-        //                }
-        //                tCdTask.remainTime = ((float)GetDelayToPlaySkill(tActionQueueAddNotifyDto.time) + tActionQueueAddNotifyDto.durationTime) * 0.001f;//从ActionQueueTimer中修改剩余时间，让结束回调等正常
-        //                tTempTip = string.Format("强制更新时间，被删者ID：{0}，被删者播放时间点：{1}，被删者播放持续时间：{2}，待修改者ID：{3}，待修改者旧播放时间点：{4}，待修改者修改后时间点：{5}，进度条计时器名字：{6}，进度条多久后结束：{7}，当前时间点：{8}",
-        //                    pPlayerUIDToRemove, DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDtoTarget.time).ToString("o"), tTargetActionPlayDuration, tActionQueueAddNotifyDto.id,
-        //                    DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDto.time + tTargetActionPlayDuration).ToString("o"), 
-        //                    DateUtil.UnixTimeStampToDateTime(tActionQueueAddNotifyDto.time).ToString("o"), tTimerName, tCdTask.remainTime, SystemTimeManager.Instance.GetServerTime().ToString("o"));
-        //                GameDebuger.LogBattleInfo(tTempTip);
-        //                if (IsInShowingQueue(tActionQueueAddNotifyDto.id))//只有正在播放的才需要调整进度倒计时
-        //                    GameEventCenter.SendEvent(GameEvent.BATTLE_FIGHT_UPDATE_REMAIN_TIME, 
-        //                        string.Format(PREFIX_UPDATE_ORDER_ITEMS_TIMER, tActionQueueAddNotifyDto.id, tActionQueueAddNotifyDto.name),
-        //                        (float)tTargetActionPlayDuration / 1000f);//修改UI表现中搞定倒计时
-        //            }
-        //        }
-        //    }
-
-        //    private int SortByTimeDes(ActionQueueAddNotifyDto pActionQueueAddNotifyDtoA, ActionQueueAddNotifyDto pActionQueueAddNotifyDtoB)
-        //    {
-        //        if (null == pActionQueueAddNotifyDtoA)
-        //            return -1;
-        //        if (null == pActionQueueAddNotifyDtoB)
-        //            return 1;
-        //        return pActionQueueAddNotifyDtoA.time.CompareTo(pActionQueueAddNotifyDtoB.time);
-        //    }
-
-        //每个人一个timer的目的在于，整体用一个timer无法准确计算播放时机等。
-        //    private void SetupActionQueueTimer(ActionQueueAddNotifyDto pActionQueueAddNotifyDto)
-        //    {
-        //        if (null == pActionQueueAddNotifyDto)
-        //            return;
-        //        string tTimerName = string.Format(PREFIX_ACTION_QUEUE_TIMER, pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name);
-        //        float tTotalTime = (float)(GetDelayToPlaySkill(pActionQueueAddNotifyDto.time) + pActionQueueAddNotifyDto.durationTime) / 1000f;//行动多久后播放+行动播放时间
-        //        bool tIsSkillIsPlaying = false;
-        //        JSTimer.CdTask.OnCdUpdate tOnCdUpdate = (pRemainTime) =>
-        //        {
-        ////            pActionQueueAddNotifyDto.time = (int)(pRemainTime * 1000) - pActionQueueAddNotifyDto.durationTime;
-        //            WatchForSkillPlaying(ref tIsSkillIsPlaying, pActionQueueAddNotifyDto);
-        //
-        //            if (IsInShowingQueue(pActionQueueAddNotifyDto.id))//已执行或已通知可执行。
-        //                    return;
-        //            if (GetDelayToPlaySkill(pActionQueueAddNotifyDto.time) > MaxQueueDuration)//添加到队列的时机未到的跳过。
-        //                    return;
-        //            if (null != CurShowingActionQueueDic && CurShowingActionQueueDic.Count >= MaxQueueNameActionNum)//队列中数目超过限制了，跳过
-        //                    return;
-        //                
-        //            GameDebuger.LogBattleInfo(string.Format("SetupActionQueueTimer 添加到队列 id:{0},time:{1},now:{2}", 
-        //                    pActionQueueAddNotifyDto.id, DateUtil.UnixTimeStampToDateTime(pActionQueueAddNotifyDto.time).ToString("o"), SystemTimeManager.Instance.GetServerTime().ToString("o")));
-        //            AddToCurShowingActionQueueDic(pActionQueueAddNotifyDto);
-        //
-        //           
-        //        };
-        //        JSTimer.CdTask.OnCdFinish tOnCdFinish = () =>//倒计时结束，技能播放（按服务端的播放持续时间）结束，从队列删除
-        //        {
-        ////                pActionQueueAddNotifyDto.time = - pActionQueueAddNotifyDto.durationTime;
-        //            //GameDebuger.LogError("暂停自动释放，因为后端发给的行动播放时间点不对");
-        //            //现在技能执行完毕后（或者中DEBUFF后）会自动移除 2017-03-11 11:35:57
-        //            GameDebuger.TODO(@"RemoveFromActionQueue(pActionQueueAddNotifyDto.id);");
-        //        };
-        //        
-        //        JSTimer.CdTask tCdTask = JSTimer.Instance.GetCdTask(tTimerName);
-        //        if (null != tCdTask)
-        //        {
-        //            tCdTask.Reset(tTotalTime, tOnCdUpdate, tOnCdFinish, 0.1f, false);
-        //            GameDebuger.Log(string.Format("SetupActionQueueTimer Reset tTimerName:{0},tTotalTime:{1},remainTime:{2}", tTimerName, tTotalTime, tCdTask.remainTime));
-        //        }
-        //        else
-        //        {
-        //            tCdTask = JSTimer.Instance.SetupCoolDown(tTimerName, tTotalTime, tOnCdUpdate, tOnCdFinish);
-        //            GameDebuger.Log(string.Format("SetupActionQueueTimer SetupCoolDown tTimerName:{0},tTotalTime:{1},remainTime:{2}", tTimerName, tTotalTime, tCdTask.remainTime));
-        //        }
-        //        
-        //        AddActionQueueTimerToDic(pActionQueueAddNotifyDto.id, tCdTask);
-        //    }
-
-        //    private void WatchForSkillPlaying(ref bool tIsSkillIsPlaying, ActionQueueAddNotifyDto pActionQueueAddNotifyDto)
-        //    {
-        //        if (tIsSkillIsPlaying)
-        //            return;
-        ////        if (pActionQueueAddNotifyDto.id == ModelManager.Player.GetPlayerId())
-        ////            GameDebuger.LogWarning(string.Format("SetupActionQueueTimer id:{0},name:{1},预期时间:{2},本地服务器时间:{3}",
-        ////                    pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name, DateUtil.UnixTimeStampToDateTime(pActionQueueAddNotifyDto.time).ToString("o"), SystemTimeManager.Instance.GetServerTime().ToString("o")));
-        //        if (pActionQueueAddNotifyDto.time <= SystemTimeManager.Instance.GetUTCTimeStamp())//到了可以播放技能的时间
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("SetupActionQueueTimer Now id:{0},name:{1},预期时间:{2},本地服务器时间:{3}",
-        //                    pActionQueueAddNotifyDto.id, pActionQueueAddNotifyDto.name, DateUtil.UnixTimeStampToDateTime(pActionQueueAddNotifyDto.time).ToString("o"), SystemTimeManager.Instance.GetServerTime().ToString("o")));
-        //            tIsSkillIsPlaying = true;
-        //            //legacy 模拟方法，正式时废弃。2017-02-23 16:05:16
-        //            if (ServiceRequestAction.SimulateNet)
-        //            {
-        //                GameDebuger.LogBattleInfo("[TEMP]模拟收到回合数据，正式时删除");
-        //                BattleNetworkManager.Instance.HanderVideoRound(VideoRoundSimulater.SimulateVideoRound(pActionQueueAddNotifyDto.id));
-        //
-        //                if (pActionQueueAddNotifyDto.id == ModelManager.Player.GetPlayerId())
-        //                {
-        //                    GameDebuger.LogBattleInfo("[TEMP]模拟收到可以操作通知，正式时删除");
-        //                    GameEventCenter.SendEvent(GameEvent.BATTLE_FIGHT_SET_READY_STATE, false);
-        //                }
-        //
-        //                #region simulate for test delete this in formal
-        //                float tCheckDelay = (float)((DemoSimulateHelper.SIMULATE_QUEUE_DELAY << 1) + DemoSimulateHelper.SIMULATE_SKILL_CD) / 1000f;
-        //                GameDebuger.LogBattleInfo("[TEMP]模拟回合结束后开始新回合，检测倒计时：" + tCheckDelay.ToString() + ",Now ServerTime:" + SystemTimeManager.Instance.GetServerTime().ToString("o"));
-        //                string tCoolDownName = "SimulateRoundStartDelay";
-        //                JSTimer.Instance.CancelCd(tCoolDownName);
-        //                JSTimer.Instance.SetupCoolDown(tCoolDownName, tCheckDelay, null, () =>
-        //                    {
-        //                        if (!HasShowingInActionQueue)
-        //                        {
-        //                            DemoSimulateHelper.SimulateRoundStart();   
-        //                        }
-        //                    }, 0.1f);    
-        //                #endregion 
-        //            }     
-        //        }
-        //    }
-
-        //    private void AddActionQueueTimerToDic(long pPlayerUID, JSTimer.CdTask pCdTask)
-        //    {
-        //        if (null == mActionQueueTimerDic)
-        //            mActionQueueTimerDic = new Dictionary<long, JSTimer.CdTask>();
-        //        if (mActionQueueTimerDic.ContainsKey(pPlayerUID))
-        //            return;
-        //        mActionQueueTimerDic.Add(pPlayerUID, pCdTask);
-        //    }
-
-        //    private void RemoveActionQueueTimer(long pPlayerUID)
-        //    {
-        //        if (null == mActionQueueTimerDic || mActionQueueTimerDic.Count <= 0)
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("RemoveActionQueueTimer failed, null == mActionQueueTimerDic || mActionQueueTimerDic.Count <= 0 ,pPlayerUID:{0}", pPlayerUID));
-        //            return;
-        //        }
-        //        JSTimer.CdTask tCdTask = null;
-        //        if (!mActionQueueTimerDic.TryGetValue(pPlayerUID, out tCdTask) || null == tCdTask)
-        //        {
-        //            GameDebuger.LogBattleInfo(string.Format("RemoveActionQueueTimer failed, !mActionQueueTimerDic.TryGetValue(pPlayerUID, out tCdTask) || null == tCdTask ,pPlayerUID:{0},tCdTask:{1}", pPlayerUID, tCdTask));
-        //            return;
-        //        }
-        //        GameDebuger.LogBattleInfo(string.Format("RemoveActionQueueTimer success,pPlayerUID:{0},tCdTask.taskName:{1}", pPlayerUID, tCdTask.taskName));    
-        //        JSTimer.Instance.CancelCd(tCdTask.taskName);
-        //        tCdTask.Dispose();
-        //        tCdTask = null;
-        //        mActionQueueTimerDic.Remove(pPlayerUID);
-        //
-        ////        RemoveFromActionQueue(pPlayerUID);
-        //    }
-
-        //    private void CancelActionQueueTimers()
-        //    {
-        //        if (null == mActionQueueTimerDic || mActionQueueTimerDic.Count <= 0)
-        //            return;
-        //        Dictionary<long,JSTimer.CdTask>.Enumerator tCdTaskDicEnum = mActionQueueTimerDic.GetEnumerator();
-        //        JSTimer.CdTask tCdTask = null;
-        //        while (tCdTaskDicEnum.MoveNext())
-        //        {
-        //            tCdTask = tCdTaskDicEnum.Current.Value;
-        //            if (null != tCdTask)
-        //            {
-        //                tCdTask.Dispose();
-        //                tCdTask = null;
-        //            }
-        //        }
-        //        mActionQueueTimerDic.Clear();
-        //    }
-
-        //    private bool SuitableToShowInActionNameQueue(ActionQueueAddNotifyDto pActionQueueAddNotifyDto)
-        //    {
-        //        if ((GetDelayToPlaySkill(pActionQueueAddNotifyDto.time) <= MaxQueueDuration) && (null == CurShowingActionQueueDic || CurShowingActionQueueDic.Count < MaxQueueNameActionNum))//到了可以执行的时间  
-        //            return true;
-        //        return false;
-        //    }
-
-        /**技能多久后播放*/
-        //    public long GetDelayToPlaySkill(long pTimeToPlaySkill)
-        //    {
-        //        return pTimeToPlaySkill - SystemTimeManager.Instance.GetUTCTimeStamp();
-        //    }
-
-        #endregion
 
         #region CD
 
@@ -1017,12 +619,20 @@ public sealed partial class BattleDataManager
         //敌方指令列表
         private List<BattleOrderInfo> _myOrderList;
         //己方指令列表
-
-
         public bool LastOrderListOpenState = false;
 
-        public int _watchTeamId;
-
+        public int CurWatchTeamId
+        {
+            get
+            {
+                if (_gameVideo == null)
+                    return 0;
+                var id = 0;
+                _watchTeamIdDic.TryGetValue(_gameVideo.id, out id);
+                return id;
+            }
+        }
+        public Dictionary<long, int> _watchTeamIdDic = new Dictionary<long, int>();
         public bool _isDead;
         public bool _isTimeCountFinish = false;  // 开场动作播放
 
@@ -1278,13 +888,6 @@ public sealed partial class BattleDataManager
             }
         }
 
-        public bool IsMainRoleActing
-        {
-            get { return CurActMonsterController != null
-                && CurActMonsterController.GetId() == ModelManager.IPlayer.GetPlayerId();
-            }
-        }
-
         public VideoSoldier GetMainRoleSoldier
         {
             get
@@ -1368,12 +971,6 @@ public sealed partial class BattleDataManager
             return ContainPlayer(GameVideo.ateam.teamSoldiers, playerId);
         }
 
-        public bool ContainPlayer(long pPlayerId)
-        {
-            return ContainPlayer(GameVideo.ateam.teamSoldiers, pPlayerId) ||
-                   ContainPlayer(GameVideo.bteam.teamSoldiers, pPlayerId);
-        }
-
         public bool ContainPlayer(IEnumerable<VideoSoldier> pBattleEntities, long pPlayerId)
         {
             if (pPlayerId <= 0)
@@ -1395,12 +992,6 @@ public sealed partial class BattleDataManager
                 reqActCnt += 1;
         }
     }
-}
-
-public enum ActionState
-{
-    HERO = 0,
-    PET
 }
 
 //S1下，绝大部分状态都是针对主角和宠物而言的，除了类似游戏结束的大状态。
@@ -1427,14 +1018,6 @@ public enum BattleSceneStat
     ON_COMMAND_ENTER,
     //退出指令、物品、特技等选择，进入目标选择
     ON_COMMAND_EXIT,
-    //技能选择
-    ON_SELECT_SKILL,
-    //目标选择
-    ON_SELECT_TARGET,
-    //捕捉
-    ON_CAPTURE,
-    //捕捉成功
-    ON_CAPTURE_SUCCESS
 }
 
 public enum BATTLE_MODE

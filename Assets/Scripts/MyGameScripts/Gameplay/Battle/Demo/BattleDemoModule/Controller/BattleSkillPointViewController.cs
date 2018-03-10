@@ -6,6 +6,7 @@
 // **********************************************************************
 
 using AppDto;
+using MyGameScripts.Gameplay.Battle.Demo.Helper;
 using UnityEngine;
 using BattleInstController = BattleDataManager.BattleInstController;
 using MonsterManager = BattleDataManager.MonsterManager;
@@ -25,54 +26,33 @@ public interface IBattleSkillPointViewData
     int HP { get; }
     int MaxEP { get;}
     int EP { get; }
-    bool IsAuto { get; }
     string Icon { get; }
 }
 
-public struct BattleSkillPointViewData : IBattleSkillPointViewData
+public partial class MonsterController : IBattleSkillPointViewData
 {
-    public string _texture;
-    public MonsterController _mc;
-    public bool isAuto;
-    
-    public bool IsAuto
-    {
-        get { return isAuto; }
-    }
-
     public string Icon {
-        get { return _mc == null ? _mc.DefaultMagicOrCraft.icon : string.Empty; }
+        get { return DefaultMagicOrCraft.icon ; }
     }
 
     public long pCharacterUID {
-        get { return _mc != null ? _mc.GetId() : 0l; }
+        get { return GetId(); }
     }
 
     public string Texture {
-        get { return _texture; }
-    }
-
-    public int MaxCP {
-        get { return _mc != null ? _mc.videoSoldier.maxCp : 0; }
+        get { return videoSoldier.PlayerHeadTex(); }
     }
 
     public int CP {
-        get { return _mc != null ? _mc.videoSoldier.cp : 0; }
-    }
-
-    public int MaxHP {
-        get { return _mc != null ? _mc.videoSoldier.maxHp : 0; }
+        get { return videoSoldier.cp; }
     }
 
     public int HP {
-        get { return _mc != null ? _mc.videoSoldier.hp : 0; }
+        get { return videoSoldier.hp; }
     }
 
-    public int MaxEP {
-        get { return _mc != null ? _mc.videoSoldier.maxEp : 0; }
-    }
     public int EP {
-        get { return _mc != null ? _mc.videoSoldier.ep : 0; }
+        get { return videoSoldier.ep; }
     }
 }
                      
@@ -166,7 +146,7 @@ public partial class BattleSkillPointViewController
 
     private void SetFireEffect()
     {
-        mFireEffect = OneShotUIEffect.BeginFollowEffect(EFFECTNAME, _view.SpriteBG_UISprite, Vector2.zero);
+        mFireEffect = OneShotUIEffect.BeginFollowEffect(EFFECTNAME, _view.effgo, Vector2.zero);
     }
     #endregion
 
@@ -200,7 +180,6 @@ public partial class BattleSkillPointViewController
 
     private void UpdateEp(int dataEp, int dataMaxEp)
     {
-        GameLog.Log_Battle_PlayerAttr(string.Format("UpdateEp----------int dataEp {0}, int dataMaxEp {1}", dataEp, dataMaxEp));
         UpdateProgress(dataEp, dataMaxEp, _view.LabelCurEP_UILabel, epProgressBar);
     }
 
@@ -225,8 +204,7 @@ public partial class BattleSkillPointViewController
     private void UpdateCP(int pCurrentCP, int pMaxCP)
     {
         UpdateProgress(pCurrentCP, pMaxCP, _view.LabelCurCP_UILabel, cpProgressBar);
-
-        _view.effgo.gameObject.SetActive(sCraftNeedCP > 0 && pCurrentCP > sCraftNeedCP);
+        _view.effgo.cachedGameObject.SetActive(sCraftNeedCP > 0 && pCurrentCP > sCraftNeedCP);
     }
 
     #endregion

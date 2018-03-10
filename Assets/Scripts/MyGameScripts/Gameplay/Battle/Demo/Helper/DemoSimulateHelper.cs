@@ -1,6 +1,7 @@
 ﻿using AppDto;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Text;
 using BattleNetworkManager = BattleDataManager.BattleNetworkManager;
 using MonsterManager = BattleDataManager.MonsterManager;
@@ -194,10 +195,20 @@ public static class DemoSimulateHelper
         tDemoVideo.readyTime = SIMULATE_FIGHTER_READY_TIME;
         tDemoVideo.ateam = SimulateVideoTeam(pFightersConfigDto.ateam, null != pSkillPreviewInfo ? pSkillPreviewInfo.formationA : 1);
         tDemoVideo.bteam = SimulateVideoTeam(pFightersConfigDto.bteam, null != pSkillPreviewInfo ? pSkillPreviewInfo.formationB : 1);
+
+        tDemoVideo.playerInfos = SimulatePlayerInfos(pFightersConfigDto);
         return tDemoVideo;
     }
 
-    public static PreviewVideo SimulatePreviewVideo(FightersConfigDto pFightersConfigDto, Skill pSkill)
+    private static List<BattlePlayerInfoDto> SimulatePlayerInfos(FightersConfigDto pFightersConfigDto)
+    {
+        return pFightersConfigDto.ateam.Concat(pFightersConfigDto.bteam)
+            .Map<FighterConfigDto, BattlePlayerInfoDto>(t => new BattlePlayerInfoDto {playerId = t.id}
+            )
+            .ToList();
+    }
+
+    private static PreviewVideo SimulatePreviewVideo(FightersConfigDto pFightersConfigDto, Skill pSkill)
     {
         if (null == pSkill)
             return null;
@@ -261,7 +272,9 @@ public static class DemoSimulateHelper
         return tList;
     }
 
-    public static VideoTeam SimulateVideoTeam(List<FighterConfigDto> pEnemyFighterConfigDtoList, int pFormation = 1)
+    private static VideoTeam SimulateVideoTeam(
+        List<FighterConfigDto> pEnemyFighterConfigDtoList
+        , int pFormation = 1)
     {
         var tVideoTeam = new VideoTeam();
         var tPlayerIdList = new List<long>(); 

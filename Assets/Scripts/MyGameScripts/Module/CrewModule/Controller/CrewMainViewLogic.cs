@@ -56,8 +56,8 @@ public sealed partial class CrewViewDataMgr
                 ctrl.UpdateView(DataMgr._data.GetCurCrewTab);
                 
             }));
-            _disposable.Add(ctrl.OnCallBtn_UIButtonClick.Subscribe(_=>CallBtn_UIButtonClick()));
-            _disposable.Add(ctrl.OnCommentBtn_UIButtonClick.Subscribe(_=>CommentBtn_UIButtonClick()));
+            _disposable.Add(ctrl.OnCrewVoiceBtn_UIButtonClick.Subscribe(_=>CallBtn_UIButtonClick()));
+            _disposable.Add(ctrl.OnCrewTalkBtn_UIButtonClick.Subscribe(_=>CommentBtn_UIButtonClick()));
             _disposable.Add(ctrl.OnFormationBtn_UIButtonClick.Subscribe(_ => FormationBtn_UIButtonClick()));
             _disposable.Add(ctrl.OnFollowBtn_UIButtonClick.Subscribe(_=>FollowBtn_UIButtonClick()));
             _disposable.Add(ctrl.OnAddExpBtn_UIButtonClick.Subscribe(_=>AddExpBtn_UIButtonClick()));
@@ -79,18 +79,16 @@ public sealed partial class CrewViewDataMgr
             #region 伙伴进阶强化
             _disposable.Add(ctrl.IStrengthenCtrl.OnCheckBtn_UIButtonClick.Subscribe(_ => ctrl.IStrengthenCtrl.OnCheckDetailBtnClick()));
             _disposable.Add(ctrl.IStrengthenCtrl.OnStrengthButton_UIButtonClick.Subscribe(_ => StrengthButton_UIButtonClick()));
-            _disposable.Add(ctrl.IStrengthenCtrl.OnTipButton_UIButtonClick.Subscribe(_ => TipButton_UIButtonClick()));
+            _disposable.Add(ctrl.IStrengthenCtrl.OnTipButton_UIButtonClick.Subscribe(_ => ctrl.IStrengthenCtrl.OnDevelopTipBtnClick()));
             _disposable.Add(ctrl.IStrengthenCtrl.OnDevelopButton_UIButtonClick.Subscribe(_ => DevelopButton_UIButtonClick()));
-            _disposable.Add(ctrl.IStrengthenCtrl.OnDevelopEffectBtn_UIButtonClick.Subscribe(_ => OnDevelopEffectBtn_UIButtonClick()));
             _disposable.Add(ctrl.IStrengthenCtrl.GetEnterSaveHandler.Subscribe(_ => OnSureBtnClcik()));
-            _disposable.Add(ctrl.IStrengthenCtrl.OnStrengthTipBtnClick.Subscribe(_ => ctrl.IStrengthenCtrl.StrengthTips()));
+            _disposable.Add(ctrl.IStrengthenCtrl.OnStrengthTipBtn_UIButtonClick.Subscribe(_ => ctrl.IStrengthenCtrl.StrengthTips()));
             _disposable.Add(ctrl.TrainSaveBtnUp.Subscribe(_ => OnSaveBtnClick(_)));
             _disposable.Add(ctrl.TrainBtnUp.Subscribe(_ => OnTrainingBtnClick()));
 
             ctrl.IStrengthenCtrl.OnTabChange(CrewStrengthenTab.Phase, DataMgr._data.GetCrewSkillTrainData());
             _disposable.Add(ctrl.IStrengthenCtrl.TabMgr.Stream.Subscribe(e =>
             {
-                //DataMgr._data.MainTab = (CrewSkillTab)e;
                 ctrl.IStrengthenCtrl.OnTabChange((CrewStrengthenTab)e, DataMgr._data.GetCrewSkillTrainData());
             }));
             #endregion
@@ -217,6 +215,29 @@ public sealed partial class CrewViewDataMgr
                 DataMgr._data.UpdateCurFavorableIdx(idx);
                 CrewProxy.OpenCrewFavorableView();
             }));
+            _disposable.Add(ctrl.OnMoreOperationBtn_UIButtonClick.Subscribe(_ =>
+            {
+                ctrl.OnMoreOperationBtnClick();
+            }));
+            _disposable.Add(ctrl.OnCrewNameBtn_UIButtonClick.Subscribe(_ =>
+            {
+
+            }));
+
+            #endregion
+            #region 羁绊
+            _disposable.Add(ctrl.OnCrewFetterItemClick.Subscribe(data =>
+            {
+                DataMgr._data.SetCurCrewFetterId(data.CrewFetterId);
+                FireData();
+            }));
+            _disposable.Add(ctrl.OnCrewFetterItemActiveClick.Subscribe(_ =>
+            {
+                long tempUId = DataMgr._data.GetCurCrewUId;
+                var currentCrewFetterVo = DataMgr._data.GetCurCrewFetterVo;
+                if (currentCrewFetterVo != null)
+                    CrewViewNetMsg.CrewFetterActive(tempUId, currentCrewFetterVo.CrewFetterId, !currentCrewFetterVo.Acitve);
+            }));
             #endregion
         }
 
@@ -255,6 +276,7 @@ public sealed partial class CrewViewDataMgr
                     var item = ItemHelper.GetGeneralItemByItemId(consumeID);
                     if (item != null)
                     {
+                        GainWayTipsViewController.OpenGainWayTip(consumeID, new Vector3(164, -46));
                         TipManager.AddTip(item.name + "不足，无法研修");
                     }
                 }

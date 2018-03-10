@@ -2,6 +2,7 @@
 using UnityEngine;
 using AppDto;
 using System.Collections.Generic;
+using AppServices;
 
 public sealed partial class BattleDataManager
 {
@@ -56,6 +57,14 @@ public sealed partial class BattleDataManager
         }
     }
 
+    private bool IsWatchMode
+    {
+        get
+        {
+            return IsInBattle && _data.CurWatchTeamId > 0;
+        }
+    }
+
     public IBattleDemoModel BattleDemo
     {
         get { return _data;}
@@ -63,13 +72,12 @@ public sealed partial class BattleDataManager
 
     public bool NeedPlayPlot;
 
-    public void PlayBattle(Video gv, int watchTeamId = 0, bool needRefreshBattle = false/**, BarrageVideo barrageVideo= null*/)
+    private void PlayBattle(Video gv, bool needRefreshBattle = false/**, BarrageVideo barrageVideo= null*/)
     {   
         if (IsInBattle && !_data.IsSameBattle(gv.id))
         {
             GameDebuger.Log(string.Format("当前有其它战斗{0}在进行，先暂存战斗{1} waitingExitBattle={2}", _data._gameVideo.id, gv.id, _nextGameVideo == null));
             _nextGameVideo = gv;
-//            _data._watchTeamId = watchTeamId;  // todo fish :只用一个字段处理观战ID 没有问题吗？有什么机制保障两场战斗同一个观战ID
             return;
         }
 
@@ -79,7 +87,6 @@ public sealed partial class BattleDataManager
         _data.GameVideo = gv;
 
         NeedPlayPlot = false;
-        _data._watchTeamId = watchTeamId;
         
         if (_data._gameVideo == null)
             _data.ResetData();
@@ -358,16 +365,14 @@ public sealed partial class BattleDataManager
         }
     }
 
-    public bool CheckNextBattle()
+    private bool CheckNextBattle()
     {
         if (_nextGameVideo != null)
         {
-            var tempWatchId = _data._watchTeamId;
             var tempGameVideo = _nextGameVideo;
 
-            _data._watchTeamId = 0;
             _nextGameVideo = null;
-            PlayBattle(tempGameVideo, tempWatchId, true);
+            PlayBattle(tempGameVideo, true);
             return true;
         }
         else
@@ -423,7 +428,7 @@ public sealed partial class BattleDataManager
             ProxyManager.DaTang.IsOpenTips(false);            
 ");
 
-            if (_data._watchTeamId == 0)
+            if (_data.GameVideo == null)
             {
                 GameDebuger.TODO("ModelManager.SiegeBattle.Resume();");
                 ModelManager.Player.CleanPlayerSp();
@@ -507,12 +512,12 @@ public sealed partial class BattleDataManager
             if (OnBattleFinishCallback != null)
             {
                 GameDebuger.TODO(@"ModelManager.Team.IsLeaderAutoInBattle = false;");
-                OnBattleFinishCallback(battleResult, _data._watchTeamId == 0);
+                OnBattleFinishCallback(battleResult, _data.GameVideo == null);
             }
             //战斗后查看我是否有在战斗中被离婚
 
             //以下的次数限制必须是自身战斗退出的情况下  for：修复观战同样 5 或10场的情况下也会出现限制提示
-            GameDebuger.TODO(@"if (_watchTeamId == 0)
+            GameDebuger.TODO(@"if (CurWatchTeamId == 0)
             {
                 if (_currentGameVideo is NpcMonsterVideo)
                 {
@@ -554,7 +559,7 @@ public sealed partial class BattleDataManager
                 if (OnBattleFinishCallback != null)
                 {
                     GameDebuger.TODO(@"ModelManager.Team.IsLeaderAutoInBattle = false;");
-                    OnBattleFinishCallback(battleResult, _data._watchTeamId == 0);
+                    OnBattleFinishCallback(battleResult, _data.GameVideo == null);
                 }
                 //战斗后查看我是否有在战斗中被离婚
                 GameDebuger.TODO(@"ModelManager.Marry.IsEmotionalBreakdown();");
@@ -1236,25 +1241,25 @@ Faction faction = ModelManager.Player.GetPlayer().faction;
             //          }
             //      }
 
-            GameDebuger.TODO(@"if (mIsWatchMode)
+        if (IsWatchMode)
         {
-            if (_data.GameVideo.bteam.id == _watchTeamId)
+            if (_data.GameVideo.bteam.id == _data.CurWatchTeamId)
             {
-                VideoTeam temp = _data.GameVideo.ateam;
+                var temp = _data.GameVideo.ateam;
                 _data.GameVideo.ateam = _data.GameVideo.bteam;
                 _data.GameVideo.bteam = temp;
             }
         }
-        else");
+        else
+        {
+            var playerId = ModelManager.Player.GetPlayerId();
+            if (_data.ContainPlayer(_data.GameVideo.bteam.teamSoldiers, playerId))
             {
-                var playerId = ModelManager.Player.GetPlayerId();
-                if (_data.ContainPlayer(_data.GameVideo.bteam.teamSoldiers, playerId))
-                {
-                    var temp = _data.GameVideo.ateam;
-                    _data.GameVideo.ateam = _data.GameVideo.bteam;
-                    _data.GameVideo.bteam = temp;
-                }
+                var temp = _data.GameVideo.ateam;
+                _data.GameVideo.ateam = _data.GameVideo.bteam;
+                _data.GameVideo.bteam = temp;
             }
+        }
 
             GameDebuger.TODO(@"if (_data.GameVideo.ateam.formation == null)
         {
@@ -1272,7 +1277,7 @@ Faction faction = ModelManager.Player.GetPlayer().faction;
             _data.GameVideo.bteam.teamSoldiers.Sort(OnVideoSoldierSort);
 
             GameDebuger.TODO(
-                @"if (_data.GameVideo is PvpVideo && ((PvpVideo)_data.GameVideo).type == PvpVideo.PvpTypeEnum_Arena /**&& !mIsWatchMode*/)
+                @"if (_data.GameVideo is PvpVideo && ((PvpVideo)_data.GameVideo).type == PvpVideo.PvpTypeEnum_Arena /**&& !IsWatchMode*/)
         {
             VideoSoldier leader = GetTeamLeader(_data.GameVideo.enemyTeam);
             if (leader != null)
@@ -1333,39 +1338,34 @@ Faction faction = ModelManager.Player.GetPlayer().faction;
         //强制退出当前战斗
         if (!IsInBattle) return;
 
-        GameDebuger.TODO(@"if (mIsWatchMode)
-                {
-                    ServiceRequestAction.requestServer(CommandService.exitWatchBattle(GameVideo.id));
-                }
-                else
+        if (IsWatchMode)
+        {
+            BattleNetworkManager.ReqExitWatchBattle(_data._gameVideo.id);
+        }
+        else
         {
             ServiceRequestAction.requestServer(
                 Services.Battle_Leave(DataMgr._data.GameVideo.id));
-        }");
+        }
 
         BattleInstController.Instance.ClearUnPlayVideo();
         FireData();
         //ExitBattleWithoutReport();
-
-//        CheckGameState();
-//        BattleInstController.Instance.ShowBattleResult();
     }
 
-    public void LateExitBattle()
+    private void LateExitBattle()
     {
         GameEventCenter.SendEvent(GameEvent.BATTLE_FIGHT_EXITBATTLE);
         CheckResult();
         BattleDestroy(_data.Result, _data._isDead, _data.GameVideo);
     }
 
-    public bool IsGameOver {
+    private bool IsGameOver {
         set
         {
-            if (_data.IsGameOver != value)
-            {
-                _data.IsGameOver = value;
-                FireData();
-            }
+            if (_data.IsGameOver == value) return;
+            _data.IsGameOver = value;
+            FireData();
         }
     }
 
@@ -1421,7 +1421,7 @@ Faction faction = ModelManager.Player.GetPlayer().faction;
         return state;
     }
     // state 只是一个compurited data，所以不会fire data
-    public void UpdateBattleState()
+    private void UpdateBattleState()
     {
         var state = CaculateBattleState();
         if (state == BattleSceneStat.Invalid)
@@ -1444,7 +1444,7 @@ Faction faction = ModelManager.Player.GetPlayer().faction;
         FireData();
     }
 
-    public void CheckGameState()
+    private void CheckGameState()
     {
         if (_data.battleState == BattleSceneStat.Battle_OVER)
         {
@@ -1454,7 +1454,6 @@ Faction faction = ModelManager.Player.GetPlayer().faction;
         else if (_data.battleState == BattleSceneStat.BATTLE_PRESTART)
         {
             FireData();
-            return;
         }
         else
         {

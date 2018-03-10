@@ -38,7 +38,7 @@ public sealed class QuartzView : BaseView
     protected override void InitElementBinding ()
     {
 	    var root = this.gameObject;
-        CloseBtn_UIButton = root.FindScript<UIButton>("BaseView/CloseBtn");
+        CloseBtn_UIButton = root.FindScript<UIButton>("BaseMainWindow/CloseBtn");
         TabBtn_UIGrid = root.FindScript<UIGrid>("Content/TabBtn");
         ExtendPanel = root.FindGameObject("Content/ExtendPanel");
         ForgeGroup = root.FindGameObject("Content/ForgeGroup");

@@ -49,6 +49,13 @@ public class MissionApplyItemSubmitDtoDelegate {
                     }
                 }
             }
+            else if(tSubmitDtoType == MissionHelper.SubmitDtoType.GuildSpeak) {
+                SpeakSubmitDto dto = MissionHelper.GetSubmitDtoByMission(mission) as SpeakSubmitDto;
+                if(dto != null)
+                {
+                    MissionDataMgr.MissionNetMsg.FinishMission(mission);
+                }
+            }
             else if(tSubmitDtoType == MissionHelper.SubmitDtoType.Nothing)
             {
                 GameDebuger.OrangeDebugLog("WARNING:@策划 未知SubmitDto类型");
@@ -192,12 +199,8 @@ public class MissionApplyItemSubmitDtoDelegate {
         {
             Mission tMission = tSubMissionMenuList[i];
             SubmitDto tSubmitDto = MissionHelper.GetSubmitDtoByMission(tMission);
-            if(MissionHelper.IsApplyItem(tSubmitDto))
+            if(MissionHelper.IsApplyItem(tSubmitDto) && tSubmitDto.count < tSubmitDto.needCount)
             {
-                //if(tSceneID == (tSubmitDto as ApplyItemSubmitDto).acc)
-                //{
-
-                //}
                 if(!_applyItemSubmitDtoDic.ContainsKey(tMission.id))
                 {
                     if(!_applyItemSubmitDtoDic.ContainsKey(tMission.id))

@@ -75,4 +75,9 @@ public sealed partial class ScheduleMainViewDataMgr : AbstractAsynInit
     {
         return DataMgr._data.GetActivityStartTime(dto, itemData);
     }
+
+    public List<ITabInfo> RightViewTabInfos
+    {
+        get { return _data.RightViewTabInfos; }
+    }
 }

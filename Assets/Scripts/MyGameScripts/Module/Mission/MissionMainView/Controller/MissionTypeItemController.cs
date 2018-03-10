@@ -76,8 +76,21 @@ public partial class MissionTypeItemController
 
     private void UpdateView(MissionType mission)
     {
-        View.lbltype_UILabel.text = mission.id >= (int)MissionType.MissionTypeEnum.Faction ?
-                                        "日常任务" : mission.name;
+        string name = "";
+        MissionType.MissionTypeEnum misType = (MissionType.MissionTypeEnum)mission.id;
+        if (misType >= MissionType.MissionTypeEnum.Faction && misType < MissionType.MissionTypeEnum.Copy)
+        {
+            name = "日常任务";
+        }
+        else if(misType >= MissionType.MissionTypeEnum.Copy && misType <= MissionType.MissionTypeEnum.CopyExtra)
+        {
+            name = "副本任务";
+        }
+        else
+        {
+            name = mission.name;
+        }
+        View.lbltype_UILabel.text = name;
     }
     
     public MissionType MissionType { get { return missionType; } }

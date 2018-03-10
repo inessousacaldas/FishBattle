@@ -1,4 +1,4 @@
-﻿public class HideEffectInfo : BaseEffectInfo
+﻿public partial class HideEffectInfo : BaseEffectInfo
 {
 	public const string TYPE = "Hide";
 

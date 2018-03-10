@@ -122,6 +122,7 @@ public partial class ChatBoxController
         //_refreshAnchor = _refreshAnchor.CloseOnceNull()
         _disposable = _disposable.CloseOnceNull();
         JSTimer.Instance.CancelCd(CHATBOXDELAYREPOSITION);
+        JSTimer.Instance.CancelCd("ChatBoxQuizarium");
     }
 
     // 如果自定义客户端交互使用了事件流，还是需要remove的
@@ -183,7 +184,7 @@ public partial class ChatBoxController
         {
             _view.QuizariumTimeLb_UILabel.text = string.Format("{0}", time);
             SetQuizariumState(false);
-            JSTimer.Instance.CancelTimer("ChatBoxQuizarium");
+            JSTimer.Instance.CancelCd("ChatBoxQuizarium");
         }, 1f);
     }
 

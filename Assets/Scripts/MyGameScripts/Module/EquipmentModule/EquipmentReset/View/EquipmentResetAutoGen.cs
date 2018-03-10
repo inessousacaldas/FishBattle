@@ -26,6 +26,7 @@ public sealed class EquipmentReset : BaseView
     public UILabel ResetBtnLbl_UILabel;
     public UIButton TipBtn_2_UIButton;
     public UIButton ResetContinue_UIButton;
+    public UILabel TimesLb_UILabel;
 
 
     protected override void InitElementBinding ()
@@ -46,6 +47,7 @@ public sealed class EquipmentReset : BaseView
         ResetBtnLbl_UILabel = root.FindScript<UILabel>("BtnContent/ResetBtn/ResetBtnLbl");
         TipBtn_2_UIButton = root.FindScript<UIButton>("BtnContent/ResetBtn/TipBtn_2");
         ResetContinue_UIButton = root.FindScript<UIButton>("BtnContent/ResetContinue");
+        TimesLb_UILabel = root.FindScript<UILabel>("BtnContent/TimesLb");
 
     }
     #endregion

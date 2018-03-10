@@ -15,6 +15,7 @@ public sealed class GuildBuildItem : BaseView
     public UISprite logoSp_UISprite;
     public UILabel DesLabel_UILabel;
     public UIButton checkBtn_UIButton;
+    public UILabel buttonLabel_UILabel;
 
 
     protected override void InitElementBinding ()
@@ -24,7 +25,7 @@ public sealed class GuildBuildItem : BaseView
         logoSp_UISprite = root.FindScript<UISprite>("logoSp");
         DesLabel_UILabel = root.FindScript<UILabel>("DesLabel");
         checkBtn_UIButton = root.FindScript<UIButton>("checkBtn");
-
+        buttonLabel_UILabel = root.FindScript<UILabel>("checkBtn/Label");
     }
     #endregion
 }

@@ -5,9 +5,9 @@
 
 public static class ProxyEquipmentMain
 {
-    public static void Open()
+    public static void Open(EquipmentViewTab tab = EquipmentViewTab.Smith)
     {
-        EquipmentMainDataMgr.EquipmentMainViewLogic.Open();
+        EquipmentMainDataMgr.EquipmentMainViewLogic.Open(tab);
     }
 
     /// <summary>

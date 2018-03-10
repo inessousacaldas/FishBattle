@@ -30,7 +30,6 @@ public static class GameEvent
     
     public static readonly GameEvents.Event<bool> BATTLE_UI_BTN_AUTO_CLICKED = new GameEvents.Event<bool>("BATTLE_UI_BTN_AUTO_CLICKED");
     public static readonly GameEvents.Event BATTLE_UI_ONORDERLISTUPDATE = new GameEvents.Event("BATTLE_UI_ONORDERLISTUPDATE");
-    public static readonly GameEvents.Event<long,int> BATTLE_UI_SP_UPDATED = new GameEvents.Event<long,int>("BATTLE_UI_SP_UPDATED");
     //有行动者死亡
    
     public static readonly GameEvents.Event<long,MonsterOptionStateManager.MonsterOptionState> BATTLE_FIGHT_MONSTER_OPTION_STATE_CHANGED = new GameEvents.Event<long,MonsterOptionStateManager.MonsterOptionState>("BATTLE_FIGHT_MONSTER_OPTION_STATE_CHANGED");
@@ -51,8 +50,8 @@ public static class GameEvent
     public static readonly GameEvents.Event<ScenePlayerDto> World_OnAddPlayer = new GameEvents.Event<ScenePlayerDto>("World_OnAddPlayer");
     public static readonly GameEvents.Event<ScenePlayerDto> World_OnUpdatePlayer = new GameEvents.Event<ScenePlayerDto>("World_OnUpdatePlayer");
     public static readonly GameEvents.Event<long> World_OnRemovePlayer = new GameEvents.Event<long>("World_OnRemovePlayer");
-    public static readonly GameEvents.Event<long, float, float> World_OnUpdatePlayerPos = new GameEvents.Event<long, float, float>("World_OnUpdatePlayerPos");
-    public static readonly GameEvents.Event<long, float, float> World_OnChangePlayerPos = new GameEvents.Event<long, float, float>("World_OnChangePlayerPos");
+    public static readonly GameEvents.Event<long, float, float, float> World_OnUpdatePlayerPos = new GameEvents.Event<long, float, float, float>("World_OnUpdatePlayerPos");
+    public static readonly GameEvents.Event<long, float, float, float> World_OnChangePlayerPos = new GameEvents.Event<long, float, float, float>("World_OnChangePlayerPos");
     public static readonly GameEvents.Event<long, bool> World_OnChangeBattleStatus = new GameEvents.Event<long, bool>("World_OnChangeBattleStatus");
     public static readonly GameEvents.Event<long, int> World_OnChangeWeapon = new GameEvents.Event<long, int>("World_OnChangeWeapon");
     public static readonly GameEvents.Event<long, int> World_OnChangeWeaponEff = new GameEvents.Event<long, int>("World_OnChangeWeaponEff");
@@ -60,7 +59,7 @@ public static class GameEvent
     public static readonly GameEvents.Event<long> World_OnChangePlayerDye = new GameEvents.Event<long>("World_OnChangePlayerDye");
     public static readonly GameEvents.Event<long, long, float> World_OnChangePlayerScale = new GameEvents.Event<long, long, float>("World_OnChangePlayerScale");
     public static readonly GameEvents.Event<long> World_OnChangePlayerModel = new GameEvents.Event<long>("World_OnChangePlayerModel");
-    public static readonly GameEvents.Event<long, float, float> World_OnUpdateNpcPos = new GameEvents.Event<long, float, float>("World_OnUpdateNpcPos");
+    public static readonly GameEvents.Event<long, float, float, float> World_OnUpdateNpcPos = new GameEvents.Event<long, float, float, float>("World_OnUpdateNpcPos");
     public static readonly GameEvents.Event<long,int> World_OnHallowSpriteNotify = new GameEvents.Event<long,int>("World_OnHallowSpriteNotify");
     public static readonly GameEvents.Event<long> World_OnChangePlayerMoveSpeed = new GameEvents.Event<long>("World_OnChangePlayerMoveSpeed");
     public static readonly GameEvents.Event<long> World_OnChangeMaster = new GameEvents.Event<long>("World_OnChangeMaster");

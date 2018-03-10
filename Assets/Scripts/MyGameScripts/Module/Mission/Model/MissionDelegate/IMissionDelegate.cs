@@ -45,4 +45,11 @@ public interface IMissionDelegate {
     /// <returns>True可以放弃任务,false不能放弃任务</returns>
     bool DropMission(Mission mission,out string winTips);
     void Dispose();
+	  /// <summary>
+    /// 登录或者重登时候赋服务器下发任务时候出触发
+    /// </summary>
+    /// <param name="mission"></param>
+    /// <param name="winTips">该返回不为 string.Empty 时候,需要弹出对话框确认</param>
+    /// <returns>True可以放弃任务,false不能放弃任务</returns>
+    void ReqEnterMission(Mission mission,SubmitDto submitDto);
 }

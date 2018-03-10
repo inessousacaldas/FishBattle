@@ -32,6 +32,7 @@ public enum ExpressionType
     Record,
     Mount,
     PutAwayGood,//上架
+    RedPack
 }
 
 #endregion
@@ -47,13 +48,14 @@ public partial class FacePanelViewController
 {
     private const int LeftTypeBtnCount = 12;
 
-    private static readonly ITabInfo[] TabInfos = new ITabInfo[9]{
+    private static readonly ITabInfo[] TabInfos = new ITabInfo[10]{
         TabInfoData.Create((int) ExpressionType.Expression,"表情")
         , TabInfoData.Create((int) ExpressionType.Good, "物品")
         , TabInfoData.Create((int) ExpressionType.Crew, "伙伴")
         , TabInfoData.Create((int) ExpressionType.Mission, "任务")
         , TabInfoData.Create((int) ExpressionType.Skill, "技能")
         , TabInfoData.Create((int) ExpressionType.PutAwayGood, "上架")
+        , TabInfoData.Create((int) ExpressionType.RedPack, "红包")
         , TabInfoData.Create((int) ExpressionType.Appellation, "称谓")
         , TabInfoData.Create((int) ExpressionType.Achievement, "成就")
         , TabInfoData.Create((int) ExpressionType.Record, "记录")
@@ -158,6 +160,7 @@ public partial class FacePanelViewController
             case FaceShowType.SHOW_TYPE_SELFZONE_SEND:
                 tabs = TabInfos.Filter(s => CommentShow.Contains((ExpressionType)s.EnumValue) && IsFuncOpen((ExpressionType)s.EnumValue));
                 break;
+
         }
         return tabs;
     }
@@ -429,6 +432,12 @@ public partial class FacePanelViewController
 //        }
         
     }
+    private void OnClickRedPackBtn()
+    {
+        if (!UpdateGridState(ChatMsgType.RedPacket))
+            return;
+        
+    }
     #region 聊天记录
     private void OnClickRecordBtn()
     {
@@ -572,7 +581,11 @@ public partial class FacePanelViewController
             case ExpressionType.Mount:
                 OnClickMountBtn();
                 break;
+            case ExpressionType.RedPack:
+                OnClickRedPackBtn();
+                break;
             case ExpressionType.PutAwayGood:
+            
                 return;
         }
     }
@@ -672,6 +685,7 @@ public partial class FacePanelViewController
         var timeGap = 0.016f;
         if (isAni)
             timeGap = 0.25f;//表情框有向上动画0.25s
+        if (View.emojiGrid_PageScrollView.PageGrid == null) return;
         var maxRow = View.emojiGrid_PageScrollView.PageGrid.maxRow;
         var maxCol = View.emojiGrid_PageScrollView.PageGrid.maxCol;
         var maxCount = 8;

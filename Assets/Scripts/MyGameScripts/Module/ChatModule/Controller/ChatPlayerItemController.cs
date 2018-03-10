@@ -69,38 +69,39 @@ public partial class ChatPlayerItemController
     public void UpdateView(ChatNotify data, int idx=-1)
     {
         _chatNotify = data;
-        //设置基本信息
-        if (_chatNotify.fromPlayer.id != ModelManager.Player.GetPlayerId())
+        //公会频道会存在fromplayer为空的情况（公会系统消息）
+        if (_chatNotify.fromPlayer != null)
         {
-            _infoDto = PrivateMsgDataMgr.DataMgr.GetInfoDtoById(_chatNotify.fromPlayer.id);
-            
-            if (_infoDto != null)
+            //设置基本信息
+            if (_chatNotify.fromPlayer.id != ModelManager.Player.GetPlayerId())
             {
-                if(_infoDto.charactor as MainCharactor != null)
-                    UIHelper.SetPetIcon(View.Icon_UISprite, (_infoDto.charactor as MainCharactor).gender == 1 ? "101" : "103");
-                View.PlayerNameAndJob_UILabel.text = _infoDto.name;
-                View.LvLbl_UILabel.text = _infoDto.grade.ToString();
+                _infoDto = PrivateMsgDataMgr.DataMgr.GetInfoDtoById(_chatNotify.fromPlayer.id);
+
+                if (_infoDto != null)
+                {
+                    if (_infoDto.charactor as MainCharactor != null)
+                        UIHelper.SetPetIcon(View.Icon_UISprite, (_infoDto.charactor as MainCharactor).gender == 1 ? "101" : "103");
+                    View.PlayerNameAndJob_UILabel.text = _infoDto.name;
+                    View.LvLbl_UILabel.text = _infoDto.grade.ToString();
+                }
+                else
+                {
+                    UIHelper.SetPetIcon(View.Icon_UISprite, _chatNotify.fromPlayer.gender == 1 ? "101" : "103");
+                    View.PlayerNameAndJob_UILabel.text = _chatNotify.fromPlayer.nickname;
+                    View.LvLbl_UILabel.text = _chatNotify.fromPlayer.grade.ToString();
+                }
             }
             else
             {
-                UIHelper.SetPetIcon(View.Icon_UISprite, _chatNotify.fromPlayer.gender == 1 ? "101" : "103");
-                View.PlayerNameAndJob_UILabel.text = _chatNotify.fromPlayer.nickname;
-                View.LvLbl_UILabel.text = _chatNotify.fromPlayer.grade.ToString();
+                View.PlayerNameAndJob_UILabel.pivot = UIWidget.Pivot.Right;
+                View.PlayerNameAndJob_UILabel.text = ModelManager.Player.GetPlayerName();
+                UIHelper.SetPetIcon(View.Icon_UISprite, ModelManager.Player.GetPlayerGender() == 1 ? "101" : "103");
+                View.LvLbl_UILabel.text = ModelManager.Player.GetPlayerLevel().ToString();
             }
         }
-        else
-        {
-            View.PlayerNameAndJob_UILabel.pivot = UIWidget.Pivot.Right;
-            View.PlayerNameAndJob_UILabel.text = ModelManager.Player.GetPlayerName();
-            UIHelper.SetPetIcon(View.Icon_UISprite, ModelManager.Player.GetPlayerGender() == 1 ? "101" : "103");
-            View.LvLbl_UILabel.text = ModelManager.Player.GetPlayerLevel().ToString();
-        }  
-
         SetContent(idx);
-
         //动画
         StopAnimation(string.Empty, false);
-
         DoSpeechAnimation(VoiceRecognitionManager.Instance.GetCurrPlayVoiceKey());
     }
 
@@ -193,7 +194,7 @@ public partial class ChatPlayerItemController
         View.ContentBg_UISprite.bottomAnchor.absolute = hasEmoji ? 10 : -2;
         View.ContentLbl_UILabel.spacingY = hasEmoji ? 25 : 5;
 
-        bool left = _chatNotify.fromPlayer.id != ModelManager.Player.GetPlayerId();
+        bool left = _chatNotify.fromPlayer == null ? true : _chatNotify.fromPlayer.id != ModelManager.Player.GetPlayerId();
         bool isVoice = ChatHelper.IsVoiceMessage(_chatNotify.content);
         float lblWidth = isVoice ? ChatLblWidth - HasVoiceLblOffset : ChatLblWidth;
         //lblWidth = left ? lblWidth - 10 : lblWidth ;
@@ -273,7 +274,7 @@ public partial class ChatPlayerItemController
         {
             return;
         }
-        if (_chatNotify.fromPlayer.id != ModelManager.Player.GetPlayerId())
+        if (_chatNotify.fromPlayer != null && _chatNotify.fromPlayer.id != ModelManager.Player.GetPlayerId())
         {
             if (_chatNotify.fromPlayer.id == 0) return;//点击的是NPC
             var ctrl = FriendDetailViewController.Show<FriendDetailViewController>(FriendDetailView.NAME, UILayerType.ThreeModule, false, true);
@@ -298,25 +299,18 @@ public partial class ChatPlayerItemController
         //    return;
         //}
 
-        //string clickMsg = View.ContentLbl_UILabel.GetUrlAtPosition(UICamera.lastWorldPosition);
-        //GameDebuger.Log("ChatPlayerItem OnClcikContentBtn : clickMsg" + clickMsg);
-        //if (string.IsNullOrEmpty(clickMsg) == false)
+        string clickMsg = View.ContentLbl_UILabel.GetUrlAtPosition(UICamera.lastWorldPosition);
+        if (!string.IsNullOrEmpty(clickMsg))
+        {
+            ChatHelper.DecodeUrlMsg(clickMsg);
+        }
+        //string pattern = ChatHelper.UrlPattern;
+        //Match match = Regex.Match(_chatNotify.content, pattern);
+        //if (match.Success)
         //{
         //    UIPanel panel = UIPanel.Find(transform);
-        //    //ILayerType layerType = LayerManager.Instance.GetLayerTypeByDepth(panel.depth);
-        //    //ModelManager.Chat.DecodeUrlMsg(clickMsg, UICamera.current.gameObject, layerType);
-        //    ChatHelper.DecodeUrlMsg(clickMsg);
-        //    return;
+        //    ChatHelper.DecodeUrlMsg(match.Groups[1].ToString(), UICamera.current.gameObject);
         //}
-
-
-        string pattern = ChatHelper.UrlPattern;
-        Match match = Regex.Match(_chatNotify.content, pattern);
-        if (match.Success)
-        {
-            UIPanel panel = UIPanel.Find(transform);
-            ChatHelper.DecodeUrlMsg(match.Groups[1].ToString(), UICamera.current.gameObject);
-        }
     }
 
     private void DoSpeechAnimation(string fileName)

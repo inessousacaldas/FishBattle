@@ -52,6 +52,7 @@ public  interface IChatInfoViewData
     //当前正在使用的喇叭
     int CurHordId { get; set; }
     IEnumerable<ChatPropsConsume> HornList { get; }
+    bool HasGuild { get; }
 }
 public class ChatRecordVo
 {
@@ -141,6 +142,8 @@ public interface IChatData
     IChatInfoViewData ChatInfoViewData { get; }
     //聊天的配置
     ChatSettingData chatSettingData { get; }
+    IEnumerable<ChatNotify> GetChannelNotifyQueue(ChatChannelEnum channelId);
+    ChatChannelEnum CurChannelId { get; set; }
 }
 
 /// <summary>
@@ -237,7 +240,7 @@ public sealed partial class ChatDataMgr
             TabInfoData.Create((int) ChatChannelEnum.Hearsay, ChatHelper.GetChannelName(ChatChannelEnum.Hearsay)),
             TabInfoData.Create((int) ChatChannelEnum.Horn, ChatHelper.GetChannelName(ChatChannelEnum.Horn)),
             //TabInfoData.Create((int) ChatChannelEnum.Country, ChatHelper.GetChannelName(ChatChannelEnum.Country)),
-            //TabInfoData.Create((int) ChatChannelEnum.Guild, ChatHelper.GetChannelName(ChatChannelEnum.Guild)),
+            TabInfoData.Create((int) ChatChannelEnum.Guild, ChatHelper.GetChannelName(ChatChannelEnum.Guild)),
             TabInfoData.Create((int) ChatChannelEnum.Team, ChatHelper.GetChannelName(ChatChannelEnum.Team)),
             TabInfoData.Create((int) ChatChannelEnum.Current, ChatHelper.GetChannelName(ChatChannelEnum.Current)),
         };
@@ -423,16 +426,7 @@ public sealed partial class ChatDataMgr
         }
 
         public bool isMoveUpFaceContent { get; set; }
-
-        //Dictionary<ChatChannelEnum, ChatViewData> _cacheInputMsg;
-        //public Dictionary<ChatChannelEnum, ChatViewData> cacheInputMsg
-        //{
-        //    get
-        //    {
-        //        return _cacheInputMsg;
-        //    }
-        //}
-
+        
         public IEnumerable<ChatNotify> GetChannelNotifyQueue(ChatChannelEnum channelId)
         {
             Queue<ChatNotify> queue = null;
@@ -453,12 +447,11 @@ public sealed partial class ChatDataMgr
                 }
                 else
                 {
-                    if (!CheckPlayerLv(notify)) return; //如果等级不够，不显示聊天信息
+                    if (!CheckPlayerLv(notify) || !CheckHasGuild(notify)) return; //1.如果等级不够，不显示聊天信息 2.判定公会频道，此时是否有公会
                     AddNotify(notify);
                     if (notify.actionType == (int)ChatChannel.ActionTypeEnum.Tip)
                     {
-                        string tTip = string.Format("{0} {1}", "系统".WrapColor(ColorConstantV3.Color_Red_Str),
-                        ColorHelper.UpdateColorInDeepStyle(notify.content));
+                        string tTip = ColorHelper.UpdateColorInDeepStyle(notify.content);
                         TipManager.AddTip(tTip);
                     }
                     _chatBoxData.AddChatBoxQueue(notify);
@@ -473,6 +466,15 @@ public sealed partial class ChatDataMgr
             ChatChannelEnum channel = (ChatChannelEnum)notify.channelId;
             if (channel == ChatChannelEnum.Current || channel == ChatChannelEnum.Horn)
                 return lv >= 15;
+            return true;
+        }
+
+        private bool CheckHasGuild(ChatNotify notify)
+        {
+            if (notify.channelId == (int)ChatChannelEnum.Guild)
+            {
+                return HasGuild;
+            }
             return true;
         }
 
@@ -569,6 +571,14 @@ public sealed partial class ChatDataMgr
                 return sub;
             }
         }
+
+        public bool HasGuild
+        {
+            get
+            {
+                return GuildMainDataMgr.DataMgr.PlayerGuildInfo != null;
+            }
+        }
     }
 
     public IEnumerable<ChatRecordVo> GetChatRecordList()
@@ -652,7 +662,7 @@ public sealed partial class ChatDataMgr
         playerDto.charactor = notify.dress.charactor as MainCharactor;
         ChatNotify chatNotify = new ChatNotify()
         {
-            channelId = (int) ChatChannelEnum.Team,
+            channelId = notify.channelId,
             content = notify.content,
             fromPlayer = playerDto,
             lableType = 1,
@@ -672,4 +682,5 @@ public sealed partial class ChatDataMgr
             _data.AddChatNotify(chatNotify);
         }
     }
+
 }

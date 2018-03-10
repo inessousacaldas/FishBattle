@@ -14,19 +14,15 @@ public sealed partial class DevelopEffectLb : BaseView
     #region Element Bindings
 
     /// bind gameobject
-    public UILabel name_UILabel;
     public UILabel beforeProper_UILabel;
     public UILabel afterProper_UILabel;
-    public UILabel addProper_UILabel;
 
 
     protected override void InitElementBinding ()
     {
 	    var root = this.gameObject;
-        name_UILabel = root.FindScript<UILabel>("name");
         beforeProper_UILabel = root.FindScript<UILabel>("beforeProper");
         afterProper_UILabel = root.FindScript<UILabel>("afterProper");
-        addProper_UILabel = root.FindScript<UILabel>("AddProper");
 
     }
     #endregion
@@ -36,10 +32,8 @@ public partial class DevelopEffectLbController : MonolessViewController<DevelopE
 {
     public void SetItemInfo(CharacterPropertyDto dto,float defaultcount)
     {
-        View.name_UILabel.text = GlobalAttr.ATTRNAMES[dto.propId];
-        View.beforeProper_UILabel.text = ((int)defaultcount).ToString();
-        View.afterProper_UILabel.text = ((int)(dto.propValue)).ToString();
+        View.beforeProper_UILabel.text =string.Format("{0}：{1}", GlobalAttr.ATTRNAMES[dto.propId], ((int)defaultcount).ToString());
         string addStr = "（" + "+" + ((int)dto.propValue - (int)defaultcount).ToString() + "）";
-        View.addProper_UILabel.text = addStr.WrapColor(ColorConstantV3.Color_Green2);
+        View.afterProper_UILabel.text = string.Format("{0}{1}", ((int)(dto.propValue)).ToString(), addStr);
     }
 }

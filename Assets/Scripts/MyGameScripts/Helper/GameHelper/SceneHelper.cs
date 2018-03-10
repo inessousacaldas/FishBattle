@@ -9,12 +9,21 @@ public static class SceneHelper
 {
     #region Scene Stand Position
 
-    public static Vector3 GetSceneStandPosition(Vector3 sourcePos, Vector3 defaultPos)
+    public static Vector3 GetSceneStandPosition(Vector3 transformPosition, Vector3 zero)
     {
-        if (AstarPath.active == null)
-            return defaultPos;
-        Pathfinding.NNInfo nNInfo = AstarPath.active.GetNearest(sourcePos);
-        return nNInfo.clampedPosition != Vector3.zero ? nNInfo.clampedPosition : defaultPos;
+        return GetPositionInScene(transformPosition);
+    }
+    
+    public static Vector3 GetPositionInScene(Vector3 sourcePos)
+    {
+        if (null == AstarPath.active) return sourcePos;
+        var tNNInfo = AstarPath.active.GetNearest(sourcePos);
+        return !tNNInfo.Equals(default(Pathfinding.NNInfo)) ? tNNInfo.clampedPosition : sourcePos;
+    }
+
+    public static Vector3 GetPositionInScene(float x,float y, float z)
+    {
+        return GetPositionInScene(new Vector3(x, y, z));
     }
 
     public static bool IsCanWalkScope(Vector3 pos)
@@ -142,4 +151,5 @@ public static class SceneHelper
 	}
 	#endregion
 
+    
 }

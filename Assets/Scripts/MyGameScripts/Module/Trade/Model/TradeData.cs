@@ -15,6 +15,8 @@ public interface ITradeData
     IPitchData PitchCtrl { get; }
     ICmomerceData CmomerceCtrl { get; }
     IPitchSellViewData SellViewCtrl { get; }
+    int CmomerceGoodsId { get; }
+    int CurPitchId { get; }
 }
 
 public interface ICmomerceData
@@ -176,6 +178,21 @@ public sealed partial class TradeDataMgr
         #endregion
 
         #region 主界面
+
+        private int _curCmomerceGoodsId;
+        public int CmomerceGoodsId
+        {
+            get { return _curCmomerceGoodsId; }
+            set { _curCmomerceGoodsId = value; }
+        }
+
+        private int _curPitchId;
+
+        public int CurPitchId
+        {
+            get { return _curPitchId; }
+            set { _curPitchId = value; }
+        }
 
         private IEnumerable<TradeMenu> _tradeMenuList; 
         private TradeTab _curTab = TradeTab.Cmomerce;

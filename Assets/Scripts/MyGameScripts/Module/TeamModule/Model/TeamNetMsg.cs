@@ -172,28 +172,52 @@ public sealed partial class TeamDataMgr
                 TipManager.AddTip("队伍人数已满，无法发送邀请");
                 return;
             }
-            if (!JSTimer.Instance.IsCdExist(taskName))
+
+            Action InvitePlayerAction = () =>
             {
-                //目前无组队,需要构建一个组队目标去邀请对方
-                if (teamDto == null)
+                if (!JSTimer.Instance.IsCdExist(taskName))
                 {
-                    teamDto = new TeamDto();
-                    teamDto.actionTargetId = 0;
-                    teamDto.minGrade = 1;
-                    teamDto.maxGrade = 100;
-                }
-                ServiceRequestAction.requestServer(Services.Team_InvitePlayer(playerId, teamDto.actionTargetId, 
+                    //目前无组队,需要构建一个组队目标去邀请对方
+                    if (teamDto == null)
+                    {
+                        teamDto = new TeamDto();
+                        teamDto.actionTargetId = 0;
+                        teamDto.minGrade = 1;
+                        teamDto.maxGrade = 100;
+                    }
+                    ServiceRequestAction.requestServer(Services.Team_InvitePlayer(playerId, teamDto.actionTargetId,
                     teamDto.minGrade, teamDto.maxGrade, ""), "InviteMember", (e) =>
+                    {
+                        //                    DataMgr._data._teamInviteNotifyList = e 
+                        TipManager.AddTip(string.Format("已邀请[2DC6F8]{0}[-]加入队伍，请耐心等待回复", nickName));
+                        JSTimer.Instance.SetupCoolDown(taskName, 10f, null, null);
+                        FireData();
+                    });
+                }
+                else
                 {
-//                    DataMgr._data._teamInviteNotifyList = e 
-                    TipManager.AddTip(string.Format("已邀请[2DC6F8]{0}[-]加入队伍，请耐心等待回复", nickName));
-                    JSTimer.Instance.SetupCoolDown(taskName, 10f, null, null);
-                    FireData();
-                });
+                    TipManager.AddTip("请耐心等待回复");
+                }
+            };
+            bool isCopyExtr = false;
+            List<Mission> tMission = MissionDataMgr.DataMgr.GetExistSubMissionMenuList();
+            for(int i = 0;i < tMission.Count;i++) {
+                if(tMission[i].type == (int)MissionType.MissionTypeEnum.CopyExtra) {
+                    isCopyExtr = true;
+                    break;
+                }
             }
-            else
+            if(isCopyExtr)
             {
-                TipManager.AddTip("请耐心等待回复");
+                var ctrl = ProxyBaseWinModule.Open();
+                BaseTipData data = BaseTipData.Create("副本任务","加入新队员将放弃当前的彩蛋任务，是否继续邀请队员？", 0, delegate
+                {
+                    InvitePlayerAction();
+                }, null);
+                ctrl.InitView(data);
+            }
+            else {
+                InvitePlayerAction();
             }
         }
 
@@ -202,7 +226,7 @@ public sealed partial class TeamDataMgr
             , Action onSuccess = null)
         {
             ServiceRequestAction.requestServer(
-                Services.Team_ApproveInvitation(notify.inviterPlayerId, notify.teamTargetId, notify.minGrade, notify.maxGrade,"")
+                Services.Team_ApproveInvitation(notify.teamId, notify.inviterPlayerId, notify.teamTargetId, notify.minGrade, notify.maxGrade,"")
             , ""
             , delegate{
                     DataMgr._data.RemoveInvitation(notify.inviterPlayerId);
@@ -283,13 +307,15 @@ public sealed partial class TeamDataMgr
 
     public static void BackTeam ()
 	{
-		if(ValidateBattleState(TeamAction.Back,null))
-			return;
-
 		ServiceRequestAction.requestServer (Services.Team_BackTeam(), "BackTeam", (e) => 
         {
-			ValidateTeamActionStatusDto (e as TeamActionStatusDto);
-			SpecialActivityDispose();
+            if (BattleDataManager.DataMgr.IsInBattle)
+                TipManager.AddTip("此操作将在战斗结束后自动执行");
+            else
+            {
+                ValidateTeamActionStatusDto(e as TeamActionStatusDto);
+                SpecialActivityDispose();
+            }
         });
 	}
 
@@ -370,20 +396,47 @@ public sealed partial class TeamDataMgr
         //自动匹配
         public static void AutoMatchTeam(ITeamMatchTargetData _data, bool isAuto = false)
         {
-            //通过组对目标界面直接自动匹配时,如果当前正在自动匹配的话,则不改变状态
-            //if (isAuto)
-            //    DataMgr._data.IsAutoMatch = false;
-
-            GameUtil.GeneralReq(
+            if(TowerDataMgr.DataMgr.IsInTower())
+                return;
+            if (isAuto && _data.GetActiveId == 0)
+            {
+                TipManager.AddTip("请选择组队目标");
+                return;
+            }
+            Action InvitePlayerAction = () =>
+            {
+                GameUtil.GeneralReq(
                 Services.Team_AutoMatch(_data.GetActiveId, isAuto, _data.GetMinLv, _data.GetMaxLv), response =>
                 {
-                    //var data = response as AutoMatchDto;
-                    //if (data != null)
-                    //{
-                    //    DataMgr._data.IsAutoMatch = data.intention;
-                    //    FireData();
-                    //}
+                    if (isAuto)
+                        TipManager.AddTip("开始匹配");
+                    else
+                        TipManager.AddTip("取消匹配");
                 });
+            };
+            bool isCopyExtr = false;
+            List<Mission> tMission = MissionDataMgr.DataMgr.GetExistSubMissionMenuList();
+            for(int i = 0;i < tMission.Count;i++)
+            {
+                if(tMission[i].type == (int)MissionType.MissionTypeEnum.CopyExtra)
+                {
+                    isCopyExtr = true;
+                    break;
+                }
+            }
+            if(isCopyExtr)
+            {
+                var ctrl = ProxyBaseWinModule.Open();
+                BaseTipData data = BaseTipData.Create("副本任务","加入新队员将放弃当前的彩蛋任务，是否继续邀请队员？", 0, delegate
+                {
+                    InvitePlayerAction();
+                }, null);
+                ctrl.InitView(data);
+            }
+            else
+            {
+                InvitePlayerAction();
+            }
         }
         
         // 我的好友
@@ -403,9 +456,22 @@ public sealed partial class TeamDataMgr
             });
         }
 
-        public static void RecommendGuild()
+        //公会成员
+        //GuildMembersDto
+        public static void GetGuildMember()
         {
-            FireData();
+            ServiceRequestAction.requestServer(Services.Team_GuildMember(), "GetGuildMember", response =>
+            {
+                var dto = response as GuildMembersDto;
+                if (dto == null)
+                {
+                    GameDebuger.LogError("Team_GuildMember返回的数据有问题");
+                    return;
+                }
+
+                DataMgr._data.GetGuildMembersDto = dto;
+                FireData();
+            });
         }
         
         //推荐队伍

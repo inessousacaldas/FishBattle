@@ -130,13 +130,15 @@ public sealed partial class AssistSkillMainDataMgr
         }
 
         //刷新
-        public static void ReqRefresh(long propUid)
+        public static void ReqRefresh()
         {
-            GameUtil.GeneralReq(Services.Delegate_PropRefresh(propUid), resp =>
+            GameUtil.GeneralReq(Services.Delegate_PropRefresh(), resp =>
             {
                 var dto = resp as DelegateMissionHoleDto;
                 DataMgr._data.UpdateMissionData(dto);
+                TipManager.AddTopTip("刷新成功");
                 FireData();
+                
             });
         }
 
@@ -183,9 +185,9 @@ public sealed partial class AssistSkillMainDataMgr
         }
 
         //快速完成
-        public static void ReqFastComplete(int delegateMissionId, long propUid)
+        public static void ReqFastComplete(int delegateMissionId)
         {
-            GameUtil.GeneralReq(Services.Delegate_Finish(delegateMissionId, propUid), resp =>
+            GameUtil.GeneralReq(Services.Delegate_Finish(delegateMissionId), resp =>
             {
                 var dto1 = resp as DelegateMissionDto;
                 var dto2 = resp as DelegateMissionHoleDto;

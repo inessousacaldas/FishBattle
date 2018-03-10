@@ -60,9 +60,9 @@ public partial class WorldManager
 
     public static IObservableExpand<IWorldModel> WorkdModelStream { get { return stream; }}
     
-    private static Subject<Vector2> heroPosStream;
+    private static Subject<Vector3> heroPosStream;
 
-    public static IObservableExpand<Vector2> OnHeroPosStreamChange {
+    public static IObservableExpand<Vector3> OnHeroPosStreamChange {
         get { return heroPosStream; }
     }
 
@@ -83,8 +83,8 @@ public partial class WorldManager
         if (_worldModel != null) return; // 避免重复创建
         _worldModel = WorldModel.Create();
         _worldView = new WorldView(_worldModel);
-        heroPosStream = new Subject<Vector2>();
-        heroPosStream.Hold(Vector2.zero);
+        heroPosStream = new Subject<Vector3>();
+        heroPosStream.Hold(Vector3.zero);
         stream = new Subject<IWorldModel>();
         stream.Hold(_worldModel);
         _disposable= new CompositeDisposable();
@@ -116,8 +116,7 @@ public partial class WorldManager
             {
                 if (noti == null || noti.sceneId != Instance._worldModel.GetSceneId()) return;
 
-                GameDebuger.Log("tSceneObjectWalkNotify " + noti.id);
-                
+                GameDebuger.Log("tSceneObjectWalkNotify " + noti.id + "  x= " + noti.x + "  y= " + noti.y + "  z= " + noti.z);
                 Instance._worldModel.HandleSceneObjectWalkNotify(noti);
                 
             }));
@@ -304,7 +303,7 @@ public partial class WorldManager
             var playView = Instance.GetHeroView();
 
             var posStr = playView == null ? string.Empty : playView.GetPosStr();
-            Instance.Enter(ModelManager.Player.GetPlayer().sceneId, false, false, false, PlayerGameState.FollowTargetNpc, flyPos : posStr);
+            Instance.Enter(ModelManager.Player.GetPlayer().sceneId, false, false, false, PlayerGameState.FollowTargetNpc, posStr);
         }
     }
 
@@ -322,7 +321,6 @@ public partial class WorldManager
 
         _targetNpc = targetNpc;
         
-        //**重登 数据没有reset， FirstEnter为false 无法进入loginScene  todo xjd
         if (FirstEnter)
         {
             RequestLoginScene(sceneId);
@@ -339,6 +337,15 @@ public partial class WorldManager
             }
         }
     }
+
+    #region 服务器要求进入副本不能调用Fly的接口
+    public void EnterCopyScene(int sceneId,Npc targetNpc = null) {
+        JSTimer.Instance.CancelCd("__waitTimeForNextMission");
+        _isEntering = sceneId;
+        _targetNpc = targetNpc;
+        MissionDataMgr.MissionNetMsg.ChangeCopyScene();
+    }
+    #endregion
 
     private void RequestLoginScene(int sceneId)
     {
@@ -670,28 +677,23 @@ public partial class WorldManager
             heroView.SyncWithServer();
     }
     //没有队伍或者是队长时才发送验证信息
-    public void PlanWalk(float targetX, float targetZ)
+    public void PlanWalk(float targetX, float targetY, float targetZ)
     {
         //Debug.LogError("PlanWalk " + targetX + ":" + targetZ);
-        if (!BattleDataManager.DataMgr.IsInBattle)
-        {
-            if (!JoystickModule.DisableMove)
-                ServiceRequestAction.requestServer(Services.Scene_PlanWalk(_worldModel.GetSceneId(), targetX, targetZ));
-        }
+        if (BattleDataManager.DataMgr.IsInBattle) return;
+        if (!JoystickModule.DisableMove)
+            ServiceRequestAction.requestServer(Services.Scene_PlanWalk(_worldModel.GetSceneId(), targetX, targetZ, targetY));
     }
 
     //WorldClickCheck 每隔一段时间请求服务器验证玩家当前位置
-    public void VerifyWalk(float toX, float toY)
+    public void VerifyWalk(float toX, float toY, float toZ)
     {
-        //Debug.LogError("VerifyWalk " + toX + ":" + toY);
-        if (!BattleDataManager.DataMgr.IsInBattle)
+        if (BattleDataManager.DataMgr.IsInBattle) return;
+        if (!JoystickModule.DisableMove)
         {
-            if (!JoystickModule.DisableMove)
-            {
-                ServiceRequestAction.requestServer(Services.Scene_VerifyWalk(_worldModel.GetSceneId(), toX, toY));
-            }
-            heroPosStream.OnNext(new Vector2(toX, toY));
+            ServiceRequestAction.requestServer(Services.Scene_VerifyWalk(_worldModel.GetSceneId(), toX, toZ, toY));
         }
+        heroPosStream.OnNext(new Vector3(toX, toY, toZ));
     }
 
     #endregion
@@ -712,17 +714,15 @@ public partial class WorldManager
 
     public void ResumeWalkToNpc()
     {
-        if (_targetNpc != null)
-        {
-            //	任务：查看是否寻路可穿越传送阵，设置CharacterController.enable ModelManager.MissionData.heroCharacterControllerEnable
-            GameDebuger.TODO(@"if (ModelManager.MissionData.heroCharacterControllerEnable)
+        if (_targetNpc == null) return;
+        //	任务：查看是否寻路可穿越传送阵，设置CharacterController.enable ModelManager.MissionData.heroCharacterControllerEnable
+        GameDebuger.TODO(@"if (ModelManager.MissionData.heroCharacterControllerEnable)
             {
                 WalkToByNpc(_targetNpc, dialogFunctionID);
             }
             else");
-            {
-                WalkToByNpc(_targetNpc, dialogFunctionID, _toTargetCallback);
-            }
+        {
+            WalkToByNpc(_targetNpc, dialogFunctionID, _toTargetCallback);
         }
     }
 
@@ -782,7 +782,7 @@ public partial class WorldManager
 
         if (BattleDataManager.DataMgr.IsInBattle)
         {
-            //TipManager.AddTip("战斗中，不能进行传送");
+            TipManager.AddTip("战斗中，不能进行传送");
             return;
         }
 
@@ -821,23 +821,9 @@ public partial class WorldManager
                 {
                     return;
                 }
-
+                
                 Vector3 tPlayerPos = GetHeroView().cachedTransform.position;
-                //	判断距离是否在单位步长内 Begin
-                /*
-				float tDis = Math.Abs(npc.x - tPlayerPos.x) + Math.Abs(npc.z - tPlayerPos.z);
-				if (tDis < 1.0f) {
-					if (toTargetCallback != null){npcUniqueId
-						toTargetCallback();
-						GetHeroView().SetNavFlag(false);
-					}
-					return;
-				}
-				*/
-                //	判断距离是否在单位步长内 End
-
-                Vector3 tLastNpcPos = new Vector3(npc.x, tPlayerPos.y, npc.z);
-                tLastNpcPos = SceneHelper.GetSceneStandPosition(tLastNpcPos, Vector3.zero);
+                var tLastNpcPos = new Vector3(npc.x, npc.y, npc.z);
 
                 //	判断距离是否在单位步长内 Begin
                 float tDis = Vector3.Distance(tPlayerPos, tLastNpcPos);
@@ -856,7 +842,7 @@ public partial class WorldManager
                     _targetNpc = npc;
                 }
             }
-            //CleanTargetNpc();
+            CleanTargetNpc();
         }
         else
         {

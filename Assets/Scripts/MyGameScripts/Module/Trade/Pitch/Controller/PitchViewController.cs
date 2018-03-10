@@ -50,6 +50,7 @@ public partial interface IPitchViewController
     PitchViewController.PageType GetCurTab { get; }
     UniRx.IObservable<int> CDTimeHandler { get; }
     UniRx.IObservable<TradeMenu> RefreshHandler { get; }
+    void ChoiseGoods(int goodsId);
 }
 
 public partial class PitchViewController
@@ -142,8 +143,6 @@ public partial class PitchViewController
 
         InitTabBtn();
         InitData();
-        InitSellItemList();
-        InitBuyItemList();
         InitBuyOptionList();
         ShowBuyGroup(true);
         UpdateCaseLb();
@@ -197,6 +196,11 @@ public partial class PitchViewController
         _disposable.Add(tabMgr.Stream.Subscribe(pageIndex =>
         {
             ShowBuyGroup(pageIndex == (int)PageType.BuyPage);
+            if (pageIndex == (int) PageType.SellPage && _sellItemList.Count == 0)
+            {
+                InitSellItemList();
+                UpdateSellItemList(_data.PitchCtrl);
+            }
             _curPageType = (PageType) pageIndex;
         }));
     }
@@ -279,11 +283,7 @@ public partial class PitchViewController
         {
             _disposable.Add(item.OnPitchItem_UIButtonClick.Subscribe(_ =>
             {
-                _curTradeGoods = _curMenuGoods.TryGetValue(idx);
-                _buyItemList.ForEachI((go, index) => { go.IsSelect(index == idx);});
-                _selectItemCount = 1;
-                _view.CountLb_UILabel.text = "1";
-                ShowSelectCount(_curTradeGoods.amount > 1);
+                OnPitchBuyItemClick(idx);
             }));
         };
 
@@ -299,6 +299,18 @@ public partial class PitchViewController
         //_view.BuyScrollView_UIScrollView.ResetPosition();
     }
 
+    private void OnPitchBuyItemClick(int idx)
+    {
+        _curTradeGoods = _curMenuGoods.TryGetValue(idx);
+        if (_curTradeGoods == null)
+            return;
+
+        _buyItemList.ForEachI((go, index) => { go.IsSelect(index == idx); });
+        _selectItemCount = 1;
+        _view.CountLb_UILabel.text = "1";
+        ShowSelectCount(_curTradeGoods.amount > 1);
+    }
+
     //左侧菜单
     private void InitBuyOptionList()
     {
@@ -306,14 +318,7 @@ public partial class PitchViewController
         {
             _disposable.Add(btn.GetClickHandler.Subscribe(i =>
             {
-                UpdateCurMenu(menu);
-                _curTradeGoods = null;
-                _optionBtnList.ForEach(button =>
-                {
-                    button.IsSelect(btn == button);
-                });
-                ShowSelectCount(false);
-                _view.BuyScrollView_UIScrollView.ResetPosition();
+                OnFirstOptionClick(btn, menu);
             }));
         };
 
@@ -331,6 +336,20 @@ public partial class PitchViewController
         _optionBtnList[0].IsSelect(true);
         _view.OptionGrid_UIGrid.Reposition();
         UpdateCurMenu(_firstOptionList.TryGetValue(0));
+        IsSelectGoodsMenu(false);
+    }
+
+    private void OnFirstOptionClick(TradeOptionBtnController btn, TradeMenu menu)
+    {
+        UpdateCurMenu(menu);
+        _curTradeGoods = null;
+        IsSelectGoodsMenu(false);
+        _optionBtnList.ForEach(button =>
+        {
+            button.IsSelect(btn == button);
+        });
+        ShowSelectCount(false);
+        _view.BuyScrollView_UIScrollView.ResetPosition();
     }
 
     //显示某个一级菜单的子类
@@ -339,7 +358,7 @@ public partial class PitchViewController
         _curFirstMenu = menu;
         _refreshMenuEvt.OnNext(menu.id);
         _secondOptionList = _allStellMenuList.Filter(d => d.parentId == menu.id);
-        IsSelectGoodsMenu(false);
+        
         InitSecondMenuBtnList(_secondOptionList);
         _view.DescLb_UILabel.text = string.Format("请选择{0}商品",
                     menu.name.WrapColor(ColorConstantV3.Color_Green_Str));
@@ -352,9 +371,7 @@ public partial class PitchViewController
         {
             _disposable.Add(item.GetItemClick.Subscribe(m =>
             {
-                ShowItemList(m);
-                ShowSelectCount(false);
-                _view.BuyScrollView_UIScrollView.ResetPosition();
+                OnSecondOptionClick(m);
             }));
             _curTradeGoods = _curMenuGoods.TryGetValue(0); //选种类后默认选中第一个
 
@@ -386,6 +403,16 @@ public partial class PitchViewController
         //_view.BuyScrollView_UIScrollView.ResetPosition();
     }
 
+    private void OnSecondOptionClick(TradeMenu m)
+    {
+        if(_buyItemList.Count == 0)
+            InitBuyItemList();
+        ShowItemList(m);
+        IsSelectGoodsMenu(true);
+        ShowSelectCount(false);
+        _view.BuyScrollView_UIScrollView.ResetPosition();
+    }
+
     //显示某个二级菜单的商品
     private void ShowItemList(TradeMenu secondMenu)
     {
@@ -393,7 +420,7 @@ public partial class PitchViewController
             return;
 
         _curSecondMenu = secondMenu;
-        IsSelectGoodsMenu(true);
+        
         var key = _data.PitchCtrl.GetStallCenterDto.Keys.FindElementIdx(d => d == _curFirstMenu.id);
         if (key == -1)
         {
@@ -408,7 +435,6 @@ public partial class PitchViewController
         var dtos = _data.PitchCtrl.GetStallCenterDto[_curFirstMenu.id];
         _curMenuGoods = dtos.items.Filter(d=>d.item.tradeMenuId == secondMenu.id);
         var list = _curMenuGoods.ToList();
-        GameDebuger.Log(list);
         _buyItemList.ForEachI((item, idx) =>
         {
             item.gameObject.SetActive(_curMenuGoods.TryGetValue(idx) != null);
@@ -420,8 +446,9 @@ public partial class PitchViewController
             item.HideDragScrollView(_curMenuGoods.Count() > 6);
         });
 
+        var goods = _curMenuGoods.TryGetValue(0);
         //有些商品没有品质,所以隐藏筛选匡
-        if(_curMenuGoods.TryGetValue(0).extra as PropsExtraDto == null)
+        if (goods == null || goods.extra == null || goods.extra as PropsExtraDto == null) 
             _view.PopupBtn_UIButton.gameObject.SetActive(false);
 
         _view.BuyGoodsGrid_UIGrid.Reposition();
@@ -506,7 +533,7 @@ public partial class PitchViewController
 
     private void UpdateSellItemList(IPitchData data)
     {
-        if (data.GetStallItems == null) return;
+        if (data.GetStallItems == null || _sellItemList.Count == 0) return;
 
         _stallGoods = data.GetStallItems;
         _sellItemList.ForEachI((item, idx) =>
@@ -542,12 +569,31 @@ public partial class PitchViewController
         if (_data.PitchCtrl.PitchCDTime <= 0 && _curPageType == PageType.BuyPage)
             _cdTimeEvt.OnNext(_curFirstMenu.id);
     }
-    
+
+    public void ChoiseGoods(int goodsId)
+    {
+        var stallgoods = _allStallGoods.Find(d => d.id == goodsId);
+        if (stallgoods == null)
+        {
+            GameDebuger.LogError(string.Format("stallGoods表找不到{0},请检查", goodsId));
+            return;
+        }
+        
+        var secondMenu = _allStellMenuList.Find(d => d.id == stallgoods.tradeMenuId);
+        var idx = _firstOptionList.FindElementIdx(d => d.id == secondMenu.parentId);
+        var firstMenu = _firstOptionList.TryGetValue(idx);
+        OnFirstOptionClick(_optionBtnList[idx], firstMenu);
+        OnSecondOptionClick(secondMenu);
+        OnPitchBuyItemClick(0); //默认选中第一个
+    }
+
+
     public void ShowBuyGroup(bool b)
     {
         _view.BuyGroup.SetActive(b);
         _view.SellGroup.SetActive(!b);
-        _view.ChoiseCount_UIButton.gameObject.SetActive(false);
+        _view.ChoiseCount_UIButton.gameObject.SetActive(b);
+        
         if(_data != null && b && _data.PitchCtrl.PitchCDTime == 0)
             _cdTimeEvt.OnNext(_curFirstMenu.id);
 

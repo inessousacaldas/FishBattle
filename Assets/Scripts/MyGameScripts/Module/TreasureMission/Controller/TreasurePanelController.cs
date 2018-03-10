@@ -11,7 +11,6 @@ using UniRx;
 using System.Collections.Generic;
 using AppDto;
 using UnityEngine;
-using AppServices;
 
 public partial interface ITreasurePanelController
 {
@@ -25,6 +24,7 @@ public partial class TreasurePanelController    {
     List<Vector3> mTurntablePosList = new List<Vector3>();
     int[] mMakeAngle = new int[] { 0,-30,-60,-90,-120,-150,180,150,120,90,60,30};
     private GeneralItem mGeneralItem;
+    private int mGeneralItemNumber;
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
@@ -71,6 +71,7 @@ public partial class TreasurePanelController    {
         if(mGeneralItem != null)
             TipManager.AddTip("恭喜获得" + mGeneralItem.name);
         mGeneralItem = null;
+        mGeneralItemNumber = 0;
         JSTimer.Instance.CancelTimer("FinalReward");
         JSTimer.Instance.CancelTimer("MoveSelect");
         JSTimer.Instance.CancelTimer("Turntable");
@@ -109,7 +110,9 @@ public partial class TreasurePanelController    {
 
     // 业务逻辑数据刷新
     protected override void UpdateDataAndView(ITreasureMissionData data){
-        View.TreasureLabel_UILabel.text = "寻宝次数"+ data.GetTreasureNumber() + "/" + DataCache.GetStaticConfigValue(AppStaticConfigs.HIGH_TREASURY_USE_TIME).ToString();
+
+        int limit= DataCache.getDtoByCls<DailyLimit>((int)DailyLimit.DailyFuncion.DAILY_15).limit;
+        View.TreasureLabel_UILabel.text = "寻宝次数"+ data.GetTreasureNumber() + "/" + DataCache.GetStaticConfigValue(limit).ToString();
         ServerType tServerType = data.GetServerType();
         switch(tServerType) {
             case ServerType.Init:
@@ -121,6 +124,7 @@ public partial class TreasurePanelController    {
                 mMovePoint = data.GetMovePoint();
                 mRewardTarget = data.GetPropsTreasureRewardId();
                 mGeneralItem = data.GetGeneralItem();
+                mGeneralItemNumber = data.GetGeneralItemNumber;
                 View.TreasureBtn_UIButton.isEnabled = false;
                 View.InfoTipsButton_UIButton.isEnabled = false;
                 Turntable(mMovePoint);
@@ -158,9 +162,18 @@ public partial class TreasurePanelController    {
                 JSTimer.Instance.SetupTimer("FinalReward",FinalRewardMove,0.5f);
             }
             else {
-                if(mGeneralItem != null)
-                    TipManager.AddTip("恭喜获得" + mGeneralItem.name);
-                mGeneralItem = null;
+                if(mGeneralItem != null && mGeneralItemNumber > 0)
+                {
+                    var appitem = mGeneralItem as AppItem;
+                    var virtualitem = mGeneralItem as AppVirtualItem;
+                    int quality = 0;
+                    if(appitem != null) quality = appitem.quality;
+                    else if(virtualitem != null) quality = virtualitem.quality;
+                    TipManager.AddTip(string.Format("恭喜获得{0}*{1}",mGeneralItem.name.WrapColor(ItemHelper.GetItemNameColorByRank(quality)),mGeneralItemNumber));
+                    //TipManager.AddColorTip(string.Format("恭喜获得{0}*{1}",mGeneralItem.name,mGeneralItemNumber),);
+                    mGeneralItem = null;
+                    mGeneralItemNumber = 0;
+                }
             }
             View.TreasureBtn_UIButton.isEnabled = true;
             View.InfoTipsButton_UIButton.isEnabled = true;
@@ -174,8 +187,17 @@ public partial class TreasurePanelController    {
         mFinalReward++;
         if(mFinalReward >= (mRewardTarget - 20 + 3)) {
             JSTimer.Instance.CancelTimer("FinalReward");
-            if(mGeneralItem != null)
-                TipManager.AddTip("恭喜获得" + mGeneralItem.name);
+            if(mGeneralItem != null && mGeneralItemNumber > 0) {
+                var appitem = mGeneralItem as AppItem;
+                var virtualitem = mGeneralItem as AppVirtualItem;
+                int quality = 0;
+                if(appitem != null) quality = appitem.quality;
+                else if(virtualitem != null) quality = virtualitem.quality;
+                TipManager.AddTip(string.Format("恭喜获得{0}*{1}",mGeneralItem.name.WrapColor(ItemHelper.GetItemNameColorByRank(quality)),mGeneralItemNumber));
+                mGeneralItem = null;
+                mGeneralItemNumber = 0;
+                //TipManager.AddColorTip(string.Format("恭喜获得{0}*{1}",mGeneralItem.name,mGeneralItemNumber),);
+            }
         }
     }
 
@@ -236,6 +258,7 @@ public partial class TreasurePanelController    {
 
     public void OnInfoTipClick() {
         OnClickBG();
-        ProxyTips.OpenTextTips(20,new UnityEngine.Vector3(80,-135),true,DataCache.GetStaticConfigValue(AppStaticConfigs.HIGH_TREASURY_USE_TIME).ToString());
+        int limit= DataCache.getDtoByCls<DailyLimit>((int)DailyLimit.DailyFuncion.DAILY_15).limit;
+        ProxyTips.OpenTextTips(20,new UnityEngine.Vector3(80,-135),true,limit.ToString());
     }
 }

@@ -19,6 +19,7 @@ public partial class DevelopInfoItem : BaseView
 	public UILabel BeforeLabel_UILabel;
 	public UILabel AfterLabel_UILabel;
     public UILabel beforeLb_UILabel;
+    public UISprite arrow_UISprite;
 
 
     protected override void InitElementBinding ()
@@ -27,6 +28,7 @@ public partial class DevelopInfoItem : BaseView
 		BeforeLabel_UILabel = root.Find("BeforeLabel").GetComponent<UILabel>();
 		AfterLabel_UILabel = root.Find("AfterLabel").GetComponent<UILabel>();
         beforeLb_UILabel = root.Find("beforeLb").GetComponent<UILabel>();
+        arrow_UISprite = root.Find("arrow").GetComponent<UISprite>();
 
     }
 }
@@ -36,8 +38,7 @@ public partial class DevelopInfoItemController : MonolessViewController<DevelopI
     //进阶
     public void SetInfo(CharacterPropertyDto dto,CharacterPropertyDto _dto)
     {
-        View.BeforeLabel_UILabel.text = GlobalAttr.ATTRNAMES[dto.propId];
-        View.beforeLb_UILabel.text = _dto.propValue.ToString().Substring(0, _dto.propValue.ToString().IndexOf(".") + 2);
+        View.BeforeLabel_UILabel.text = string.Format("{0}：{1}", GlobalAttr.ATTRNAMES[dto.propId], _dto.propValue.ToString().Substring(0, _dto.propValue.ToString().IndexOf(".") + 2));
         View.AfterLabel_UILabel.text = dto.propValue.ToString().Substring(0, dto.propValue.ToString().IndexOf(".") + 2);
     }
 
@@ -52,15 +53,16 @@ public partial class DevelopInfoItemController : MonolessViewController<DevelopI
 
     public void SetCombatInfo(float beforePower,float afterPower)
     {
-        _view.BeforeLabel_UILabel.text = "战力";
-        _view.beforeLb_UILabel.text = beforePower.ToString();
+        _view.BeforeLabel_UILabel.text = "战力：" + beforePower.ToString();
         _view.AfterLabel_UILabel.text = afterPower.ToString();
+        _view.arrow_UISprite.gameObject.SetActive(true);
     }
 
     public void SetStrengthenInfo(CrewRaise data, CrewRaise _data)
     {
-        _view.BeforeLabel_UILabel.text = "基础属性";
-        _view.beforeLb_UILabel.text = data.ratio.ToString() + "%";
+        _view.BeforeLabel_UILabel.text = "基础属性："+ data.ratio.ToString() + "%";
         _view.AfterLabel_UILabel.text = _data.ratio.ToString() + "%";
+        _view.arrow_UISprite.gameObject.SetActive(true);
+        
     }
 }

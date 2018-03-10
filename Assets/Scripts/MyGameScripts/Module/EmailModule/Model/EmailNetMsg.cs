@@ -29,7 +29,7 @@ public sealed partial class EmailDataMgr
         {
             GameUtil.GeneralReq(Services.Mail_ExtractAll(), delegate(GeneralResponse resp)
             {
-                TipManager.AddTip("一键领取成功");
+                //TipManager.AddTip("一键领取成功");
             }
             , onSuccess, onFail);
         }

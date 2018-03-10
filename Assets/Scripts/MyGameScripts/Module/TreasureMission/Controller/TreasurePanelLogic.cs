@@ -56,7 +56,8 @@ public sealed partial class TreasureMissionDataMgr
         }
         private static void TreasureBtn_UIButtonClick()
         {
-            bool number = DataMgr._data.GetTreasureNumber() < DataCache.GetStaticConfigValue(AppStaticConfigs.HIGH_TREASURY_USE_TIME);
+            int limit= DataCache.getDtoByCls<DailyLimit>((int)DailyLimit.DailyFuncion.DAILY_15).limit;
+            bool number = DataMgr._data.GetTreasureNumber() < limit;
             bool isHasItem = DataMgr._data.ItemNumberBool();
             string tipErr = "道具数量不足";
             if(!number)

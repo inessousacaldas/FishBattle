@@ -30,16 +30,30 @@ public partial class GainWayTipsViewController
 
     public static void OpenGainWayTip(int itemId, Vector3 pos, Action callback = null)
     {
-        var props = DataCache.getDtoByCls<GeneralItem>(itemId) as Props;
-        if (props == null || props.gainWayIds.IsNullOrEmpty()) return;
+        int id = 0;
+        List<int> gainWayIds = null;
+        var item = DataCache.getDtoByCls<GeneralItem>(itemId);
+        if(item is Props)
+        {
+            var props = item as Props;
+            id = props.id;
+            gainWayIds = props.gainWayIds;
+        }
+        else if(item is PassiveSkillBook)
+        {
+            var psvSkillBook = item as PassiveSkillBook;
+            id = psvSkillBook.id;
+            gainWayIds = psvSkillBook.gainWayIds;
+        }
 
-        var gainCtrl = GainWayTipsViewController.Show<GainWayTipsViewController>(
+        if (id == 0 || gainWayIds.IsNullOrEmpty()) return;
+        var gainCtrl = Show<GainWayTipsViewController>(
             GainWayTipsView.NAME,
             UILayerType.ThreeModule,
             false, false);
 
-        gainCtrl.SetPropsId(props.id);
-        gainCtrl.SetGainWayGrid(props.gainWayIds);
+        gainCtrl.SetPropsId(id);
+        gainCtrl.SetGainWayGrid(gainWayIds);
         gainCtrl.SetTipPos(pos);
         _callback = callback;
     }

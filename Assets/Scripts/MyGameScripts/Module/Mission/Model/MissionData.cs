@@ -11,6 +11,8 @@ using AppServices;
 
 public partial interface IMissionData
 {
+    IEnumerable<Copy> GetCopyMisList { get; }
+    IEnumerable<CopyMissionConfig> GetCopyMisConfig { get; }
     Dictionary<int, Mission> GetAllMissionDic { get;}
     IEnumerable<PlayerMissionDto> GetMissionListDto { get; }
     List<Mission> GetExistSubMissionMenuList();
@@ -31,6 +33,9 @@ public partial interface IMissionData
     void ClearLastFindMission();
     void DropMission(Mission mission);
     void RemovePlayerMissionWhenDrop(int missionid);
+    MissionShopItemMarkModel GetMissionShopItem();
+    MissionStatDto GetMissionStatDto(int missiontype);
+
 }
 
 public sealed partial class MissionDataMgr
@@ -51,9 +56,6 @@ public sealed partial class MissionDataMgr
         private IDisposable _disposable;
         private MissionStoryPlotDelegate mMissionStoryPlotDelegate;
         private MissionApplyItemSubmitDtoDelegate mMissionApplyItemSubmitDtoDelegate;
-
-        //最近提交的任务
-        private Mission _lastSubmitMission = null;
         //	上次寻路任务ID
         private Mission _lastFindMission = null;
         private int TreasureMaxCount = 0;
@@ -61,7 +63,7 @@ public sealed partial class MissionDataMgr
         public static int mGhostRingCount;
         #region 一个对话选项的枚举
         private DialogueOption _dialogueOption = DialogueOption.NothingOption;
-
+        MissionShopItemMarkModel mMissionShopItemMarkModel = new MissionShopItemMarkModel();
         public DialogueOption dialogueOption
         {
             get { return _dialogueOption; }
@@ -94,6 +96,12 @@ public sealed partial class MissionDataMgr
             _missionDelegateFactory.Setup(this);
             _submitDelegateFactory = new SubmitDelegateFactory();
             _submitDelegateFactory.Setup(this);
+            for(int i = 0;i<dto.bodyMissions.Count;i++) {
+                SubmitDto submitDto = GetSubmitDto(dto.bodyMissions[i].mission);
+                IMissionDelegate missionDelegate = _missionDelegateFactory.GetHandleMissionDelegate(dto.bodyMissions[i].mission.type);
+                missionDelegate.ReqEnterMission(dto.bodyMissions[i].mission,submitDto);
+            }
+            //
             _playerMissionListDto = dto;
             mGhostRingCount = _playerMissionListDto.ghostRingCount;
             
@@ -118,8 +126,12 @@ public sealed partial class MissionDataMgr
             IMissionDelegate missionDelegate = _missionDelegateFactory.GetHandleMissionDelegate(mission.type);
             //是否满足在接受条件
             bool isAccept= missionDelegate.AcceptMission();
-            if(isAccept)
-                MissionNetMsg.ReqAcceptMission(mission.id);
+            if(isAccept) {
+                if(mission.type != (int)MissionType.MissionTypeEnum.Guild)
+                    MissionNetMsg.ReqAcceptMission(mission.id);
+                else
+                    MissionNetMsg.AcceptMissionGuild();
+            }
         }
 
         /// <summary>
@@ -219,15 +231,54 @@ public sealed partial class MissionDataMgr
             var exitDic = BodyMissionDic();
             //身上有同种类型的任务（不包括主/支线）
             var sampleType = IsSampleType();
+            //身上已有的副本任务类型
+            var exitCopyType = GetCopyMisTypeList();
+            //1.不能是主线 2.不能是已提交的任务 3.不能是已接任务 4.等级判断 5.不能与身上相同任务类型 6.不能是紧急委托 7.宝图达到最大次数需屏蔽 
+            //8.筛选身上没有的副本任务类型（普通，精英，else）9.不能是副本彩蛋任务
             var val = GetAllMissionDic.Filter
                 (
-                    e =>//1.不能是主线 2.不能是已提交的任务 3.不能是已接任务 4.等级判断 5.不能是相同任务类型 6.不能是紧急委托 7.宝图达到最大次数需屏蔽
+                    e =>
                     e.Value.type != (int)MissionType.MissionTypeEnum.Master && !submitDic.ContainsKey(e.Key) && !exitDic.ContainsKey(e.Key) &&
                     JudgeAcceptionCondition(e.Value,submitDic) && !sampleType.Contains(e.Value.type) && e.Value.type != (int)MissionType.MissionTypeEnum.Urgent
-                    && JudgeTreasureMis(e.Value,sampleType)
+                    && JudgeTreasureMis(e.Value,sampleType) && JudgeCopyMis(e.Value,exitCopyType) && e.Value.type != (int)MissionType.MissionTypeEnum.CopyExtra
                 ).ToList();
             val.ForEach(e => tMissionMenuList.Add(e.Value));
             return tMissionMenuList;
+        }
+
+        //获取已接副本任务类型（普通，精英，else）
+        private List<int> GetCopyMisTypeList()
+        {
+            List<int> list = new List<int>();
+            var tExistSubMission = GetExistSubMissionMenuList();
+            int count = tExistSubMission.Count;
+            for(int i = 0; i < count; i++)
+            {
+                var mis = tExistSubMission[i];
+                if (mis.type == (int)MissionType.MissionTypeEnum.Copy)
+                {
+                    var val = GetCopyMisConfig.Find(e => e.id == mis.id);
+                    if (val != null)
+                    {
+                        if (!list.Contains(val.copyId))
+                            list.Add(val.copyId);
+                    }
+                }
+            }
+            return list;
+        }
+        //筛选身上没有的副本任务类型（普通，精英，else）
+        private bool JudgeCopyMis(Mission mis,List<int> hasCopyList)
+        {
+            if(mis.type == (int)MissionType.MissionTypeEnum.Copy)
+            {
+                var val = GetCopyMisConfig.Find(e => e.id == mis.id);
+                if (val != null)
+                {
+                    return !hasCopyList.Contains(val.copyId);
+                }
+            }
+            return true;
         }
 
         //判断宝图任务是否已完成最大次数
@@ -323,7 +374,8 @@ public sealed partial class MissionDataMgr
             List<int> sampleList = new List<int>();
             for (int i = 0, len = tExistSubMission.Count; i < len; i++)
             {
-                if(tExistSubMission[i].type >= (int)MissionType.MissionTypeEnum.Faction && !sampleList.Contains(tExistSubMission[i].type))
+                if(tExistSubMission[i].type >= (int)MissionType.MissionTypeEnum.Faction && !sampleList.Contains(tExistSubMission[i].type)
+                    &&tExistSubMission[i].type != (int)MissionType.MissionTypeEnum.Copy)
                     sampleList.Add(tExistSubMission[i].type);
             }
             return sampleList;
@@ -497,6 +549,31 @@ public sealed partial class MissionDataMgr
                 return _allMissionDic;
             }
         }
+        private List<Copy> copyMisList = null;
+        public IEnumerable<Copy> GetCopyMisList
+        {
+            get
+            {
+                if(copyMisList == null)
+                {
+                    copyMisList = DataCache.getArrayByCls<Copy>();
+                }
+                return copyMisList;
+            }
+        }
+
+        private List<CopyMissionConfig> copyMisConfig = null;
+        public IEnumerable<CopyMissionConfig> GetCopyMisConfig
+        {
+            get
+            {
+                if (copyMisConfig == null)
+                {
+                    copyMisConfig = DataCache.getArrayByCls<CopyMissionConfig>();
+                }
+                return copyMisConfig;
+            }
+        }
         #endregion
         //====================================================提交任务相关====================================================
 
@@ -583,91 +660,7 @@ public sealed partial class MissionDataMgr
         public NpcInfoDto GetBindMissionNpcInfoDtoBySubmit(SubmitDto submitDto,bool getSubmitNpc = false)
         {
             NpcInfoDto tNpcInfoDto = null;
-            bool tReFinish = submitDto.count >= submitDto.needCount;
-            bool tGetSubmitNpc = tReFinish || getSubmitNpc;
-            MissionHelper.SubmitDtoType tSubmitDtoType = MissionHelper.GetSubmitDtoTypeBySubmitDto(submitDto);
-            switch(tSubmitDtoType)
-            {
-                //对话任务
-                case MissionHelper.SubmitDtoType.Talk:
-                    TalkSubmitDto tTalkSubmitDto = submitDto as TalkSubmitDto;
-                    tNpcInfoDto = tTalkSubmitDto.submitNpc;
-                    break;
-                //明雷怪任务
-                case MissionHelper.SubmitDtoType.ShowMonster:
-                    ShowMonsterSubmitDto tShowMonsterSubmitDto=submitDto as ShowMonsterSubmitDto;
-                    if(tShowMonsterSubmitDto.dialog == null)
-                    {
-                        GameDebuger.LogError(string.Format("{0}表格错误，对话数据空 -> MissionDialogID:{1}",tShowMonsterSubmitDto.dialogId));
-                    }
-                    bool tAutoDialogueSta=!submitDto.auto
-                        &&(tShowMonsterSubmitDto.dialog==null?0:tShowMonsterSubmitDto.dialog.submitDialogSequence.Count)>0
-                        &&tShowMonsterSubmitDto.submitNpc.npc==null;
-                    tNpcInfoDto = tGetSubmitNpc ? tAutoDialogueSta ? tShowMonsterSubmitDto.acceptNpc : tShowMonsterSubmitDto.submitNpc
-                        : tNpcInfoDto = tShowMonsterSubmitDto.acceptNpc;
-                    break;
-                case MissionHelper.SubmitDtoType.HiddenMonster:
-                    HiddenMonsterSubmitDto tHiddenMonsterSubmitDto = submitDto as HiddenMonsterSubmitDto;
-                    Npc tHiddenMonsterNpc = new Npc();
-                    tHiddenMonsterNpc.id = -1;
-                    if(tHiddenMonsterSubmitDto.acceptScene.sceneMap == null)
-                    {
-                        tHiddenMonsterNpc.name = "数据出错";
-                    }
-                    else
-                    {
-                        tHiddenMonsterNpc.name = tHiddenMonsterSubmitDto.acceptScene.sceneMap.name;
-                    }
-                    tHiddenMonsterNpc.sceneId = tHiddenMonsterSubmitDto.acceptScene.id;
-                    tHiddenMonsterNpc.x = tHiddenMonsterSubmitDto.acceptScene.x;
-                    tHiddenMonsterNpc.z = tHiddenMonsterSubmitDto.acceptScene.z;
-                    tNpcInfoDto = tGetSubmitNpc ? tHiddenMonsterSubmitDto.submitNpc : GetNpcInfoDtoByNpc(tHiddenMonsterNpc);
-                    break;
-                //收集物品任务
-                case MissionHelper.SubmitDtoType.CollectionItem:
-                    CollectionItemSubmitDto tCollectionItemSubmitDto=submitDto as CollectionItemSubmitDto;
-                    tNpcInfoDto = tGetSubmitNpc ? tCollectionItemSubmitDto.submitNpc : tCollectionItemSubmitDto.acceptNpc;
-                    break;
-                //使用道具
-                case MissionHelper.SubmitDtoType.ApplyItem:
-                    ApplyItemSubmitDto tApplyItemSubmitDto=submitDto as ApplyItemSubmitDto;
-                    Npc tApplyItemNpc = new Npc();
-                    tApplyItemNpc.id = -1;
-                    tApplyItemNpc.name = tApplyItemSubmitDto.acceptScene.sceneMap.name;
-                    tApplyItemNpc.sceneId = tApplyItemSubmitDto.acceptScene.id;
-                    tApplyItemNpc.x = tApplyItemSubmitDto.acceptScene.x;
-                    tApplyItemNpc.z = tApplyItemSubmitDto.acceptScene.z;
-                    tNpcInfoDto = tGetSubmitNpc ? tApplyItemSubmitDto.submitNpc : GetNpcInfoDtoByNpc(tApplyItemNpc);
-                    break;
-                //多人交谈任务
-                case MissionHelper.SubmitDtoType.Findtem:
-                    FindtemSubmitInfoDto tFindtemSubmitInfoDto = submitDto as FindtemSubmitInfoDto;
-                    tNpcInfoDto = tGetSubmitNpc? tFindtemSubmitInfoDto.submitNpc : tNpcInfoDto = tFindtemSubmitInfoDto.acceptNpc;
-                    break;
-                //采集任务
-                case MissionHelper.SubmitDtoType.PickItem:
-                    PickItemSubmitInfoDto tPickItemSubmitInfoDto = submitDto as PickItemSubmitInfoDto;
-                    if(tGetSubmitNpc)
-                    {
-                        tNpcInfoDto = tPickItemSubmitInfoDto.submitNpc;
-                    }
-                    else
-                    {
-                        tPickItemSubmitInfoDto.pickNpcs.ForEach(e =>
-                        {
-                            if(!e.pick)
-                            {
-                                tNpcInfoDto = e.npcInfoDto;
-                                return;
-                            }
-                        });
-                    }
-                    break;
-                default:
-                    GameDebuger.Log("submitDto提交类型出错");
-                    break;
-
-            }
+            tNpcInfoDto = GetCompletionConditionNpc(submitDto,getSubmitNpc);
             return tNpcInfoDto;
         }
 
@@ -679,6 +672,7 @@ public sealed partial class MissionDataMgr
             tNpcInfoDto.name = npc.name;
             tNpcInfoDto.sceneId = npc.sceneId;
             tNpcInfoDto.x = npc.x;
+            tNpcInfoDto.y = npc.y;
             tNpcInfoDto.z = npc.z;
             tNpcInfoDto.npcAppearanceId = 0;
 
@@ -782,6 +776,7 @@ public sealed partial class MissionDataMgr
                 tNpc.name = npcInfoDto.name;
                 tNpc.sceneId = npcInfoDto.sceneId;
                 tNpc.x = npcInfoDto.x;
+                tNpc.y = npcInfoDto.y;
                 tNpc.z = npcInfoDto.z;
 
                 if(npcInfoDto.npc != null)
@@ -836,7 +831,8 @@ public sealed partial class MissionDataMgr
                     MissionOption tMissionOption = new MissionOption(tMission, tIsExist);
                     if(tIsExist)
                     {
-                        tMissionOptionList.Add(tMissionOption);
+                        tAddToList = true;
+                        //tMissionOptionList.Add(tMissionOption);
                     }
                     else
                     {
@@ -844,6 +840,11 @@ public sealed partial class MissionDataMgr
                             tAddToList = false;
                         else
                             tAddToList = true;
+                        SubmitDto tSubmitDto = MissionHelper.GetSubmitDtoByMission(tMission);
+                        MissionHelper.SubmitDtoType tSubmitDtoType = MissionHelper.GetSubmitDtoTypeBySubmitDto(tSubmitDto);
+                        if(tSubmitDtoType == MissionHelper.SubmitDtoType.CollectionItemCategory || tSubmitDtoType == MissionHelper.SubmitDtoType.CollectionItem) {
+                            tAddToList = false;
+                        }
                     }
 
                     if(tAddToList)
@@ -1074,6 +1075,10 @@ public sealed partial class MissionDataMgr
                 }
             }else
             {
+                if(GetSubmitDto(mission) != null)
+                {
+                    mMissionShopItemMarkModel.SetShopItemMark(GetSubmitDto(mission));
+                }
                 Npc tFindToTargetNpc = GetMissionNpcByMission(mission, isExistState);
                 PlayerCopyMissionDto tPlayerMissionDto = GetPlayerMission(mission) as PlayerCopyMissionDto;
                 //如果他是副本任务，并且是副本外面，那样要通过NPC进入副本
@@ -1665,6 +1670,9 @@ public sealed partial class MissionDataMgr
                         MissionNetMsg.FinishMission(mission);
                 }
                 else {
+                    if(submitDto != null) {
+                        mMissionShopItemMarkModel.SetShopItemMark(submitDto);
+                    }
                     if(WorldManager.Instance.GetHeroView() != null)
                     {
                         // 这个其实挺诡异的
@@ -1673,7 +1681,7 @@ public sealed partial class MissionDataMgr
                     WorldManager.Instance.FlyToByNpc(targetNpc,0,() =>
                     {
                         // 玩家移动到任务相关地点,如果是 ApplyItemSubmitDto 执行物品弹出框
-                        //ModelManager.MissionApplyItemModel.WalkEndToFinishSubmitDto(mission,targetNpc);
+                        mMissionApplyItemSubmitDtoDelegate.WalkEndToFinishSubmitDto(mission,true,targetNpc);
                     });
                 }
             }
@@ -1734,11 +1742,6 @@ public sealed partial class MissionDataMgr
             //	当改NPC是虚拟NPC是转换为具体NPC
             npc = MissionHelper.NpcVirturlToEntity(npc);
             return npc;
-        }
-
-        public Mission GetLastSubmitMission()
-        {
-            return _lastSubmitMission;
         }
 
         public Mission GetLastFindMission() {
@@ -1810,6 +1813,12 @@ public sealed partial class MissionDataMgr
                 }
             }
             return tMainMissionMenuList;
+        }
+        #endregion
+
+        #region 获得当前任务需要取得商店的数据
+        public MissionShopItemMarkModel GetMissionShopItem() {
+            return mMissionShopItemMarkModel;
         }
         #endregion
     }

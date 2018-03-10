@@ -6,8 +6,8 @@
 // Porpuse  : 
 // **********************************************************************
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using AppDto;
 using System.Text;
 using UniRx;
@@ -24,8 +24,8 @@ public partial class AssistDelegateMainViewController
     private List<AssistDelegateMissionBtnController> _missionItemCtrlList = new List<AssistDelegateMissionBtnController>();
     private Subject<int> _choseMissionStream = new Subject<int>();
     public Subject<int> OnDelegateChoseMissionStream { get { return _choseMissionStream; } }
-    CompositeDisposable _disposable = new CompositeDisposable();
-    private List<ItemCellController> _itemCellCtrlList = new List<ItemCellController>();
+    private CompositeDisposable _disposable = new CompositeDisposable();
+    private List<ItemCellController> _itemCellCtrlList = new List<ItemCellController>(rewardCount);
     private Dictionary<int, GeneralCharactor> _crewDataDic = DataCache.getDicByCls<GeneralCharactor>();
     private Dictionary<int, DelegateMission> _delegateMissionDic = DataCache.getDicByCls<DelegateMission>();
     private Dictionary<int, DelegateRandomAward> _delegateRandomAwardDic = DataCache.getDicByCls<DelegateRandomAward>();
@@ -35,10 +35,10 @@ public partial class AssistDelegateMainViewController
     private const int rewardCount = 5;
     private const int minToHour = 60;
     private const int secToMin = 60;
-
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView()
     {
+        UIHelper.SetUITexture(View.Npc_UITexture, "npc_311");
         _crewSpriteList.Add(View.Add_UISprite_1);
         _crewSpriteList.Add(View.Add_UISprite_2);
         _crewSpriteList.Add(View.Add_UISprite_3);
@@ -53,21 +53,10 @@ public partial class AssistDelegateMainViewController
         }
         View.RewardGrid_UIGrid.Reposition();
     }
-
-    // 客户端自定义事件
-    protected override void RegistCustomEvent ()
-    {
-
-    }
-
+    
     protected override void OnDispose()
     {
         JSTimer.Instance.CancelCd(TimerName + this.GetHashCode());
-    }
-
-    // 如果自定义客户端交互使用了事件流，还是需要remove的
-    protected override void RemoveCustomEvent ()
-    {
         _disposable = _disposable.CloseOnceNull();
     }
 
@@ -82,51 +71,48 @@ public partial class AssistDelegateMainViewController
     }
 
     private static readonly string TimerName = "AssistDelegateMission";
+
     public void UpdateView(IAssistSkillMainData data)
     {
-        if (!_delegateMissionDic.ContainsKey(data.CurMissionId)) return;
-        if (_itemCellCtrlList.Count < rewardCount) return;
+        var isOpen = data.MissionList != null && data.MissionList.Any();
+        
+        View.MissionTra.gameObject.SetActive(isOpen);
+        View.DetailBg.gameObject.SetActive(isOpen);
+        _view.NumBg.SetActive(isOpen);
+        View.Npc_UITexture.enabled = !isOpen;
+        View.NoMissionTips.SetActive(!isOpen);
 
+        if (!isOpen)
+            return;
+        
+        data.MissionList.GetEnumerator().Reset();
+           
         //今天任务数量和今天限量
         View.MissionProgressLabel_UILabel.text = string.Format("{0}/{1}", data.AcceptNum, data.AcceptLimit);
 
-        if (data.MissionList.IsNullOrEmpty())
-        {
-            View.NoMissionTips.gameObject.SetActive(true);
-            View.MissionTra.gameObject.SetActive(false);
-            View.DetailBg.gameObject.SetActive(false);
-            UIHelper.SetUITexture(View.Npc_UITexture, "npc_311");
-            return;
-        }
-
-        View.NoMissionTips.gameObject.SetActive(false);
-        View.MissionTra.gameObject.SetActive(true);
-        View.DetailBg.gameObject.SetActive(true);
-
-        _disposable.Clear();
         DelegateMissionDto curMissionMsg = new DelegateMissionDto();
+
         #region 任务按钮
+
         _missionItemCtrlList.ForEach(item => { item.Hide(); });
         data.MissionList.ForEachI((itemDto, index) =>
         {
             if (index < missionCount && _delegateMissionDic.ContainsKey(itemDto.id))
             {
                 var ctrl = AddMissionItemIfNotExist(index);
-                ctrl.UpdateView(itemDto, _delegateMissionDic[itemDto.id], itemDto.id==data.CurMissionId);
+                ctrl.UpdateView(itemDto, _delegateMissionDic[itemDto.id], itemDto.id == data.CurMissionId);
                 ctrl.Show();
                 if (itemDto.id == data.CurMissionId)
-                    curMissionMsg = itemDto;
-
-                _disposable.Add(ctrl.OnClickItemStream.Subscribe(missionId =>
-                {
-                    _choseMissionStream.OnNext(missionId);
-                }));
+                    curMissionMsg = itemDto;              
             }
         });
+
         #endregion
 
         var curMissionDto = _delegateMissionDic[data.CurMissionId];
+
         #region 描述 委托要求
+
         View.MissionDesLabel_UILabel.text = curMissionDto.content;
         var sb = new StringBuilder();
         curMissionMsg.conditions.ForEach(itemId =>
@@ -134,27 +120,39 @@ public partial class AssistDelegateMainViewController
             if (_delegateAcceptConditionsDic.ContainsKey(itemId))
             {
                 sb.Append(_delegateAcceptConditionsDic[itemId].desc);
-                sb.Append('，');
+                sb.Append('，');                              
             }
+            //foreach (var item in _delegateAcceptConditionsDic[itemId].param.Split(','))
+            //{
+            //    item.Split(':');
+            //    foreach (var singleItem in item.Split(':'))
+            //    {
+                    
+            //    }
+            //}
         });
         sb.Remove(sb.ToString().LastIndexOf('，'), 1);
+        
         View.DemandDesLabel_UILabel.text = sb.ToString();
+        //字体变色   加判断？
+        //View.DemandDesLabel_UILabel.text = string.Format("{0}{1}[-]", "[7EE830FF]", sb.ToString());
         #endregion
 
         #region 倒计时
-        if (curMissionMsg.finishTime <= 0)  //未开始
+
+        if (curMissionMsg.finishTime <= 0) //未开始
         {
             JSTimer.Instance.CancelCd(TimerName + this.GetHashCode());
             var str = string.Empty;
             var lefttime = curMissionMsg.needTime / 1000;
-            GetCountDownStr((int)lefttime, out str);
+            GetCountDownStr((int) lefttime, out str);
             View.LeftTime_UILabel.text = str;
             //接受 取消 快速完成 按钮
             View.AcceptBtn_UIButton.gameObject.SetActive(true);
             View.GetRewardBtn_UIButton.gameObject.SetActive(false);
             View.CancelOrFast_Transform.gameObject.SetActive(false);
         }
-        else if (curMissionMsg.finishTime < SystemTimeManager.Instance.GetUTCTimeStamp())  //已完成可领取奖励
+        else if (curMissionMsg.finishTime < SystemTimeManager.Instance.GetUTCTimeStamp()) //已完成可领取奖励
         {
             JSTimer.Instance.CancelCd(TimerName + this.GetHashCode());
             View.LeftTime_UILabel.text = "00:00:00";
@@ -163,11 +161,11 @@ public partial class AssistDelegateMainViewController
             View.GetRewardBtn_UIButton.gameObject.SetActive(true);
             View.CancelOrFast_Transform.gameObject.SetActive(false);
         }
-        else  //进行中
+        else //进行中
         {
             var str = string.Empty;
             var lefttime = (curMissionMsg.finishTime - SystemTimeManager.Instance.GetUTCTimeStamp()) / 1000;
-            GetCountDownStr((int)lefttime, out str);
+            GetCountDownStr((int) lefttime, out str);
             View.LeftTime_UILabel.text = str;
 
             var tDuration = 1.0f;
@@ -185,13 +183,14 @@ public partial class AssistDelegateMainViewController
             };
             JSTimer.CdTask.OnCdUpdate tOnCdUpdate = (pRemain) =>
             {
-                GetCountDownStr((int)pRemain, out str);
+                GetCountDownStr((int) pRemain, out str);
                 View.LeftTime_UILabel.text = str;
             };
 
             if (null == tCdTask)
             {
-                tCdTask = JSTimer.Instance.SetupCoolDown(TimerName + this.GetHashCode(), tDuration, tOnCdUpdate, tOnCdFinish);
+                tCdTask = JSTimer.Instance.SetupCoolDown(TimerName + this.GetHashCode(), tDuration, tOnCdUpdate,
+                    tOnCdFinish);
                 tCdTask.remainTime = lefttime;
             }
             else
@@ -204,37 +203,52 @@ public partial class AssistDelegateMainViewController
             View.GetRewardBtn_UIButton.gameObject.SetActive(false);
             View.CancelOrFast_Transform.gameObject.SetActive(true);
         }
+
         #endregion
 
         #region 奖励
+
         _itemCellCtrlList.ForEach(itemCtrl => { itemCtrl.Hide(); });
         //生活积分
         var hourTime = curMissionMsg.needTime / 1000 / 60 / 60;
         var expression = curMissionDto.assistIntegralFormula.Replace("needTime", hourTime.ToString());
         expression = expression.Replace("grade", ModelManager.Player.GetPlayerLevel().ToString());
-        var assistIntergalCount = Mathf.CeilToInt((float)ExpressionManager.DelegateMissionProps(string.Format("DelegateMisassistIntegralFormula{0}", curMissionMsg.id), expression));
+        var assistIntergalCount =
+            Mathf.CeilToInt((float) ExpressionManager.DelegateMissionProps(
+                string.Format("DelegateMisassistIntegralFormula{0}", curMissionMsg.id), expression));
         _itemCellCtrlList[0].Show();
-        _itemCellCtrlList[0].UpdateView(ItemHelper.GetGeneralItemByItemId((int)AppVirtualItem.VirtualItemEnum.ASSISTINTEGRAL), assistIntergalCount.ToString());
+        _itemCellCtrlList[0]
+            .UpdateView(ItemHelper.GetGeneralItemByItemId((int) AppVirtualItem.VirtualItemEnum.ASSISTINTEGRAL),
+                assistIntergalCount.ToString());
         if (_delegateRandomAwardDic.ContainsKey(curMissionMsg.randomAwardId))
         {
             _itemCellCtrlList[4].Show();
-            _itemCellCtrlList[4].UpdateView(ItemHelper.GetGeneralItemByItemId(_delegateRandomAwardDic[curMissionMsg.randomAwardId].itemId), "概率获得", true);
+            _itemCellCtrlList[4]
+                .UpdateView(
+                    ItemHelper.GetGeneralItemByItemId(_delegateRandomAwardDic[curMissionMsg.randomAwardId].itemId),
+                    "概率获得", true);
         }
-        var rewardItem = curMissionDto.gainItem.Split(',');
+
+        var rewardItem = curMissionDto.props.Split(',');
         rewardItem.ForEachI((itemData, index) =>
         {
             if (index < 3)
             {
                 var tempStr = itemData.Split(':');
                 if (tempStr.Length < 2) return;
-                _itemCellCtrlList[index+1].UpdateView(ItemHelper.GetGeneralItemByItemId(int.Parse(tempStr[0])), tempStr[1]);
-                _itemCellCtrlList[index+1].Show();
+                _itemCellCtrlList[index + 1].UpdateView(ItemHelper.GetGeneralItemByItemId(int.Parse(tempStr[0])),
+                    tempStr[1]);
+                _itemCellCtrlList[index + 1].Show();
             }
         });
+
         #endregion
+
         var teamLenth = 0;
         var likeCount = 0;
+
         #region 选择伙伴或好友
+
         if (data.ChoseFriendId > 0)
         {
             View.FriendIcon_UISprite.gameObject.SetActive(true);
@@ -243,15 +257,16 @@ public partial class AssistDelegateMainViewController
             if (friendDto == null)
                 UIHelper.SetPetIcon(View.FriendIcon_UISprite, "101");
             else
-                UIHelper.SetPetIcon(View.FriendIcon_UISprite, (friendDto.charactor as MainCharactor).gender == 1 ? "101" : "103");
+                UIHelper.SetPetIcon(View.FriendIcon_UISprite,
+                    (friendDto.charactor as MainCharactor).gender == 1 ? "101" : "103");
             teamLenth = 1;
-        } 
+        }
         else
         {
             View.FriendIcon_UISprite.gameObject.SetActive(false);
             View.FriendLabel_UILabel.gameObject.SetActive(true);
         }
-
+        
         int choseCrewIndex = 0;
         data.ChoseCrewCrewIdList.ForEach(crewId =>
         {
@@ -262,29 +277,64 @@ public partial class AssistDelegateMainViewController
                 _crewSpriteList[choseCrewIndex].width = 66;
                 _crewSpriteList[choseCrewIndex].height = 66;
                 if (crewData.delegateTypeIds.Contains(curMissionDto.type))
-                    likeCount++;
+                    likeCount++;           
             }
-            
-            choseCrewIndex++;
+            choseCrewIndex++;            
         });
+
+
+        //    var conCnt_1 = 0;
+        //    var conCnt_2 = 0;
+        //    var conCnt_3 = 0;
+        //    var conCnt_4 = 0;
+
+        //    int[] intArrCrewInfo = new int[] { conCnt_1, conCnt_2, conCnt_3, conCnt_4 };
+        //    DelegateAcceptConditions.ParamType typeUnknow = DelegateAcceptConditions.ParamType.Unknown;
+        //    DelegateAcceptConditions.ParamType typeGrade = DelegateAcceptConditions.ParamType.Grade;
+        //    DelegateAcceptConditions.ParamType typeNumber = DelegateAcceptConditions.ParamType.Number;
+        //    DelegateAcceptConditions.ParamType typeCrewType = DelegateAcceptConditions.ParamType.CrewType;
+        //    DelegateAcceptConditions.ParamType typeCrewGender = DelegateAcceptConditions.ParamType.CrewGender;
+        //data.ChoseCrewCrewIdList.ForEachI((crewId, misInfo) =>
+        //    {
+                //if (checkCon_1(misInfo))
+                //    conCnt_1++;
+
+                //获取伙伴
+                //var crewData = _crewDataDic[crewId] as Crew;
+                //伙伴的性别、类型
+            //    intArrCrewInfo[crewData.property]++;
+            //    string[] strArrParam = _delegateAcceptConditionsDic[misInfo].param.Split(',');
+                
+                
+            //    for (int i = 0;i < strArrParam.Length; i=i+2)
+            //    {
+            //        string[] arrParamItem = strArrParam[i].Split(':');
+            //    }
+            //});             
 
         for (int i = choseCrewIndex; i < crewCount; i++)
         {
-            UIHelper.SetCommonIcon(_crewSpriteList[i], "btn_crewadd", true);
+            UIHelper.SetCommonIcon(_crewSpriteList[i], "btn_crewadd", true);            
         }
+
         #endregion
 
         #region 计算成功 大成功概率
+
         var expressionStr = curMissionDto.successFormula.Replace("teamLen", teamLenth.ToString());
         expressionStr = expressionStr.Replace("likeNum", likeCount.ToString());
-        var successPer = ExpressionManager.DelegateMissionProps(string.Format("DelegateMisSuccessFormula{0}{1}", curMissionMsg.id, SystemTimeManager.Instance.GetUTCTimeStamp()), expressionStr);
+        var successPer = ExpressionManager.DelegateMissionProps(
+            string.Format("DelegateMisSuccessFormula{0}{1}", curMissionMsg.id,
+                SystemTimeManager.Instance.GetUTCTimeStamp()), expressionStr);
         View.ProNum_2_UILabel.text = string.Format("{0}%", successPer * 100);
         expressionStr = curMissionDto.superSuccessFormula.Replace("teamLen", teamLenth.ToString());
         expressionStr = expressionStr.Replace("likeNum", likeCount.ToString());
-        var supSuccessPer = ExpressionManager.DelegateMissionProps(string.Format("DelegateMisSuperSuccessFormula{0}", curMissionMsg.id, SystemTimeManager.Instance.GetUTCTimeStamp()), expressionStr);
+        var supSuccessPer = ExpressionManager.DelegateMissionProps(
+            string.Format("DelegateMisSuperSuccessFormula{0}", curMissionMsg.id), expressionStr);
         View.ProNum_3_UILabel.text = string.Format("{0}%", supSuccessPer * 100);
         var smlSuccessPer = 1 - successPer - supSuccessPer;
         View.ProNum_1_UILabel.text = string.Format("{0}%", smlSuccessPer * 100);
+
         #endregion
     }
 
@@ -294,10 +344,14 @@ public partial class AssistDelegateMainViewController
         _missionItemCtrlList.TryGetValue(idx, out ctrl);
         if (ctrl == null)
         {
-            ctrl = AddChild<AssistDelegateMissionBtnController, AssistDelegateMissionBtn>(View.MissionGrid_UIGrid.gameObject, AssistDelegateMissionBtn.NAME);
+            ctrl = AddChild<AssistDelegateMissionBtnController, AssistDelegateMissionBtn>(
+                View.MissionGrid_UIGrid.gameObject, AssistDelegateMissionBtn.NAME);
             _missionItemCtrlList.Add(ctrl);
+            _disposable.Add(
+                ctrl.OnClickItemStream.Subscribe(missionId => { _choseMissionStream.OnNext(missionId); }));
         }
 
         return ctrl;
     }
+    
 }

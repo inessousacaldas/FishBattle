@@ -18,7 +18,7 @@ public class TriggerNpcUnit : BaseNpcUnit
 
     private bool _isRunning;
 
-    protected UnityEngine.AI.NavMeshAgent _mAgent;
+    protected GridMapAgent _mAgent;
     public bool enabled;
     public bool touch;
     public bool waitingTrigger;
@@ -181,7 +181,6 @@ public class TriggerNpcUnit : BaseNpcUnit
         else
         {
             _heroView.WalkToPoint(GetPos(),null,true);
-            //GameDebuger.Log(">>>>>>>>>>>>>>>>>>>>>>>>>> " + _npcInfo.name + " " + _unitGo.gameObject.name);
             waitingTrigger = true;
         }
     }
@@ -285,17 +284,15 @@ public class TriggerNpcUnit : BaseNpcUnit
         {
             if (_mAgent == null)
             {
-                _mAgent = _unitGo.GetMissingComponent<UnityEngine.AI.NavMeshAgent>();
-                _mAgent.radius = 0.4f;
+                _mAgent = _unitGo.GetMissingComponent<GridMapAgent>();
+                _mAgent.canSearch = true;
+                _mAgent.canMove = true;
                 _mAgent.speed = ModelHelper.DefaultModelSpeed;
-                _mAgent.acceleration = 1000;
-                _mAgent.angularSpeed = 1000;
-                _mAgent.obstacleAvoidanceType = UnityEngine.AI.ObstacleAvoidanceType.NoObstacleAvoidance;
-                _mAgent.autoTraverseOffMeshLink = false;
-                _mAgent.autoRepath = false;
+                _mAgent.rotationSpeed = 10;
+                _mAgent.interpolatePathSwitches = false;
             }
             _mAgent.enabled = true;
-            _mAgent.SetDestination(targetPoint);
+            _mAgent.SearchPath(targetPoint);
             walk = true;
             _master.npcViewDataManager.AddToAlwaysShow(this);
         }
@@ -311,7 +308,7 @@ public class TriggerNpcUnit : BaseNpcUnit
         {
             if (_mAgent.enabled)
             {
-                if (_mAgent.hasPath)
+                if (_mAgent.HasPath)
                 {
                     PlayRunAnimation();
                 }
@@ -372,9 +369,10 @@ public class TriggerNpcUnit : BaseNpcUnit
         {
             if (_unitGo.activeInHierarchy)
             {
-                if (_mAgent != null && _mAgent.isActiveAndEnabled && _mAgent.hasPath)
+                if (_mAgent != null && _mAgent.isActiveAndEnabled && _mAgent.HasPath)
                 {
-                    _mAgent.ResetPath();
+                    _mAgent.ReleasePath();
+                    //_mAgent.ResetPath();
                     _mAgent.enabled = false;
                 }
             }
@@ -393,6 +391,7 @@ public class TriggerNpcUnit : BaseNpcUnit
         JSTimer.Instance.CancelCd("soundUnlockTimer");
         if (_mAgent != null)
         {
+            _mAgent.Clear();
             GameObjectExt.DestroyLog(_mAgent);
             _mAgent = null;
         }

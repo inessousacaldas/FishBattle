@@ -6,11 +6,14 @@
 // Porpuse  : 
 // **********************************************************************
 
-using System;
+using AppDto;
 
 public partial class GuildBuildItemController
 {
+    //建筑
     public BuildDetailMsg buildDetailMsg;
+    //福利
+    public GuildWelfare guildWelfare;
     // 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
@@ -25,6 +28,8 @@ public partial class GuildBuildItemController
 
     protected override void OnDispose()
     {
+        buildDetailMsg = new BuildDetailMsg();
+        guildWelfare = null;
         base.OnDispose();
     }
 
@@ -34,6 +39,7 @@ public partial class GuildBuildItemController
         
     }
 
+    #region 建筑
     public void UpdateView(IGuildMainData data,int idx)
     {
         var list = data.BuildList;
@@ -70,6 +76,20 @@ public partial class GuildBuildItemController
         }
         return lv;
     }
+    #endregion
+
+    #region 福利
+
+    public void UpdateWelfareView(GuildWelfare data)
+    {
+        guildWelfare = data;
+        View.titleLabel_UILabel.text = data.name;
+        View.DesLabel_UILabel.text = data.shortDes;
+        View.buttonLabel_UILabel.text = data.buttonDefault;
+        View.logoSp_UISprite.spriteName = data.icon;
+    }
+
+    #endregion
 }
 
 public struct BuildDetailMsg

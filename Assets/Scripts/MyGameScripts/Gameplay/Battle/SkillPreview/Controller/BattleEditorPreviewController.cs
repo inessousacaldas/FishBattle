@@ -51,9 +51,6 @@ namespace SkillEditor
             catch(Exception e){
                 GameDebuger.LogError(e);
             }
-            return;
-            var tPlayer = Activator.CreateInstance<SBGameVideoGeneralActionPlayer>();
-            tPlayer.Excute(tVideoRound.skillActions[0]);
         }
 
         public void ClosePreview(bool pCloseBgAlso = true)

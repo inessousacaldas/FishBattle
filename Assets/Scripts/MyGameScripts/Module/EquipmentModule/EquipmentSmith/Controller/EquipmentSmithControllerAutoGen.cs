@@ -11,6 +11,7 @@ public partial interface IEquipmentSmithController
 {
      UniRx.IObservable<Unit> OnSmithBtn_UIButtonClick{get;}
      UniRx.IObservable<Unit> OntipsBtn_UIButtonClick{get;}
+     UniRx.IObservable<Unit> OnTipsBtn_UIButtonClick{get;}
 
 }
 
@@ -20,12 +21,14 @@ public partial class EquipmentSmithController:MonolessViewController<EquipmentSm
     protected override void InitReactiveEvents(){
         SmithBtn_UIButtonEvt = View.SmithBtn_UIButton.AsObservable();
         tipsBtn_UIButtonEvt = View.tipsBtn_UIButton.AsObservable();
+        TipsBtn_UIButtonEvt = View.TipsBtn_UIButton.AsObservable();
 
     }
 
     protected override void ClearReactiveEvents(){
         SmithBtn_UIButtonEvt = SmithBtn_UIButtonEvt.CloseOnceNull();
         tipsBtn_UIButtonEvt = tipsBtn_UIButtonEvt.CloseOnceNull();
+        TipsBtn_UIButtonEvt = TipsBtn_UIButtonEvt.CloseOnceNull();
 
     }
 
@@ -37,6 +40,11 @@ public partial class EquipmentSmithController:MonolessViewController<EquipmentSm
     private Subject<Unit> tipsBtn_UIButtonEvt;
     public UniRx.IObservable<Unit> OntipsBtn_UIButtonClick{
         get {return tipsBtn_UIButtonEvt;}
+    }
+
+    private Subject<Unit> TipsBtn_UIButtonEvt;
+    public UniRx.IObservable<Unit> OnTipsBtn_UIButtonClick{
+        get {return TipsBtn_UIButtonEvt;}
     }
 
 

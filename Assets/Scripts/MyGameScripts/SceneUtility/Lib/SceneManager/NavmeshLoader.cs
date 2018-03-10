@@ -12,6 +12,7 @@ public class NavmeshLoader : BaseCommand {
 	{
 		base.Execute ();
         string navmeshName = "navmesh_" + this.sceneName;
+        //ProfileHelper.SystimeBegin(navmeshName);
         ResourcePoolManager.Instance.LoadStreamSceneConfig(
             navmeshName, 
             this.OnGetNavmeshAsset,
@@ -26,6 +27,8 @@ public class NavmeshLoader : BaseCommand {
             GameDebuger.LogError("GetNavConfigError:navmesh_" + sceneName);
         else
 	        AstarPath.active.astarData.DeserializeGraphs(textAsset);
+        //string navmeshName = "navmesh_" + this.sceneName;
+        //ProfileHelper.SystimeEnd(navmeshName);
         this.OnFinish();
     }
     private void OnLoadError()

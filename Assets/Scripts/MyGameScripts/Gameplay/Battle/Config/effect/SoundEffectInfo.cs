@@ -1,4 +1,4 @@
-﻿public class SoundEffectInfo : BaseEffectInfo
+﻿public partial class SoundEffectInfo : BaseEffectInfo
 {
 	public const string TYPE = "Sound";
 

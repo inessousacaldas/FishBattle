@@ -39,11 +39,11 @@ public sealed class AssistDelegateMainView : BaseView
     public UIButton TipsBtn_UIButton;
     public UILabel MissionProgressLabel_UILabel;
     public UITexture Npc_UITexture;
-    public Transform NoMissionTips;
+    public GameObject NoMissionTips;
     public Transform MissionTra;
     public Transform DetailBg;
-    public Transform NumBg;
-
+    public GameObject NumBg;
+    
     protected override void InitElementBinding ()
     {
 	    var root = this.gameObject;
@@ -75,10 +75,10 @@ public sealed class AssistDelegateMainView : BaseView
         MissionProgressLabel_UILabel = root.FindScript<UILabel>("NumBg/MissionProgressLabel");
         TipsBtn_UIButton = root.FindScript<UIButton>("DetailBg/Demand/TipsBtn");
         Npc_UITexture = root.FindScript<UITexture>("NoMissionTips/Texture");
-        NoMissionTips = root.FindTrans("NoMissionTips");
+        NoMissionTips = root.FindGameObject("NoMissionTips");
         MissionTra = root.FindTrans("Mission");
         DetailBg = root.FindTrans("DetailBg");
-        NumBg = root.FindTrans("NumBg");
+        NumBg = root.FindGameObject("NumBg");
 
     }
     #endregion

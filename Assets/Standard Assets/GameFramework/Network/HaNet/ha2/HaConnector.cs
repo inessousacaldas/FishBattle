@@ -313,14 +313,14 @@ public class HaConnector : MonoBehaviour
         _erc4 = new ARC4();
         _drc4 = new ARC4();
 
-#if UNITY_EDITOR
-        //编辑器模式下为空，连内网，如果需要调试外网，则需要修改这里
-        string sessionKey = "";
-#else
-//打包模式需要跟运维约定HA的加密key，不同项目的key不同
+//#if UNITY_EDITOR
+//        //编辑器模式下为空，连内网，如果需要调试外网，则需要修改这里
+//        string sessionKey = "";
+//#else
+////打包模式需要跟运维约定HA的加密key，不同项目的key不同
+//        string sessionKey = HaApplicationContext.getConfiguration().GetSessionKey();
+//        #endif
         string sessionKey = HaApplicationContext.getConfiguration().GetSessionKey();
-        #endif
-        
         byte[] newKey = System.Text.Encoding.Default.GetBytes(sessionKey + System.Text.Encoding.Default.GetString(k.bytes));
         
         _erc4.init(new ProtoByteArray(newKey));

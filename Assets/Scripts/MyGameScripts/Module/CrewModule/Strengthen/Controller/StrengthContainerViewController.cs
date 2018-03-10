@@ -18,13 +18,7 @@ public partial interface IStrengthContainerViewController
     void OnTabChange(CrewStrengthenTab index, ICrewSkillTrainData data);
     void UpdateView(CrewInfoDto data, Crew crew, int chips);
     void OnCheckDetailBtnClick();
-    UniRx.IObservable<Unit> OnCheckBtn_UIButtonClick { get; }
-    UniRx.IObservable<Unit> OnStrengthButton_UIButtonClick { get; }
-    UniRx.IObservable<Unit> OnTipButton_UIButtonClick { get; }
-    UniRx.IObservable<Unit> OnDevelopButton_UIButtonClick { get; }
     UniRx.IObservable<Unit> OnDevelopEffectBtn_UIButtonClick { get; }
-    UniRx.IObservable<Unit> OnBlackButton_UIButtonClick { get; }
-    UniRx.IObservable<Unit> OnStrengthTipBtnClick { get; }
     UniRx.IObservable<Unit> GetEnterSaveHandler { get; }
     void ShowWindows(bool show,ICrewSkillTrainData data = null,int id = -1);
 
@@ -32,11 +26,13 @@ public partial interface IStrengthContainerViewController
     void OpenMiddle();
     void OpenRight();
     void StrengthTips();
+    void OnDevelopTipBtnClick();
 }
-public partial class StrengthContainerViewController:
+public partial class StrengthContainerViewController :
     MonolessViewController<StrengthContainerView>
-    ,IStrengthContainerViewController
+    , IStrengthContainerViewController
 {
+    public UniRx.IObservable<Unit> OnDevelopEffectBtn_UIButtonClick { get { return null; } }
 
     // 界面初始化完成之后的一些后续初始化工作
 
@@ -45,7 +41,7 @@ public partial class StrengthContainerViewController:
         TabInfoData.Create((int)CrewStrengthenTab.Phase,"强化")
        ,TabInfoData.Create((int)CrewStrengthenTab.Raise,"进阶")
        ,TabInfoData.Create((int)CrewStrengthenTab.Craft,"研修")
-       
+
     };
     public TabbtnManager TabMgr
     {
@@ -71,28 +67,27 @@ public partial class StrengthContainerViewController:
     private List<DevelopInfoItemController> _developList = new List<DevelopInfoItemController>();
     private List<MasterialItemController> _developMasterialList = new List<MasterialItemController>();
 
+    private List<Transform> _strenLightList = new List<Transform>();
+    private List<Transform> _strenYelLineList = new List<Transform>();
+    private List<Transform> _devLightList = new List<Transform>();
+
     private CrewSkillTrainingViewController trainingCtrl;           //研修
 
     private Subject<Unit> _enterSaveEvt = new Subject<Unit>();
-    public UniRx.IObservable<Unit> GetEnterSaveHandler { get { return _enterSaveEvt; } }  
+    public UniRx.IObservable<Unit> GetEnterSaveHandler { get { return _enterSaveEvt; } }
 
     private void CreateTabItem()
     {
-        Func<int, ITabBtnController> func = i => AddChild<TabBtnWidgetController, TabBtnWidget>(
-            View.StrengthenPageGrid_UIGrid.gameObject,
-            TabbtnPrefabPath.TabBtnWidget_H1.ToString(),
-            "Tabbtn_" + i
-             );
-
-        View.StrengthenPageGrid_UIGrid.hideInactive = true;
-        tabMgr = TabbtnManager.Create(tabInfoList, func);
-        if (!FunctionOpenHelper.isFuncOpen(FunctionOpen.FunctionOpenEnum.FUN_16))
-            tabMgr.SetBtnHide((int)CrewStrengthenTab.Raise);
-
-        tabMgr.SetBtnLblFont(normalColor: ColorConstantV3.Color_VerticalUnSelectColor2_Str);
-
-        tabMgr.SetTabBtn(2);        //切换标签页颜色
-        tabMgr.SetTabBtn(0);
+        tabMgr = TabbtnManager.Create(tabInfoList, i => AddTabBtn(i, View.StrengthenPageGrid_UIGrid.gameObject, "TabBtnWidget_CrewSkill", "Tabbtn_"));
+        tabMgr.SetBtnLblFont(selectColor: "000000", normalColor: "ffffff");
+    }
+    private ITabBtnController AddTabBtn(int i, GameObject parent, string tabPath, string name)
+    {
+        var ctrl = AddChild<TabBtnWidgetController, TabBtnWidget>(
+            parent
+            , tabPath
+            , name + i);
+        return ctrl;
     }
 
     public void OnTabChange(CrewStrengthenTab index, ICrewSkillTrainData data)
@@ -112,21 +107,20 @@ public partial class StrengthContainerViewController:
                 View.TrainView_Transform.gameObject,
                 CrewSkillTrainingView.NAME
                 );
-            trainingCtrl.transform.localPosition = new Vector3(-191, 0, 0);
             return trainingCtrl;
         }
         return null;
     }
-    public void UpdateTrainView( ICrewSkillTrainData trainData,int id)
+    public void UpdateTrainView(ICrewSkillTrainData trainData, int id)
     {
         if (trainingCtrl != null)
         {
-            trainingCtrl.UpdateView(trainData,id);
+            trainingCtrl.UpdateView(trainData, id);
         }
         ShowWindows(false);
     }
 
-    public void ShowWindows(bool show,ICrewSkillTrainData data = null,int id = -1)
+    public void ShowWindows(bool show, ICrewSkillTrainData data = null, int id = -1)
     {
 
         if (data != null)
@@ -167,63 +161,20 @@ public partial class StrengthContainerViewController:
         ProxyTips.OpenTextTips(5, new Vector3(174, 125, 0));
     }
     #endregion
-    public void UpdateView(CrewInfoDto data,Crew crew, int chips)
+    public void UpdateView(CrewInfoDto data, Crew crew, int chips)
     {
         _data = data;
         UpdateStrengthenData(data, crew, chips);
         UpdateStrengthenInfo(data);
-        UpdateDevelopData(data);
         UpdateConsumeMasterial(data);
         UpdateDevelopInfo(data);
-    }
-
-    private void UpdateDevelopData(CrewInfoDto data)
-    {
-        if (data == null)
-            return;
-
-        int _nextQuality = data.quality + 1;
-        string crewIcon = _allCrewList.Find(d => d.id == data.crewId).icon;
-        UIHelper.SetPetIcon(View.DevelopCrewIcon_b_UISprite, crewIcon);
-        UIHelper.SetPetIcon(View.DevelopCrewIcon_a_UISprite, crewIcon);
-
-        UIHelper.SetItemQualityIcon(View.DevelopCrewIconBg_a, data.quality);
-
-        View.DevCrewLevel_b_UILabel.text = data.grade.ToString();
-        View.DevCrewLevel_a_UILabel.text = data.grade.ToString();
-
-        //View.Label_UILabel.text = "";
-        View.BeforeLevel_UILabel.text = string.Format("{0}{1}", SetLabelString(data.quality), 
-            string.Format(data.phase % _phaseNum + "级"));
-
-        if (data.phase % _phaseNum == _progressBarNum)
-        {
-            View.AfterLevel_UILabel.text = string.Format("{0}0级", SetLabelString(_nextQuality));
-            UIHelper.SetItemQualityIcon(View.DevelopCrewIconBg_b, _nextQuality);
-        }
-        else if (data.phase == _MaxPhase)
-        {
-            UIHelper.SetItemQualityIcon(View.DevelopCrewIconBg_b, data.quality);
-            View.AfterLevel_UILabel.text = View.BeforeLevel_UILabel.text;
-        }
-        else
-        {
-            View.AfterLevel_UILabel.text = string.Format("{0}{1}", SetLabelString(data.quality), 
-                string.Format(data.phase % _phaseNum + 1 + "级"));
-            UIHelper.SetItemQualityIcon(View.DevelopCrewIconBg_b, data.quality);
-        }
+        UpdateDevelopData(data);
     }
 
     private void UpdateDevelopInfo(CrewInfoDto data)
     {
         if (data == null)
             return;
-
-        View.ExpendGrid_UIGrid.gameObject.SetActive(data.phase != _MaxPhase);
-        View.BestDevelopLab_UILabel.gameObject.SetActive(data.phase == _MaxPhase);
-        View.DevelopButton_UIButton.gameObject.SetActive(data.phase != _MaxPhase);
-        View.DevelopEffectBtn_UIButton.gameObject.SetActive(data.phase != _MaxPhase);
-        View.ExpendTitle_UILabel.gameObject.SetActive(data.phase != _MaxPhase);
 
         CrewPhase _beforePhase = _allDevelopList.TryGetValue(data.phase);
         List<CharacterPropertyDto> properties = data.properties;
@@ -246,15 +197,68 @@ public partial class StrengthContainerViewController:
             }
         });
     }
+    private void UpdateDevelopData(CrewInfoDto data)
+    {
+        if (data == null)
+            return;
+
+        SetDevQualityIcon(data.quality);
+        if (_devLightList.Count == 0)
+        {
+            for (int i = 0; i < View.devLigth.transform.childCount; i++)
+            {
+                _devLightList.Add(View.devLigth.transform.GetChild(i));
+            }
+        }
+        int phase = data.phase % _phaseNum;
+
+        if (data.phase == _MaxPhase)
+        {
+            _devLightList.ForEach(light => { light.gameObject.SetActive(true); });
+        }
+        else if (phase == 0)
+        {
+            _devLightList.ForEach(light => { light.gameObject.SetActive(false); });
+        }
+        else
+        {
+
+            _devLightList.ForEachI((light, idx) =>
+            {
+                light.gameObject.SetActive(phase > idx);
+
+            });
+        }
+
+
+    }
+    private void SetDevQualityIcon(int quality)
+    {
+
+        string iconName = "";
+        switch (quality)
+        {
+            case 3:iconName = "icon";break;
+            case 4:iconName = "icon_1";break;
+            case 5: iconName = "icon_2";break;
+            case 6:iconName = "icon_3";break;
+        }
+        _view.QualityIcon_UISprite.spriteName = iconName;
+    }
 
     private void UpdateConsumeMasterial(CrewInfoDto data)
     {
         if (data == null)
             return;
+        View.BestDevelopLab.SetActive(data.phase == _MaxPhase);
+        View.DevelopButton_UIButton.gameObject.SetActive(data.phase != _MaxPhase);
+        View.DevConsume.SetActive(data.phase != _MaxPhase);
+        View.DevLightGroup.transform.localPosition = data.phase != _MaxPhase ?
+           Vector3.zero : new Vector3(0, -40, 0);
 
         CrewPhase _beforePhase = _allDevelopList.TryGetValue(data.phase);
         var afterPhaseNum = data.phase + 1;
-        
+
         if (data.phase == _MaxPhase)
             afterPhaseNum = data.phase;
 
@@ -290,39 +294,42 @@ public partial class StrengthContainerViewController:
             });
         }
     }
-    
 
-    private void UpdateStrengthenData(CrewInfoDto data,Crew crew, int chips)    
+
+    private void UpdateStrengthenData(CrewInfoDto data, Crew crew, int chips)
     {
         if (data == null)
             return;
-
-        View.AfterStrength_UILabel.gameObject.SetActive(data.raise != _maxRaise);
-        _strengthenMasterial.gameObject.SetActive(data.raise != _maxRaise);
         View.StrengthButton_UIButton.gameObject.SetActive(data.raise != _maxRaise);
-        View.CheckBtn_UIButton.gameObject.SetActive(data.raise != _maxRaise);
-        View.BestStrengthLab_UILabel.gameObject.SetActive(data.raise == _maxRaise);
-        View.StrengthExpendTitle_UILabel.gameObject.SetActive(data.raise != _maxRaise);
+        View.Consume.SetActive(data.raise != _maxRaise);
+        View.BestStrengthLab.gameObject.SetActive(data.raise == _maxRaise);
 
         if (data != null)
         {
-            string crewIcon = _allCrewList.Find(d=>d.id == data.crewId).icon;
-            UIHelper.SetPetIcon(View.StrengthCrewIcon_b_UISprite, crewIcon);
-            UIHelper.SetPetIcon(View.strengthCrewIcon_a_UISprite, crewIcon);
+            string crewIcon = _allCrewList.Find(d => d.id == data.crewId).icon;
 
-            View.StrengthIconBG_a.spriteName = string.Format("item_ib_{0}", data.quality);
-           
-
-            View.StrengLevelLab_b_UILabel.text = data.grade.ToString();
-            View.StrengLevelLabel_a_UILabel.text = data.grade.ToString();
-            View.BeforeStrength_UILabel.text = string.Format(crew.name + "+" + data.raise);
-            View.AfterStrength_UILabel.text = string.Format(crew.name + "+" + (data.raise + 1));
-
-            if (data.phase % _phaseNum == _progressBarNum)
-                View.StrengthIconBG_b.spriteName = string.Format("item_ib_{0}", data.quality + 1);
-            else
-                View.StrengthIconBG_b.spriteName = string.Format("item_ib_{0}", data.quality);
+            View.BeforeStrength_UILabel.text = "强化+" + data.raise;
+            View.AfterStrength_UILabel.text = data.raise == _maxRaise ? "强化+" + _maxRaise : "强化+" + (data.raise + 1);
         }
+        if (_strenLightList.Count == 0)
+        {
+            for(int i = 0; i < View.LightGroup.transform.childCount; i++)
+            { 
+                _strenLightList.Add(View.LightGroup.transform.GetChild(i));
+            }
+            for(int i = 0; i < View.YellowLineGroup.transform.childCount; i++)
+            {
+                _strenYelLineList.Add(View.YellowLineGroup.transform.GetChild(i));
+            }
+        }
+        _strenLightList.ForEachI((light, idx) =>
+        {
+            light.gameObject.SetActive(idx < data.raise);
+        });
+        _strenYelLineList.ForEachI((line, idx) =>
+        {
+            line.gameObject.SetActive(data.raise > 1 && idx < data.raise - 1);
+        });
 
         if (_allStrengthList.TryGetValue(data.raise) == null)
             return;
@@ -332,7 +339,7 @@ public partial class StrengthContainerViewController:
         if (raise == null)
         {
             GameDebuger.LogError(string.Format("CrewRaise找不到{0},请检查(这一行不算报错)", afterRaise));
-            return; 
+            return;
         }
         raise.chips.Split(',').ForEachI((f, idx) =>
         {
@@ -369,11 +376,33 @@ public partial class StrengthContainerViewController:
         var controller = UIModuleManager.Instance.OpenFunModule<DetailInfoController>(DetailInfoView.NAME, UILayerType.SubModule, true);
 
         controller.InitTitle("强化效果");
-        controller.SetEffectLb(_data.nextRaiseProperties.Count, _data.nextRaiseProperties,_data.properties);
-        controller.SetPosition(new Vector3(-252, -32, 0));
+        controller.SetEffectLb(_data.nextRaiseProperties.Count, _data.nextRaiseProperties, _data.properties);
+        controller.SetPosition(new Vector3(-136, -20, 0));
     }
 
-    protected override void AfterInitView ()
+    public void OnDevelopTipBtnClick()
+    {
+        View.DevelopTipsGroup.SetActive(true);
+        UICamera.onPress += OnDevelopTipViewClose;
+    }
+    public void OnDevelopTipViewClose(GameObject go,bool isPress)
+    {
+        UIPanel panel = UIPanel.Find(go.transform);
+        if (panel != null)
+        {
+            if (panel.gameObject != _view.DevelopTipsGroup)
+            {
+                View.DevelopTipsGroup.SetActive(false);
+                UICamera.onPress -= OnDevelopTipViewClose;
+            }
+        }
+    }
+    private void OnDevelopTipViewClick()
+    {
+
+    }
+
+    protected override void AfterInitView()
     {
         CreateTabItem();
 
@@ -381,19 +410,19 @@ public partial class StrengthContainerViewController:
         InitStrengthenList();
         InitDevelopList();
         InitDevelopMasterialList();
-        InitStrengthMasterial(); 
+        InitStrengthMasterial();
     }
 
     // 客户端自定义代码
-    protected override void RegistCustomEvent ()
+    protected override void RegistCustomEvent()
     {
-        
+
     }
 
-    protected override void RemoveCustomEvent ()
+    protected override void RemoveCustomEvent()
     {
     }
-        
+
     protected override void OnDispose()
     {
         _strengthenList.Clear();
@@ -402,7 +431,7 @@ public partial class StrengthContainerViewController:
         base.OnDispose();
     }
 
-        //在打开界面之前，初始化数据
+    //在打开界面之前，初始化数据
 
     private void InitData()
     {
@@ -411,10 +440,10 @@ public partial class StrengthContainerViewController:
 
         CrewPhase _zeroCrewPhase = new CrewPhase();
         _zeroCrewPhase.id = 0;
-        _zeroCrewPhase.itemId = new List<int>() { 500001};
+        _zeroCrewPhase.itemId = new List<int>() { 500001 };
         _zeroCrewPhase.amount = null;
         _zeroCrewPhase.silver = 100;
-        _zeroCrewPhase.addProperties = new List<int>() { 201,202,204};
+        _zeroCrewPhase.addProperties = new List<int>() { 201, 202, 204 };
         _allDevelopList.Add(_zeroCrewPhase);
         DataCache.getArrayByCls<CrewPhase>().ForEach(d => { _allDevelopList.Add(d); });
 
@@ -427,7 +456,7 @@ public partial class StrengthContainerViewController:
         DataCache.getArrayByCls<CrewRaise>().ForEach(c => _allStrengthList.Add(c));
         DataCache.getArrayByCls<GeneralCharactor>().ForEach(d =>
         {
-            if(d is Crew)
+            if (d is Crew)
                 _allCrewList.Add(d as Crew);
         });
     }
@@ -448,7 +477,7 @@ public partial class StrengthContainerViewController:
         for (int i = 0; i < _developeNum; i++)
         {
             var item = AddChild<DevelopInfoItemController, DevelopInfoItem>(
-                _view.InfoGrid_UIGrid.gameObject
+                _view.InfoTable_UITable.gameObject
                 , DevelopInfoItem.NAME);
             _developList.Add(item);
         }
@@ -458,23 +487,22 @@ public partial class StrengthContainerViewController:
     {
         for (int i = 0; i < _developeMasterialNum; i++)
         {
-            var com = AddChild<MasterialItemController, MasterialItem>(
-                _view.ExpendGrid_UIGrid.gameObject
-                , MasterialItem.NAME);
+            var lb = _view.ExpendGrid_Transform.GetChild(i).gameObject;
+            var com = AddController<MasterialItemController, MasterialItem>(lb);
             _developMasterialList.Add(com);
         }
     }
 
-    private void InitStrengthMasterial() 
+    private void InitStrengthMasterial()
     {
-         _strengthenMasterial = AddChild<MasterialItemController, MasterialItem>(
-            _view.StrengthMasAnchor_Transform.gameObject
-            , MasterialItem.NAME);
+        _strengthenMasterial = AddChild<MasterialItemController, MasterialItem>(
+           _view.StrengthMasAnchor_Transform.gameObject
+           , MasterialItem.NAME);
     }
 
     private string SetLabelString(int quality)
     {
-        string color="";
+        string color = "";
         switch (quality)
         {
             case (int)CrewQuality.Blue:

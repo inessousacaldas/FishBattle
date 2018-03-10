@@ -70,6 +70,6 @@ public class ApplyItemSubmitDelegate :BaseSubmitDelegate, ISubmitDelegate
 
     public bool IsBattleDelay(SubmitDto submitDto,MissionSubmitStateNotify notify)
     {
-        return true;
+        return false;
     }
 }

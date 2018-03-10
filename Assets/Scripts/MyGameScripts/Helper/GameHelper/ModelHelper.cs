@@ -70,6 +70,12 @@ public static class ModelHelper
         , skill
         , showup //战斗进场
         , gather  // 采集
+        , co1
+        , co2
+        , co3
+        , co4
+        , co5
+        , co6
     }
 
     //模型基础动作名称

@@ -74,9 +74,7 @@ public sealed partial class MisRewardTipDataMgr
             var notify = battleNotifyQueue.Dequeue();
             MisRewardTipViewLogic.Open();
             if (battleNotifyQueue.Count > 0)
-            {
-                JSTimer.Instance.SetupCoolDown(MisRewardTipViewLogic.UpdateItemTipsInBattle, 5f, null, delegate { BattleRewardTips(); });
-            }
+                JSTimer.Instance.SetupCoolDown(MisRewardTipViewLogic.UpdateItemTipsInBattle, 5f, null, BattleRewardTips);
             else
             {
                 isTimer = false;

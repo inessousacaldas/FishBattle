@@ -113,6 +113,8 @@ namespace GamePlot
 		//其它业务逻辑触发剧情接口，例如任务，战斗胜利
 		public bool TriggerPlot (int triggerType, int param)
 		{
+            if(_curTriggerPlot != null)
+                return true;
 			InitTriggerPlotDic ();
             Plot plot = null;
             if(_triggerPlotDic.TryGetValue(triggerType+"_"+param,out plot))
@@ -184,7 +186,7 @@ namespace GamePlot
             BattleDataManager.DataMgr.NeedPlayPlot = false;
             _mSceneCameraController.enabled = true;
             RequestServer ();
-			ClosePresureView ();
+            ClosePresureView();
             if(OnFinishPlot != null)
             {
                 OnFinishPlot(_curTriggerPlot);
@@ -194,7 +196,7 @@ namespace GamePlot
 				_curPlotPlayer.Finish ();
 				_curPlotPlayer = null;
 			}
-		}
+        }
 
 		private void RequestServer ()
 		{

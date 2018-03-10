@@ -86,12 +86,11 @@ public sealed partial class MainUIDataMgr
             _disposable.Add(ctrl.OnButton_lifeskill_UIButtonClick.Subscribe(_ => Button_lifeskill_UIButtonClick()));
             _disposable.Add(ctrl.OnButton_quartz_UIButtonClick.Subscribe(_ => Button_quartz_UIButtonClick()));
             _disposable.Add(ctrl.OnButton_Friend_UIButtonClick.Subscribe(_ => Button_Friend_UIButtonClick()));
-            _disposable.Add(ctrl.OnButton_Question_UIButtonClick.Subscribe(_=> Button_Question_UIButtonClick()));
             _disposable.Add(ctrl.OnGuideBtn_UIButtonClick.Subscribe(_ => Button_Guide_UIButtonClick()));
             _disposable.Add(ctrl.OnScheduleBtn_UIButtonClick.Subscribe(_ => Button_Schedule_UIButtonClick()));
             _disposable.Add(ctrl.OnButton_Crew_UIButtonClick.Subscribe(_ => { Button_Partner_UIButtonClick(); }));
             _disposable.Add(ctrl.OnButton_Recruit_UIButtonClick.Subscribe(_ => { ProxyCrewReCruit.Open(); }));
-            _disposable.Add(ctrl.OnButton_Guild_UIButtonClick.Subscribe(_ => Button_guild_UIButtonClick()));
+            _disposable.Add(ctrl.OnButton_guild_UIButtonClick.Subscribe(_ => Button_guild_UIButtonClick()));
             _disposable.Add(ctrl.PlayerInfo.OnBuffBtnClick.Subscribe(_ =>
             {
                 List<int> list = new List<int>{1,2,3,4};        //用于展示 --xush
@@ -203,7 +202,7 @@ public sealed partial class MainUIDataMgr
                         break;
                 }
             }));
-
+            _disposable.Add(TowerDataMgr.Stream.Subscribe(e => ctrl.UpdateTowerGuildUI(e)));
             _disposable.Add(ctrl.OnActivityPoll_UIButtonClick.Subscribe(e => OnActivityPollClick(DataMgr._data)));
 
         }
@@ -342,11 +341,6 @@ public sealed partial class MainUIDataMgr
             ProxySociality.OpenChatMainView(ChatPageTab.Friend);
         }
 
-        private static void Button_Question_UIButtonClick()
-        {
-            ProxyQuestion.OpenQuestionView();
-        }
-
         private static void Button_Equipment_UIButtonClick()
         {
             ProxyEquipmentMain.Open();   
@@ -389,9 +383,17 @@ public sealed partial class MainUIDataMgr
 
         private static void OnLeaveTeamBtnClick()
         {
+            var sceneDto = WorldManager.Instance.GetModel().GetSceneDto();
+            var txt = "";
+            if(sceneDto.sceneMap.type != (int)SceneMap.SceneType.CopyScene)
+            {
+                txt = "是否确定离队";
+            }
+            else {
+                txt = "玩家离开队伍，并且删除队伍的彩蛋任务、玩家的副本任务";
+            }
             var controller = ProxyBaseWinModule.Open();
             var title = "是否离队";
-            var txt = "是否确定离队";
             BaseTipData data = BaseTipData.Create(title, txt, 0, () => { TeamDataMgr.TeamNetMsg.LeaveTeam(); }, null);
             controller.InitView(data);
         }

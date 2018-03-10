@@ -23,8 +23,7 @@ public partial interface ISocialityViewController
     void TweenMoveDown();
 
     void SetTweenOffsetValue(float value);
-
-    void OnChannelTabChange(IChatInfoViewData data);
+    
 }
 public partial class SocialityViewController    {
 
@@ -102,7 +101,7 @@ public partial class SocialityViewController    {
         InitFriendPage();
         InitPrivateMsgPage();
         tweenOffset = 200;
-        _view.ApplyGuideBtn_UILabel.text = "[333251]加入工会可以让你认识更多新朋友，还能参与抵御[a64e00]强盗入侵[-]、参加[a64e00]工会任务[-]和[a64e00]攻城掠地[-]等精彩的工会活动！此外还有[1d8e00]每周福利[-]、[1d8e00]工会宝箱[-]、[1d8e00]工会工资[-]、[1d8e00]工会商店[-]等丰富的福利等着你！[-]";
+        _view.ApplyGuideBtn_UILabel.text = "[333251]加入公会可以让你认识更多新朋友，还能参与抵御[a64e00]强盗入侵[-]、参加[a64e00]公会任务[-]和[a64e00]攻城掠地[-]等精彩的公会活动！此外还有[1d8e00]每周福利[-]、[1d8e00]公会宝箱[-]、[1d8e00]公会工资[-]、[1d8e00]公会商店[-]等丰富的福利等着你！[-]";
     }
 
 	// 客户端自定义代码
@@ -193,24 +192,14 @@ public partial class SocialityViewController    {
         UpdateChannelList(data);
 
         ChatViewCtrl.SetFacePanelVisible(false);
-
-        //if (data.isMoveUpFaceContent)
-        //    TweenMoveUp();
-        //else
-        //    TweenMoveDown();
     }
-    public void OnChannelTabChange(IChatInfoViewData data)
-    {
-        //_chatViewCtrl.SetRightPanelHeight(data.chatViewData.isEnable);
-    }
-
     //更新聊天窗口~
     private void UpdateChannelList(IChatInfoViewData data)
     {
         //更新聊天标签页
         var idx = ChatDataMgr.ChatData.ShowChannelBtnNames.FindElementIdx(s => s.EnumValue == (int)data.CurChannelId);
         _channelTabMgr.UpdateTabs(ChatDataMgr.ChatData.ShowChannelBtnNames, AddChannelTabBtn, idx);
-        View.ApplyGuide.SetActive(data.CurChannelId == ChatChannel.ChatChannelEnum.Guild);
+        View.ApplyGuide.SetActive(!data.HasGuild && data.CurChannelId == ChatChannel.ChatChannelEnum.Guild);
         //更新聊天面板
         _chatViewCtrl.UpdateView(data);
     }

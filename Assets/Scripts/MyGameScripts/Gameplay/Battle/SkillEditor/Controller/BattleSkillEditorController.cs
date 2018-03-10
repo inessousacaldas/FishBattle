@@ -572,10 +572,11 @@ namespace SkillEditor
                     list = _configInfoDic.ToList()
                 };
 
-                OldBattleConfigConverter.ConvertOldAndSave(configInfo);
                 // use new json formmat
                 var jsonStr = configInfo.ToBattleJsonStr();
                 FileHelper.SaveJsonText(jsonStr,OldBattleConfigConverter.BattleConfig_Path,false);
+                
+                OldBattleConfigConverter.ConvertOldAndSave(configInfo);                
 
                 return true;
             }

@@ -34,11 +34,18 @@ public sealed partial class QuartzDataMgr
         }
 
         //结晶回路打造
-        //无返回
+        //QuartzSmithDto
         public static void Quartz_Smith(int grade, bool strengSmith)
         {
             GameUtil.GeneralReq(Services.Quartz_Smith(grade, strengSmith), response =>
             {
+                QuartzSmithDto dto = response as QuartzSmithDto;
+                if (dto == null)
+                {
+                    GameDebuger.Log("Quartz_Smith返回的数据有问题,请检查");
+                    return;
+                }
+                DataMgr._data.GetOrbmentDto.curSmithCount = dto.curSmithCount;
                 TipManager.AddTip("打造成功");
                 FireData();
             });

@@ -263,12 +263,6 @@ public sealed partial class GMDataMgr
             TipManager.AddTip(string.Format("当前是否弹窗显示重要提示:{0}",BattleDataManager.DataMgr.BattleDemo.ShowTip));
         }
 
-        private static void TestInfoSimulate()
-        {
-            ServiceRequestAction.SimulateNet = !ServiceRequestAction.SimulateNet;
-            TipManager.AddTip("当前DEMO战斗是否单机模式：" + ServiceRequestAction.SimulateNet.ToString());
-        }
-
         private static void TestCompleteRound()
         {
             DemoSimulateHelper.SimulateRoundStart();

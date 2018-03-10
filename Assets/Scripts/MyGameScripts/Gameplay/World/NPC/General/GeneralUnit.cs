@@ -61,9 +61,11 @@ public class GeneralUnit : TriggerNpcUnit
                         OpenDefaultDialogueFunction();
                         return;
                     }
+                    else {
+                        ProxyNpcDialogueView.Open(_npcInfo);
+                    }
                 }
             }
-            OpenDefaultDialogueFunction();
         }
         else
         {

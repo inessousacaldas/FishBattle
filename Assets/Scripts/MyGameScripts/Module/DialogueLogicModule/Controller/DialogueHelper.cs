@@ -22,9 +22,12 @@ public class DialogueHelper  {
         GarandArena = 13,
         BackToMainScene = 14,   //四轮之塔回到洛连特
         GoOnNextTower = 15,      //四轮之塔继续下一层
-        OpenCopyPanel = 16,
+        OpenCopyPanel = 16,     //打开副本界面
         EnterMarial = 17,        //参加武术大会
-        LeaveMarial = 18         //离开武术大会场景
+        LeaveMarial = 18,         //离开武术大会场景
+        AcceptMissionGuild = 21,        //帮派任务
+        ExpelGuildMonster = 22      //驱赶公会强盗
+
     }
 
     public static bool OpenDialogueFunction(SceneNpcDto npcStateDto,DialogFunction dialogFunction)
@@ -34,8 +37,16 @@ public class DialogueHelper  {
             case DialogType.Shop:
                 ProxyNpcDialogueView.Close();
                 var shop = DataCache.getDtoByCls<Shop>(dialogFunction.logicId);
-                if(shop != null)
-                    ProxyShop.OpenShopByType(shop.shopType);
+                if(shop != null) {
+                    if(shop.shopType == 104)
+                        ProxyShop.OpenShopByType(shop.shopType,MissionDataMgr.DataMgr.GetMissionShopItem().QuickShopItemID);
+                    else if(shop.shopType == 105)
+                        ProxyShop.OpenShopByType(shop.shopType,MissionDataMgr.DataMgr.GetMissionShopItem().WeaPonShopItemID);
+                    else if(shop.shopType == 108)   //公会商店直接开商城界面,特殊处理
+                        ProxyShop.OpenShop(ShopTypeTab.GuildShop, ShopTypeTab.GuildShopId);
+                    else
+                        ProxyShop.OpenShopByType(shop.shopType);
+                }
                 else
                     GameDebuger.LogError(string.Format("shop表找不到{0}商店,请检查", dialogFunction.logicId));
                 needClose = false;
@@ -46,6 +57,7 @@ public class DialogueHelper  {
                 needClose = false;
                 break;
             case DialogType.Fight:
+            case DialogType.ExpelGuildMonster:
                 //开战
                 GameUtil.GeneralReq(Services.Scene_Battle(npcStateDto.id));
                 break;
@@ -54,6 +66,7 @@ public class DialogueHelper  {
                 var teamTarget = TeamMatchTargetData.Create(dialogFunction.logicId, teamAction.maxGrade, teamAction.minGrade, true);
                 TeamDataMgr.DataMgr.GetCurTeamMatchTargetData = teamTarget;
                 ProxyTeamModule.OpenMainView(TeamMainViewTab.CreateTeam);
+                TeamDataMgr.TeamNetMsg.AutoMatchTeam(teamTarget, true);
                 //组队平台
                 break;
             case DialogType.WathcFight:
@@ -141,6 +154,13 @@ public class DialogueHelper  {
                 break;
             case DialogType.LeaveMarial:
                 MartialDataMgr.MartialNetMsg.Exit();
+                break;
+            case DialogType.AcceptMissionGuild:
+                Mission gmission = new Mission();
+                gmission.id = -1;
+                gmission.type = (int)MissionType.MissionTypeEnum.Guild;
+                MissionDataMgr.DataMgr.AcceptMission(gmission);
+                needClose = false;
                 break;
         }
         return needClose;

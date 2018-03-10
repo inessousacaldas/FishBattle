@@ -6,6 +6,7 @@
 // Porpuse  : 
 // **********************************************************************
 
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using AppDto;
@@ -18,18 +19,15 @@ public partial interface IFriendDetailViewController
     void UpdateView(FriendInfoDto dto);
     void UpdateGuildView(GuildMemberDto dto);
     void UpdateView(ScenePlayerDto dto);
-
     void SetPosition(Vector3 pos);
-
-    //UniRx.IObservable<FriendInfoDto> OnClickChatStream { get; }
-
+    void UpdateRankView(PlayerTipDto dto);
     void Close();
 }
 public partial class FriendDetailViewController
 {
     private bool _isMyFriend = true;
     private bool _isMyBlack = true;
-    //readonly int LimitBlack = 50;
+    private List<UILabel> _tagLbList = new List<UILabel>();
     private FriendInfoDto _infoDto = new FriendInfoDto();
     private const int TeamMaxCnt = 4;
 
@@ -52,7 +50,11 @@ public partial class FriendDetailViewController
 	// 界面初始化完成之后的一些后续初始化工作
     protected override void AfterInitView ()
     {
-        
+        for (int i = 0; i < _view.Grid_UIGrid.transform.childCount; i++)
+        {
+            var lb = _view.Grid_UIGrid.GetChild(i).GetComponent<UILabel>();
+            _tagLbList.Add(lb);
+        }
     }
 
 	// 客户端自定义代码
@@ -169,11 +171,13 @@ public partial class FriendDetailViewController
 
         ChatBtn_UIButtonEvt.Subscribe(_ =>
         {
+            Close();
             //处理主界面打开好友操作面板
             PrivateMsgDataMgr.DataMgr.SetCurFriendDto(_infoDto);
             ProxySociality.OpenChatMainView(ChatPageTab.PrivateMsg);
 
-            Close();
+            //关闭排行榜界面,因为有可能是通过排行榜界面跳到私聊界面,所以需要关闭排行榜
+            ProxyRank.CloseRankView();
         });
     }
 
@@ -206,6 +210,37 @@ public partial class FriendDetailViewController
         }
 
         View.Table_UITable.Reposition();
+        View.Name_UILabel.text = dto.name;
+        View.NumLabel_UILabel.text = dto.id.ToString();
+        View.CountryName_UILabel.text = dto.guildInfoDto == null ? "无" : dto.guildInfoDto.guildName;
+        View.LvLabel_UILabel.text = dto.grade.ToString();
+        if (dto.charactor as MainCharactor != null)
+            UIHelper.SetPetIcon(View.Icon_UISprite, (dto.charactor as MainCharactor).gender == 1 ? "101" : "103");
+        _tagLbList.ForEachI((lb, idx) =>
+        {
+            lb.gameObject.SetActive(idx < dto.labelInfos.Count);
+            if (idx < dto.labelInfos.Count)
+                lb.text = dto.labelInfos[idx];
+        });
+    }
+
+    public void UpdateRankView(PlayerTipDto dto)
+    {
+        _isMyBlack = FriendDataMgr.DataMgr.isMyBlack(dto.id);
+        _isMyFriend = FriendDataMgr.DataMgr.IsMyFriend(dto.id);
+        _infoDto.friendId = dto.id;
+        _infoDto.name = dto.name;
+        _infoDto.grade = dto.grade;
+        _infoDto.factionId = dto.factionId;
+        _infoDto.countryId = 0;
+        _infoDto.degree = 0;
+        _infoDto.online = true;
+        _infoDto.charactorId = dto.charactorId;
+        _infoDto.charactor = dto.charactor;
+        UpdateInfo(dto);
+        SetBtnState();
+        View.FightBtn_UIButton.gameObject.SetActive(false);
+        View.Table_UITable.Reposition();
     }
 
     public void UpdateGuildView(GuildMemberDto dto)
@@ -225,13 +260,13 @@ public partial class FriendDetailViewController
             _infoDto.degree = 0;
             _infoDto.online = true;
         }
-
-        //设置基本信息 
-        UIHelper.SetPetIcon(View.Icon_UISprite, dto.gender == 1 ? "101" : "103");
-        View.Name_UILabel.text = dto.name;
-        View.LvLabel_UILabel.text = dto.grade.ToString();
         View.NumLabel_UILabel.text = dto.id.ToString();
 
+        GameUtil.GeneralReq(Services.Player_TipInfo(_infoDto.friendId), resp =>
+        {
+            var tipsDto = resp as PlayerTipDto;
+            UpdateInfo(tipsDto);
+        });
         SetBtnState();
     }
 
@@ -255,14 +290,13 @@ public partial class FriendDetailViewController
             _infoDto.charactorId = dto.charactorId;
             _infoDto.charactor = dto.charactor;
         }
-
-        //设置基本信息 两个UpdateView都要写 = =、
-        if (dto.charactor as MainCharactor != null)
-            UIHelper.SetPetIcon(View.Icon_UISprite, (dto.charactor as MainCharactor).gender == 1 ? "101" : "103");
-        View.Name_UILabel.text = dto.nickname;
-        View.LvLabel_UILabel.text = dto.grade.ToString();
         View.NumLabel_UILabel.text = dto.id.ToString();
 
+        GameUtil.GeneralReq(Services.Player_TipInfo(_infoDto.friendId), resp =>
+        {
+            var tipsDto = resp as PlayerTipDto;
+            UpdateInfo(tipsDto);
+        });
         SetBtnState();
     }
 
@@ -272,14 +306,13 @@ public partial class FriendDetailViewController
         _infoDto = dto;
         _isMyFriend = FriendDataMgr.DataMgr.IsMyFriend(_infoDto.friendId);
         _isMyBlack = FriendDataMgr.DataMgr.isMyBlack(_infoDto.friendId);
-
-        //设置基本信息 两个UpdateView都要写 = =、
-        if (dto.charactor as MainCharactor != null)
-            UIHelper.SetPetIcon(View.Icon_UISprite, (dto.charactor as MainCharactor).gender == 1 ? "101" : "103");
-        View.Name_UILabel.text = dto.name;
-        View.LvLabel_UILabel.text = dto.grade.ToString();
         View.NumLabel_UILabel.text = dto.friendId.ToString();
 
+        GameUtil.GeneralReq(Services.Player_TipInfo(_infoDto.friendId), resp =>
+        {
+            var tipsDto = resp as PlayerTipDto;
+            UpdateInfo(tipsDto);
+        });
         SetBtnState();
     }
 
@@ -303,26 +336,18 @@ public partial class FriendDetailViewController
             _infoDto.charactorId = dto.charactorId;
             _infoDto.charactor = dto.charactor;
         }
-
-        //设置基本信息 两个UpdateView都要写 = =、
-        if (dto.charactor as MainCharactor != null)
-            UIHelper.SetPetIcon(View.Icon_UISprite, (dto.charactor as MainCharactor).gender == 1 ? "101" : "103");
-        View.Name_UILabel.text = dto.name;
-        View.LvLabel_UILabel.text = dto.grade.ToString();
         View.NumLabel_UILabel.text = dto.id.ToString();
 
-        SetBtnState();
-    }
-
-    private void SetBtnState()
-    {
-        //请求
         GameUtil.GeneralReq(Services.Player_TipInfo(_infoDto.friendId), resp =>
         {
             var tipsDto = resp as PlayerTipDto;
             UpdateInfo(tipsDto);
         });
+        SetBtnState();
+    }
 
+    private void SetBtnState()
+    {
         View.DeleteLabel_UILabel.text = _isMyFriend ? "删除好友" : "添加好友";
         View.BlackLabel_UIlabel.text = _isMyBlack ? "取消拉黑" : "拉黑";
         //UIHelper.SetFactionIcon(View.Faction_UISprite, _infoDto.factionId);

@@ -22,6 +22,7 @@ public interface ITreasureMissionData
     int GetTreasureNumber();
 
     void OnChangeNextDay();
+    int GetGeneralItemNumber { get; }
 }
 
 public sealed partial class TreasureMissionDataMgr
@@ -74,6 +75,7 @@ public sealed partial class TreasureMissionDataMgr
             return mDiamondsNumber;
         }
 
+        //这个是获得使用羊波波劵的数量主界面 1/10 这样
         public string GetItemNumber() {
             return itemName + " " + mNumber + "/1";
         }
@@ -85,6 +87,7 @@ public sealed partial class TreasureMissionDataMgr
         public GeneralItem GetGeneralItem() {
             return mGeneralItem;
         }
+
 
         public int GetPropsTreasureRewardId() {
             return mPropsTreasureRewardId;
@@ -120,6 +123,11 @@ public sealed partial class TreasureMissionDataMgr
         }
 
 
+        private int mGeneralItemNumber;
+        //这个是获得抽奖，获得奖励的数量，用于飘字
+        public int GetGeneralItemNumber { get { return mGeneralItemNumber; } }
+
+
         public void HighTreasuryNotify(HighTreasuryNotify tHighTreasuryNotify) {
             UpdateBagIndex();
             mServerType = ServerType.UpDate;
@@ -127,6 +135,7 @@ public sealed partial class TreasureMissionDataMgr
             mMovePoint = tHighTreasuryNotify.rollPoint;
             mCurIndex = tHighTreasuryNotify.highTreasuryPosition;
             mPropsTreasureRewardId = tHighTreasuryNotify.propsTreasureRewardId;
+            mGeneralItemNumber = tHighTreasuryNotify.count;
             mTreasureNumber++;
             if(mTreasureNumber >= 100)
                 mTreasureNumber = 100;

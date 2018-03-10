@@ -611,7 +611,7 @@ public class BaseNpcUnit : IQuadObject<BaseNpcUnit>
     {
         if (_unitGo != null)
         {
-            Vector3 position = SceneHelper.GetSceneStandPosition(new Vector3(_npcInfo.npcStateDto.x, 0f, _npcInfo.npcStateDto.z), Vector3.zero);
+            Vector3 position = SceneHelper.GetPositionInScene(_npcInfo.npcStateDto.x, _npcInfo.npcStateDto.y, _npcInfo.npcStateDto.z);
             SetPos(position);
             _unitTrans.localEulerAngles = new Vector3(0, _npcInfo.npcStateDto.npc.rotateY, 0);
            
@@ -628,10 +628,7 @@ public class BaseNpcUnit : IQuadObject<BaseNpcUnit>
     }
     public Vector3 GetPos()
     {
-        if (_unitGo != null)
-            return _unitGo.transform.position;
-        else
-            return SceneHelper.GetSceneStandPosition(new Vector3(_npcInfo.npcStateDto.x, 0f, _npcInfo.npcStateDto.z), Vector3.zero);
+        return _unitGo != null ? _unitGo.transform.position : SceneHelper.GetPositionInScene(_npcInfo.npcStateDto.x, _npcInfo.npcStateDto.y, _npcInfo.npcStateDto.z);
     }
     protected virtual bool NeedTrigger()
     {

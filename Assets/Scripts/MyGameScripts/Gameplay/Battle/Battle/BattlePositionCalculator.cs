@@ -18,10 +18,6 @@ public class BattlePositionCalculator
 
     public static Vector3 GetZonePosition(BattlePosition.MonsterSide side)
     {
-        if (side == BattlePosition.MonsterSide.Player)
-        {
-            return new Vector3(-3.41f, 0f, -2.43f);
-        }
-        return new Vector3(3.72f, 0f, -1.95f);
+        return side == BattlePosition.MonsterSide.Player ? BattleConst.PlayerCenterVector3 : BattleConst.EnemyCenterVector3;
     }
 }

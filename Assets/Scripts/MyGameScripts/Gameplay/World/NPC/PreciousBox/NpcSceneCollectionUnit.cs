@@ -28,6 +28,8 @@ public class NpcSceneCollectionUnit:TriggerNpcUnit
         SubmitDto tSubmitDto = MissionHelper.GetSubmitDtoByMission(_mission);
         PickItemSubmitInfoDto tApplyItemSubmitDto = tSubmitDto as PickItemSubmitInfoDto;
         GeneralItem tAppMissionItem = tApplyItemSubmitDto.item as GeneralItem;
+        var heroView = WorldManager.Instance.GetHeroView();
+        heroView.PlayAnimation(ModelHelper.AnimType.gather);
         ProxyProgressBar.ShowProgressBar(tAppMissionItem.icon,"采集中...",null,"__PopupUseMissionProps",delegate
         {
             MissionDataMgr.MissionNetMsg.PickItemMission(_npcInfo.npcStateDto.id,_mission.id);

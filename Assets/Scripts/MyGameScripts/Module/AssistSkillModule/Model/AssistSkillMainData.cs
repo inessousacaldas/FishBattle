@@ -51,36 +51,24 @@ public interface IAssistSkillMainData
 
     int SkillLevel { get; }
 
-    bool FirstForget { get; set; }
-
     int ChosedSkillId { get; set; }
 
     int CurRecipeId { get; set; }
 
     AssistViewTab CurTab { get; }
 
-    Dictionary<int, int> GetCostList { get; }
-
-    Dictionary<int, int> GetCostFiveList { get; }
-
     RightViewTab CurRightTab { get; }
 
     //委托任务
     AssistViewTab CurDelegateTab { get; set; }
     long ChoseFriendId { get; set; }
-    string ChoseCrewStr { get; }
-    IEnumerable<long> ChoseCrewIdList { get; }
-    bool RemoveChoseCrewByIndex(int idx);
     IEnumerable<int> ChoseCrewCrewIdList { get; }
-    IEnumerable<long> AllIngCrewIdList { get; }
-    IEnumerable<long> AllHelpedFriendIdList { get; }
+
     int CurMissionId { get; set; }
     //DelegateMissionDto CurMissionDto { get; }
-    List<DelegateMissionDto> MissionList { get; }
-    IEnumerable<CrewShortDto> CrewInfoList { get; }
     int AcceptNum { get; set; }
     int AcceptLimit { get; set; }
-    bool RefreshIsNoTips { get; set; }
+    IEnumerable<DelegateMissionDto> MissionList { get; }
 }
 
 public sealed partial class AssistSkillMainDataMgr
@@ -278,8 +266,9 @@ public sealed partial class AssistSkillMainDataMgr
         public long ChoseFriendId { get; set; }
         public int CurMissionId { get; set; }
         //public DelegateMissionDto CurMissionDto { get { return _missionList.Find(x => x.id == CurMissionId); } }
-        private List<DelegateMissionDto> _missionList = new List<DelegateMissionDto>();
-        public List<DelegateMissionDto> MissionList
+        public List<DelegateMissionDto> _missionList = new List<DelegateMissionDto>();
+
+        public IEnumerable<DelegateMissionDto> MissionList
         {
             get { return _missionList; }
         }
@@ -386,16 +375,21 @@ public sealed partial class AssistSkillMainDataMgr
             AcceptNum = dto.acceptNum;
             AcceptLimit = dto.acceptLimit;
             _missionList.Clear();
-            if(dto.delegateMissionDtos != null)
+            _allHelpedFriendIdList.Clear();
+            
+            if(!dto.delegateMissionDtos.IsNullOrEmpty())
             {
                 _missionList = dto.delegateMissionDtos;
                 //默认选择第一个任务
                 CurMissionId = _missionList[0].id;
                 ResetChoseCrewAndFriend(_missionList[0].crewIds, _missionList[0].friendId);
-                _allHelpedFriendIdList.Clear();
+                
                 _allHelpedFriendIdList = dto.helpFriend;
             }
-
+            else
+            {
+                CurMissionId = 0;
+            }
             //红点测试xjd 注释了免得显示红点影响界面 要用就打开
             //UpdateDelegateRed();
         }
@@ -410,7 +404,7 @@ public sealed partial class AssistSkillMainDataMgr
                 if (itemDto.finishTime <= 0)
                     isHavCompleteMission = true;
             });
-            RedPointDataMgr.DataMgr.UpdateSingleData(2, isHavCompleteMission);
+//            RedPointDataMgr.DataMgr.UpdateSingleData(2, isHavCompleteMission);
         }
 
         //接受任务更新dto

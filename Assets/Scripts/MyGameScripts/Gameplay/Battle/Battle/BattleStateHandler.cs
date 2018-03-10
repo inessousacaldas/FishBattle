@@ -11,14 +11,7 @@ public static class BattleStateHandler
 	{
 		if (mc == null) return;
 		mc.ClearMessageEffect(true);
-		mc.modifyHP = action.hpSpent;
-		mc.modifyEP = action.epSpent;
-		mc.modifyCP = action.cpSpent;
-		mc.lastHP = mc.videoSoldier.hp + action.hpSpent;
-		mc.lastEP = mc.videoSoldier.ep + action.epSpent;
-		mc.lastCP = mc.videoSoldier.cp + action.cpSpent;
-		
-		mc.PlayInjure();
+		mc.AddHPMPValue(action);
 	}
 
 	public static void PlayState(this MonsterController mc, VideoTargetState bas, bool handleAll=false)
@@ -37,19 +30,19 @@ public static class BattleStateHandler
 			return;
 		}
 
-        mc.UpdateHpEpCp(bas);
+        mc.dead = bas.dead;
+        mc.leave = bas.leave;
+
 		if (bas is VideoActionTargetState)
 		{
-			var action = (VideoActionTargetState)bas;
-
-			if ( action.crit )
-				mc.AddMessageEffect( MonsterController.ShowMessageEffect.CRITICAL );
+			mc.PlayInjure(bas as VideoActionTargetState);
 		}
 		else if (bas is VideoDodgeTargetState)
 		{
-			mc.AddMessageEffect( MonsterController.ShowMessageEffect.DODGE );
-            mc.PlaySkillName("躲闪");
-        }
+            mc.PlayStateName("躲闪");
+            mc.AddMessageEffect( MonsterController.ShowMessageEffect.DODGE );
+			mc.ShowEffName(MonsterController.ShowMessageEffect.DODGE);
+		}
         else if (bas is VideoBuffAddTargetState)
         {
             mc.AddBuffState((VideoBuffAddTargetState) bas);
@@ -67,6 +60,13 @@ public static class BattleStateHandler
 				MonsterManager.Instance.SwitchSolider(soldier);
 			}
 		}
+        else if (bas is VideoDrivingTargetState)
+        {
+	        var value = (bas as VideoDrivingTargetState).driving;
+	        if (mc.driving && !value)
+		        mc.ClearSkill(); // 被打清空技能选择
+	        mc.driving = value;
+        }
 		GameDebuger.TODO(@"else if (bas is VideoAntiSkillTargetState)
         {
             mc.AddMessageEffect( MonsterController.ShowMessageEffect.IMMUNE );
@@ -110,17 +110,6 @@ public static class BattleStateHandler
                 }
             }
 		}
-
-		mc.dead = bas.dead;
-		mc.leave = bas.leave;
-		if (bas is VideoDrivingTargetState)
-		{
-			var value = (bas as VideoDrivingTargetState).driving;
-			if (mc.driving && !value)
-				mc.ClearSkill(); // 被打清空技能选择
-			mc.driving = value;
-		}
-		mc.PlayInjure();
 	}
 
 	public static void HanderOtherTargetState(List<long> checkList, List<VideoTargetState> targetStates/**, BattleController bc*/){//useless bc was deleted in 2017-01-20 17:25:2

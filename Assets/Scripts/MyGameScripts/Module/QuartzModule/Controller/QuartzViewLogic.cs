@@ -112,8 +112,25 @@ public sealed partial class QuartzDataMgr
                 FireData();
             }
             #endregion
-        }
+
+            #region forge
+            _disposable.Add(ctrl.InitForgeHandler.Subscribe(_ => { InitForgeCtrl(ctrl); }));
             
+            #endregion
+        }
+
+        private static void InitForgeCtrl(IQuartzViewController ctrl)
+        {
+            _disposable.Add(ctrl.ForgeCtrl.CommonBtnHandler.Subscribe(grade =>
+            {
+                QuartzNetMsg.Quartz_Smith(grade, false);
+            }));
+            _disposable.Add(ctrl.ForgeCtrl.StrengthHandler.Subscribe(grade =>
+            {
+                QuartzNetMsg.Quartz_Smith(grade, false);
+            }));
+        }
+
         private static void Dispose()
         {
             _disposable = _disposable.CloseOnceNull();

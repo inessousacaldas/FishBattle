@@ -89,7 +89,7 @@ public partial class ChatSystemItem2Controller
         }
         else
         {
-            name = ChatHelper.GetChannelName(channelId);
+            name = ChatHelper.GetTitleName(channelId);
         }
 
         //if (!string.IsNullOrEmpty(name))

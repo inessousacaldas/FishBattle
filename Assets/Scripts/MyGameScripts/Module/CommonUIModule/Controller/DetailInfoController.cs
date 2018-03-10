@@ -178,7 +178,7 @@ public class DetailInfoController : MonoViewController<DetailInfoView>
     public void SetPosition(Vector3 pos)
     {
         _view.BackGround_Transform.transform.localPosition = pos;
-        var scrollviewPos = new Vector3(pos.x, pos.y+30, 0);
+        var scrollviewPos = new Vector3(pos.x, pos.y, 0);
         _view.ScrollView_UIScrollView.transform.localPosition = scrollviewPos;
     }
 }

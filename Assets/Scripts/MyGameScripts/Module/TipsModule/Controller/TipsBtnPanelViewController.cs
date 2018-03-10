@@ -45,103 +45,72 @@ public partial class TipsBtnPanelViewController
         View.LeftLabel_UILabel.text = left;
         View.RightLabel_UILabel.text = right;
 
-        if (leftClick != null)
-        {
-            _onLeftClick = leftClick;
-            _disposable.Add(OnLeftBtn_UIButtonClick.Subscribe(_ => _onLeftClick()));
-        }
+        View.RightBtn_UIButton.gameObject.SetActive(rightClick != null);
+        View.LeftBtn_UIButton.gameObject.SetActive(leftClick != null);
 
         if (rightClick != null)
         {
             _onRightClick = rightClick;
             _disposable.Add(OnRightBtn_UIButtonClick.Subscribe(_ => _onRightClick()));
-            View.RightBtn_UIButton.gameObject.SetActive(true);
         }
-        else
+
+        if (leftClick != null)
         {
-            View.LeftBtn_UIButton.transform.localPosition = View.MiddleTrans.localPosition;
-            View.RightBtn_UIButton.gameObject.SetActive(false);
+            _onLeftClick = leftClick;
+            _disposable.Add(OnLeftBtn_UIButtonClick.Subscribe(_ => _onLeftClick()));
         }
+        View.RightBtn_UIButton.transform.localPosition = leftClick == null
+            ? View.MiddleTrans.localPosition
+            : new Vector3(60, 0, 0);
+        View.LeftBtn_UIButton.transform.localPosition = rightClick == null
+            ? View.MiddleTrans.localPosition
+            : new Vector3(-60, 0, 0);
     }
 
     public void OnLeftClick()
     {
-        View.LeftExpandBg_UISprite.gameObject.SetActive(!View.LeftExpandBg_UISprite.gameObject.activeSelf);
+        //View.LeftExpandBg_UISprite.gameObject.SetActive(!View.LeftExpandBg_UISprite.gameObject.activeSelf);
         View.LeftExpandTable_UITable.gameObject.SetActive(!View.LeftExpandTable_UITable.gameObject.activeSelf);
-    }
-
-    public void OnRightClick()
-    {
-        View.RightExpandBg_UISprite.gameObject.SetActive(!View.RightExpandBg_UISprite.gameObject.activeSelf);
-        View.RightExpandTable_UITable.gameObject.SetActive(!View.RightExpandTable_UITable.gameObject.activeSelf);
     }
 
     public void UpdateView(Dictionary<string, Action> leftDic, string right, Action rightClick, int depth)
     {
         var itemHeight = 0;
-        leftDic.ForEachI((KVpair, idx) =>
+        if (leftDic.Count == 1)
         {
-            if (idx == 0)
+            var key = leftDic.Keys.ToList()[0];
+            View.LeftLabel_UILabel.text = key;
+            _disposable.Add(OnLeftBtn_UIButtonClick.Subscribe(_ =>
             {
-                View.LeftLabel_UILabel.text = KVpair.Key;
-                //if(KVpair.Value == null)
-                    _disposable.Add(OnLeftBtn_UIButtonClick.Subscribe(_ =>
-                    {
-                        View.LeftExpandBg_UISprite.gameObject.SetActive(!View.LeftExpandBg_UISprite.gameObject.activeSelf);
-                        View.LeftExpandTable_UITable.gameObject.SetActive(!View.LeftExpandTable_UITable.gameObject.activeSelf);
-                    }));
-            }
-            else
+                var action = leftDic.Values.ToList()[0];
+                if (action != null)
+                    action();
+            }));
+        }
+        else
+        {
+            View.LeftLabel_UILabel.text = "更多";
+            leftDic.ForEachI((KVpair, idx) =>
             {
                 var ctrl = AddChild<TipsBtnItemController, TipsBtnItem>(View.LeftExpandTable_UITable.gameObject, TipsBtnItem.NAME);
                 ctrl.UpdateView(KVpair.Key, KVpair.Value);
                 itemHeight = ctrl.GetHeight();
                 _disposable.Add(ctrl.OnBtn_UIButtonClick.Subscribe(_ =>
                 {
-                    View.LeftExpandBg_UISprite.gameObject.SetActive(false);
-                    View.LeftExpandTable_UITable.gameObject.SetActive(false);
-                    if(KVpair.Value != null)
+                    if (KVpair.Value != null)
                         KVpair.Value();
                 }));
-            }
-        });
-
-        //rightDic.ForEachI((KVpair, idx) =>
-        //{
-        //    if (idx == 0)
-        //    {
-        //        View.RightLabel_UILabel.text = KVpair.Key;
-        //        if (KVpair.Value == null)
-        //            _disposable.Add(OnRightBtn_UIButtonClick.Subscribe(_ =>
-        //            {
-        //                View.RightExpandBg_UISprite.gameObject.SetActive(!View.RightExpandBg_UISprite.gameObject.activeSelf);
-        //                View.RightExpandTable_UITable.gameObject.SetActive(!View.RightExpandTable_UITable.gameObject.activeSelf);
-        //            }));
-        //    }
-        //    else
-        //    {
-        //        var ctrl = AddChild<TipsBtnItemController, TipsBtnItem>(View.RightExpandTable_UITable.gameObject, TipsBtnItem.NAME);
-        //        ctrl.UpdateView(KVpair.Key, KVpair.Value);
-        //        _disposable.Add(ctrl.OnBtn_UIButtonClick.Subscribe(_ =>
-        //        {
-        //            View.RightExpandBg_UISprite.gameObject.SetActive(false);
-        //            View.RightExpandTable_UITable.gameObject.SetActive(false);
-        //            if (KVpair.Value != null)
-        //                KVpair.Value();
-        //        }));
-        //    }
-        //});
+            });
+            _disposable.Add(OnLeftBtn_UIButtonClick.Subscribe(_ =>
+            {
+                OnLeftClick();
+            }));
+        }
 
         this.gameObject.GetComponent<UIPanel>().depth = depth;
         View.LeftExpandTable_UITable.Reposition();
-        //View.RightExpandTable_UITable.Reposition();
 
-        Bounds bLeft = NGUIMath.CalculateRelativeWidgetBounds(View.LeftExpandTable_UITable.transform);
-        //Bounds bRight = NGUIMath.CalculateRelativeWidgetBounds(View.RightExpandTable_UITable.transform);
         View.LeftExpandBg_UISprite.SetDimensions(View.LeftExpandBg_UISprite.width, (leftDic.Count-1)* itemHeight + _exBgHeigher);
-        var oldPos = View.LeftExpandTable_UITable.transform.localPosition;
-        View.LeftExpandTable_UITable.transform.localPosition = new Vector3(oldPos.x, oldPos.y + (leftDic.Count - 1) * itemHeight);
-        //View.RightExpandBg_UISprite.SetDimensions((int)bRight.size.x, (int)bRight.size.y);
 
         View.RightLabel_UILabel.text = right;
         if (rightClick != null)

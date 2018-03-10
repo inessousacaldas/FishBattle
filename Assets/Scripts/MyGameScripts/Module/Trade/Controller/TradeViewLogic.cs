@@ -15,7 +15,7 @@ public sealed partial class TradeDataMgr
     {
         private static CompositeDisposable _disposable;
         private static bool _canRefresh = false;
-        public static void Open()
+        public static void Open(TradeTab tab = TradeTab.Cmomerce, int goodsId = -1)
         {
         // open的参数根据需求自己调整
 	    var layer = UILayerType.DefaultModule;
@@ -25,7 +25,11 @@ public sealed partial class TradeDataMgr
                 , true
                 , true
                 , Stream);
-            DataMgr._data.CurTab = TradeTab.Cmomerce;
+            DataMgr._data.CurTab = tab;
+            if (tab == TradeTab.Cmomerce)
+                DataMgr._data.CmomerceGoodsId = goodsId;
+            else
+                DataMgr._data.CurPitchId = goodsId;
             InitReactiveEvents(ctrl);
         }
         
@@ -43,35 +47,46 @@ public sealed partial class TradeDataMgr
             _disposable.Add(ctrl.OnCloseBtn_UIButtonClick.Subscribe(_ => ProxyTrade.CloseTradeView()));
             _disposable.Add(ctrl.GetTabMgr.Stream.Subscribe(page =>
             {
-                DataMgr._data.CurTab = (TradeTab) page;
-                ctrl.UpdateTabPage((TradeTab)page);
-                if ((TradeTab) page == TradeTab.Cmomerce)
-                {
-                    TradeNetMsg.StallExit();
-                    TradeNetMsg.OpenTradeView(null);
-                }
-                if ((TradeTab) page == TradeTab.Pitch)
-                {
-                    TradeNetMsg.TradeExit();
-                    TradeNetMsg.OpenPitchView(() =>
-                    {
-                        RefreshStellLb(ctrl.GetPitchCtrl);
-                    });
-                }
-                TradeNetMsg.StallMenu(2000);    //请求第一项的数据
+                UpdatePage(ctrl, page);
+                if (DataMgr._data.CurPitchId == 0)
+                    TradeNetMsg.StallMenu(2000);    //请求第一项的数据
             }));
+            if(DataMgr._data.CurTab != TradeTab.Cmomerce)
+                UpdatePage(ctrl, (int)DataMgr._data.CurTab);
 
-            #region 摆摊
+            #region 商会
+            _disposable.Add(ctrl.GetCmomerceCtrl.GetOnBuyHandler.Subscribe(buyData => { OnBuyCmomerceItem(buyData); }));
+            _disposable.Add(ctrl.GetCmomerceCtrl.GetSellHandler.Subscribe(buyData => { OnSellCmomerceItem(buyData); }));
+            #endregion
 
-            _disposable.Add(ctrl.GetPitchCtrl.OnAddCashBtn_UIButtonClick.Subscribe(_=>OnAddCashBtnClick()));
+            _disposable.Add(ctrl.InitPitchViewHandler.Subscribe(_canRefresh => { InitPitchView(ctrl); }));
+        }
+            
+        private static void Dispose()
+        {
+            _disposable = _disposable.CloseOnceNull();
+            OnDispose();    
+        }
+        
+        // 如果有自定义的内容需要清理，在此实现
+        private static void OnDispose()
+        {
+            
+        }
+
+        #region 摆摊
+
+        private static void InitPitchView(ITradeViewController ctrl)
+        {
+            _disposable.Add(ctrl.GetPitchCtrl.OnAddCashBtn_UIButtonClick.Subscribe(_ => OnAddCashBtnClick()));
             _disposable.Add(ctrl.GetPitchCtrl.GetBuyGoodHandler.Subscribe(dto => BuyPitchItemClick(dto)));
-            _disposable.Add(ctrl.GetPitchCtrl.OnLastBtn_UIButtonClick.Subscribe(_=>ctrl.GetPitchCtrl.ChangeItemListPage(0)));
-            _disposable.Add(ctrl.GetPitchCtrl.OnNextBtn_UIButtonClick.Subscribe(_=>ctrl.GetPitchCtrl.ChangeItemListPage(1)));
-            _disposable.Add(ctrl.GetPitchCtrl.OnOneKeyGetCashBtn_UIButtonClick.Subscribe(_=>OneKeyGetCashClick()));
-            _disposable.Add(ctrl.GetPitchCtrl.OnOneKeySellBtn_UIButtonClick.Subscribe(_=>OneKeySellClick()));
+            _disposable.Add(ctrl.GetPitchCtrl.OnLastBtn_UIButtonClick.Subscribe(_ => ctrl.GetPitchCtrl.ChangeItemListPage(0)));
+            _disposable.Add(ctrl.GetPitchCtrl.OnNextBtn_UIButtonClick.Subscribe(_ => ctrl.GetPitchCtrl.ChangeItemListPage(1)));
+            _disposable.Add(ctrl.GetPitchCtrl.OnOneKeyGetCashBtn_UIButtonClick.Subscribe(_ => OneKeyGetCashClick()));
+            _disposable.Add(ctrl.GetPitchCtrl.OnOneKeySellBtn_UIButtonClick.Subscribe(_ => OneKeySellClick()));
             _disposable.Add(ctrl.GetPitchCtrl.GetLockClick.Subscribe(idx => OnLockBtnClick()));
             _disposable.Add(ctrl.GetPitchCtrl.OnSellTipBtn_UIButtonClick.Subscribe(_ => ShowSellTip()));
-            _disposable.Add(ctrl.GetPitchCtrl.GetPutawayClick.Subscribe(id => { TradeNetMsg.StallOneItemCash(id);}));
+            _disposable.Add(ctrl.GetPitchCtrl.GetPutawayClick.Subscribe(id => { TradeNetMsg.StallOneItemCash(id); }));
             _disposable.Add(ctrl.GetPitchCtrl.RefreshHandler.Subscribe(menu =>
             {
                 DataMgr._data.CurStellMenu = menu;
@@ -90,27 +105,26 @@ public sealed partial class TradeDataMgr
                 TradeNetMsg.StallRefresh(menuId);
             }));
             _disposable.Add(ctrl.GetPitchCtrl.GetRefreshCDTimeHandler.Subscribe(_ => { RefreshStellLb(ctrl.GetPitchCtrl); }));
-
-            #endregion
-            #region 商会
-            _disposable.Add(ctrl.GetCmomerceCtrl.GetOnBuyHandler.Subscribe(buyData => { OnBuyCmomerceItem(buyData); }));
-            _disposable.Add(ctrl.GetCmomerceCtrl.GetSellHandler.Subscribe(buyData => { OnSellCmomerceItem(buyData); }));
-            #endregion
-        }
-            
-        private static void Dispose()
-        {
-            _disposable = _disposable.CloseOnceNull();
-            OnDispose();    
-        }
-        
-        // 如果有自定义的内容需要清理，在此实现
-        private static void OnDispose()
-        {
-            
         }
 
-        #region 摆摊
+        private static void UpdatePage(ITradeViewController ctrl, int page)
+        {
+            DataMgr._data.CurTab = (TradeTab)page;
+            ctrl.UpdateTabPage((TradeTab)page);
+            if ((TradeTab)page == TradeTab.Cmomerce)
+            {
+                TradeNetMsg.StallExit();
+                TradeNetMsg.OpenTradeView(null);
+            }
+            if ((TradeTab)page == TradeTab.Pitch)
+            {
+                TradeNetMsg.TradeExit();
+                TradeNetMsg.OpenPitchView(() =>
+                {
+                    RefreshStellLb(ctrl.GetPitchCtrl);
+                });
+            }
+        }
 
         private static void OnAddCashBtnClick()
         {
