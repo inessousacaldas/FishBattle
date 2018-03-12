@@ -19,51 +19,38 @@ public sealed partial class RedPointDataMgr
     //  退出/重登清除数据
     public void OnDispose()
     {
-        _redPointDic.Clear();
+        _data._redPointDic.Clear();
         GameLog.LogRedPoint("redpointmanager ClearData------");
     }
 
     public static void UpdateRedPoint(IEnumerable<ShowRedPointTypeDto> set)
     {
-        set.ForEach(delegate(ShowRedPointTypeDto dto)
-        {
-            if (dto != null)
-            {
-                var ty = ConvertUILayoutToRedPointType(dto.redPointId);
-                var isOpen = IsFunctionOpen(ty);
-                var isShow = dto.count > 0;
-                var data = new RedPointInfo(
-                    isShow
-                    , ty
-                    , dto.count
-                    , isOpen);
-                DataMgr.UpdateRedPointDic(data);
-
-            }
-        });
-
+        set.ForEach(UpdateRedPoint);
         FireData();
     }
-    public static void UpdateRedPoint(ShowRedPointTypeDto dto)
+
+    private static void UpdateRedPoint(ShowRedPointTypeDto dto)
     {
         if (dto == null)
         {
             return;
         }
-
         var ty = ConvertUILayoutToRedPointType(dto.redPointId);
-        if (ty != RedPointType.invalid)
-        {
-            var isOpen = IsFunctionOpen(ty);
-            var data = new RedPointInfo(dto.count > 0, ty, dto.count, isOpen);
-            UpdateRedPoint(data);
-        }
+        if (ty == RedPointType.invalid) return;
+        var isOpen = IsFunctionOpen(ty);
+        var isShow = dto.count > 0;
+        var data = new RedPointInfo(
+            isShow
+            , ty
+            , dto.count
+            , isOpen);
+        UpdateRedPoint(data);
     }
 
-    public static void UpdateRedPoint(bool isShown, RedPointType rpEnum, int rpCnt = -1)
+    public void UpdateRedPoint(bool isShown, RedPointType rpEnum, int rpCnt = -1)
     {
         RedPointInfo info = null;
-        DataMgr._redPointDic.TryGetValue(rpEnum, out info);
+        _data._redPointDic.TryGetValue(rpEnum, out info);
         var isOpen = IsFunctionOpen(rpEnum);
         if (info == null)
         {
@@ -73,7 +60,7 @@ public sealed partial class RedPointDataMgr
         else
         {
             info.isShow = isShown;
-            info.isOpen = isOpen;
+            info.isActive = isOpen;
             if (rpCnt >= 0)
             {
                 info.num = rpCnt;
@@ -82,7 +69,7 @@ public sealed partial class RedPointDataMgr
         UpdateRedPoint(info);
     }
 
-    public static void UpdateRedPoint(RedPointInfo info)
+    private static void UpdateRedPoint(RedPointInfo info)
     {
         if (info == null)
         {
@@ -93,17 +80,6 @@ public sealed partial class RedPointDataMgr
         DataMgr.UpdateRedPointDic(info);
         FireData();
     }
-
-    public static RedPointInfo Filter(RedPointType redPointEnum)
-    {
-        return DataMgr.GetDataByRPEnum(redPointEnum);
-    }
-
-    /// <summary>
-    /// The _red point dic.
-    /// </summary>
-    /// 红点id(对应的界面上的Id)，数量(如果不需要显示具体数量的话，>0 表示需要显示红点)
-    Dictionary<RedPointType, RedPointInfo> _redPointDic = new Dictionary<RedPointType, RedPointInfo>(new EnumEqualityComparer());
 
     /// <summary>
     /// The _action dic.
@@ -134,15 +110,8 @@ public sealed partial class RedPointDataMgr
     {
         if (info != null && info.redPointEnum != RedPointType.invalid)
         {
-            _redPointDic[info.redPointEnum] = info;
+            _data._redPointDic[info.redPointEnum] = info;
         }
-    }
-
-    private RedPointInfo GetDataByRPEnum(RedPointType redPointEnum)
-    {
-        RedPointInfo info = null;
-        _redPointDic.TryGetValue(redPointEnum, out info);
-        return info;
     }
 
     public static int ConvertRedpointTypeToDailyInfoID(RedPointType id)
@@ -210,95 +179,11 @@ public sealed partial class RedPointDataMgr
     public int GetRedPoint(RedPointType id)
     {
         RedPointInfo info = null;
-        _redPointDic.TryGetValue(id, out info);
+        _data._redPointDic.TryGetValue(id, out info);
         return info == null ? 0 : info.num;
     }
 
     #endregion
-
-    private int GetShowNum(RedPointType rpEnum)
-    {
-        Func<RedPointType, bool> checkIgnore = delegate(RedPointType typeId)
-        {
-            return false;
-            //todo fish:日程红点忽略计数： to be check
-//            int activityId = ConvertRedpointTypeToDailyInfoID(typeId);
-//            DailyActivityInfo activityInfo = ModelManager.DailyPush.GetDailyInfoByID(activityId);
-//            return activityInfo != null && ModelManager.DailyPush.CheckIgnore(activityId);
-        };
-
-        RedPointInfo info = null;
-        _redPointDic.TryGetValue(rpEnum, out info);
-
-        if (info == null)
-        {
-            return 0;
-        }
-        else
-        {
-            return !checkIgnore(rpEnum) ? info.num : 0;
-        }
-    }
-
-    public static bool GetRedPointShowState(int actID)
-    {
-        var data = GetMergeData(new RedPointType[1] { (RedPointType)actID });
-        return data.IsShow();
-    }
-
-    public static bool GetRedPointShowState(RedPointType ty)
-    {
-        var data = GetMergeData(new RedPointType[1] { ty });
-        return data.IsShow();
-    }
-
-    public static RedPointInfo GetMergeData(RedPointType ty)
-    {
-        return GetMergeData(new RedPointType[1] { ty });
-    }
-
-    public static RedPointInfo GetMergeData(RedPointType[] redPointEnumArray)
-    {
-        if (redPointEnumArray == null)
-        {
-            return null;
-        }
-        return GetMergeData(redPointEnumArray, redPointEnumArray[0]);
-    }
-
-    public static RedPointInfo GetMergeData(RedPointType[] redPointEnumArray, RedPointType rpEnum)
-    {
-        GameLog.LogRedPoint("get mergeData by enum : " + rpEnum.ToString());
-        if (rpEnum == RedPointType.invalid)
-        {
-            GameLog.LogRedPoint("GetMergeData------- rpEnum = DeliverShowRedPoint_Unknown");
-            return null;
-        }
-        var num = 0;
-        
-        var isShow = false;
-        var isOpen = false;
-        foreach (var id in redPointEnumArray)
-        {
-            if (DataMgr.GetDataByRPEnum(id) != null)
-            {
-                RedPointInfo info = null;
-                DataMgr._redPointDic.TryGetValue(id, out info);
-
-                info.Print(string.Format("GetMergeData------- rpenum = {0}  ", id));
-                if (info != null && info.IsShow())
-                {
-                    num += DataMgr.GetShowNum(info.redPointEnum);
-                    isShow = true;
-                    isOpen = true;
-                }
-            }
-        }
-
-        var mergedData = new RedPointInfo(isShow, rpEnum, num, isOpen);
-        mergedData.Print();
-        return mergedData;
-    }
 }
 
 //

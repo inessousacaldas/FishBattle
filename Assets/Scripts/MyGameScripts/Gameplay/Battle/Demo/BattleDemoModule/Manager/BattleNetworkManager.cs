@@ -230,15 +230,6 @@ public sealed partial class BattleDataManager
                 GameLog.Log_Battle_PlayerAttr( "pVideoRound.id ==  mainrole, acReward value :" + str);
             }
 
-            var skillAction = pVideoRound.skillActions.Filter(ac => ac.actionSoldierId == pid);
-            skillAction.ForEach(ac =>
-            {
-                var str = string.Format("playerID = {0} action spent Hp = {1}",ac.actionSoldierId, ac.hpSpent);
-                str += string.Format("action spent Ep = {0}", ac.epSpent);
-                str += string.Format("action spent Cp = {0}", ac.cpSpent);
-                GameLog.Log_Battle_PlayerAttr(str);
-            });
-
             pVideoRound.skillActions.ForEach(ac =>
             {
                 ac.targetStateGroups.ForEach(target =>

@@ -6,6 +6,7 @@ using Fish;
 using Newtonsoft.Json;
 using UnityEngine;
 using JsonC = Newtonsoft.Json.JsonConvert;
+
 public static class BattlePlayHelper
 {
     public static ModelHelper.AnimType GetAnimType(this string name,
@@ -167,28 +168,24 @@ public static class BattlePlayHelper
         return startPos;
     }
     
-    public static void HandleMonsterAfterAction(this MonsterController monster,MonsterController otherMc)
+    public static void HandleMonsterAfterAction(this MonsterController monster)
     {
         if (monster.leave)
         {
             monster.RetreatFromBattle(MonsterController.RetreatMode.Fly);
         }
+        //http://oa.cilugame.com/redmine/issues/12591
+        else if (monster.IsDead())
+        {
+            monster.PlayDieAnimation();
+        }
+        else if (monster.driving)
+        {
+            monster.PlayDrivingAnimation();
+        }
         else
         {
-            //http://oa.cilugame.com/redmine/issues/12591
-
-            if (monster.IsDead())
-            {
-                monster.PlayDieAnimation();
-            }
-            else if (monster.driving)
-            {
-                monster.PlayDrivingAnimation();
-            }
-            else
-            {
-                monster.PlayStateAnimation();
-            }
+            monster.PlayIdleAnimation();
         }
     }
 

@@ -24,7 +24,8 @@ namespace Fish
             }
 
             var waitCtl = (delayTime > 0f) ? KeepStatePlayCtl.Create(delayTime) : null;
-            var combinedAct = waitCtl.Chain(ctl);
+            var aa = ImmediaBattleActionCtl.Create(() => ctl._mc.HandleMonsterAfterAction());
+            var combinedAct = waitCtl.Chain(ctl).Chain(aa);
             return combinedAct.Branch(effList.ToParallel());
         }
 

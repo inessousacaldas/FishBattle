@@ -41,7 +41,7 @@ public sealed partial class RedPointDataMgr
     
     private static RedPointDataMgr _ins = null;
     private CompositeDisposable _disposable;
-    private RedPointData _data = null;
+    private static RedPointData _data = null;
     public static IObservableExpand<IRedPointData> Stream{
         get{
             InitDataAndStream();

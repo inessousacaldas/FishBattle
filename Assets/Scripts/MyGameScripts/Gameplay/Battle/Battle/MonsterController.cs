@@ -1073,7 +1073,7 @@ public partial class MonsterController : MonoBehaviour
 
     public void AddHPMPValue(VideoSkillAction action)
     {
-
+        driving = action.driving;
         _videoSoldier.hp = Math.Max(0, _videoSoldier.hp + action.hpSpent);
         _videoSoldier.ep = Math.Max(0, _videoSoldier.ep + action.epSpent);
         _videoSoldier.cp = Math.Max(0, _videoSoldier.cp + action.cpSpent);

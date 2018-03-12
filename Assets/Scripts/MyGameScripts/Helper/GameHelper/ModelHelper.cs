@@ -1188,6 +1188,7 @@ public static class ModelHelper
             }
             else
             {
+                GameDebuger.LogError(AnimToString(action).ToString());
                 anim.Play(AnimToString(action), layer, 0f);
             }
             if (animClipCallBack != null)
